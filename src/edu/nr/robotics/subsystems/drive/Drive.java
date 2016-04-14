@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -31,33 +32,33 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	double pidMaxVal;
 	CANTalon leftTalon, rightTalon, tempLeftTalon, tempRightTalon;
 	TalonEncoder leftTalonEncoder, rightTalonEncoder;
-
+	
 	// These values are right so that one distance  
 	// unit given by the encoders is one meter
-	private final int ticksPerRev = 256 * 60 / 24;
+	private final int ticksPerRev = 256 * 60 / 24 * 48 * 4;
 	private final double wheelDiameter = 0.6375; //Feet
-	private final double distancePerRev = Math.PI * wheelDiameter / 4.04;
+	private final double distancePerRev = Math.PI * wheelDiameter;
 	//The 4.04 is a scaling factor we found...
 
 	private Drive() {
 		if(EnabledSubsystems.driveEnabled) {
-			leftTalon = new CANTalon(RobotMap.TALON_LEFT_A);
+			leftTalon = new CANTalon(RobotMap.TALON_LEFT_B);
 			leftTalon.enableBrakeMode(true);
 			leftTalon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 			leftTalon.setEncPosition(0);
 	
-			tempLeftTalon = new CANTalon(RobotMap.TALON_LEFT_B);
+			tempLeftTalon = new CANTalon(RobotMap.TALON_LEFT_A);
 			tempLeftTalon.changeControlMode(TalonControlMode.Follower);
 			tempLeftTalon.set(leftTalon.getDeviceID());
 			tempLeftTalon.enableBrakeMode(true);
 			
-			rightTalon = new CANTalon(RobotMap.TALON_RIGHT_B);
+			rightTalon = new CANTalon(RobotMap.TALON_RIGHT_A);
 			rightTalon.enableBrakeMode(true);
 			rightTalon.setInverted(true);
 			rightTalon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 			rightTalon.setEncPosition(0);
 	
-			tempRightTalon = new CANTalon(RobotMap.TALON_RIGHT_A);
+			tempRightTalon = new CANTalon(RobotMap.TALON_RIGHT_B);
 			tempRightTalon.changeControlMode(TalonControlMode.Follower);
 			tempRightTalon.set(rightTalon.getDeviceID());
 			tempRightTalon.enableBrakeMode(true);
@@ -79,6 +80,8 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	
 			leftTalonEncoder.setDistancePerRev(distancePerRev);
 			leftTalonEncoder.setScale(RobotMap.MAX_SPEED);
+			
+			
 			
 			leftPid = new PID(JOYSTICK_DRIVE_P, 0, 0, 1, leftTalonEncoder, leftTalon);
 			rightPid = new PID(JOYSTICK_DRIVE_P, 0, 0, 1, rightTalonEncoder, rightTalon);
@@ -378,8 +381,8 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	 */
 	@Override
 	public void smartDashboardInfo() {
-		LiveWindowClasses.driveEncodersDistance.set(getEncoderAverageDistance());
-		LiveWindowClasses.driveEncodersSpeed.set(getEncoderAverageSpeed());
+		SmartDashboard.putNumber("Left Pos", getEncoderLeftDistance());
+		SmartDashboard.putNumber("Right Pos", getEncoderRightDistance());
 
 	}
 
