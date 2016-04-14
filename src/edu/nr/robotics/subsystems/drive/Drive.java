@@ -1,7 +1,7 @@
 package edu.nr.robotics.subsystems.drive;
 
 import edu.nr.lib.NRMath;
-import edu.nr.lib.PID;
+import edu.nr.lib.NRPID;
 import edu.nr.lib.TalonEncoder;
 import edu.nr.lib.interfaces.Periodic;
 import edu.nr.lib.interfaces.SmartDashboardSource;
@@ -28,7 +28,7 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	public static final double JOYSTICK_DRIVE_P = 0.25;
 
 	private static Drive singleton;
-	private PID leftPid, rightPid;
+	private NRPID leftPid, rightPid;
 	double pidMaxVal;
 	CANTalon leftTalon, rightTalon, tempLeftTalon, tempRightTalon;
 	TalonEncoder leftTalonEncoder, rightTalonEncoder;
@@ -81,18 +81,15 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 			
 			
 			
-			leftPid = new PID(JOYSTICK_DRIVE_P, 0, 0, 1, leftTalonEncoder, leftTalon);
-			rightPid = new PID(JOYSTICK_DRIVE_P, 0, 0, 1, rightTalonEncoder, rightTalon);
+			leftPid = new NRPID(JOYSTICK_DRIVE_P, 0, 0, 1, leftTalonEncoder, leftTalon);
+			rightPid = new NRPID(JOYSTICK_DRIVE_P, 0, 0, 1, rightTalonEncoder, rightTalon);
 			
 			pidMaxVal = 1.0;
-			rightPid.setOutputRange(0, pidMaxVal);
-			leftPid.setOutputRange(0, pidMaxVal);
+			rightPid.setMaxOutput(pidMaxVal);
+			leftPid.setMaxOutput(pidMaxVal);
 			
 	
-			
-			LiveWindow.addSensor("Drive", "Left PID", leftPid);
-			LiveWindow.addSensor("Drive", "Right PID", rightPid);
-			
+					
 			LiveWindow.addSensor("Drive", "Distance", LiveWindowClasses.driveEncodersDistance);
 			LiveWindow.addSensor("Drive", "Speed", LiveWindowClasses.driveEncodersSpeed);
 		}
@@ -387,9 +384,9 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 		SmartDashboard.putNumber("Right speed", getEncoderRightSpeed());
 		SmartDashboard.putNumber("Average speed", getEncoderAverageSpeed());
 
-		SmartDashboard.putString("Left", leftPid.get() + ":" + leftPid.getSetpoint() + ":" + leftPid.getError());
-		SmartDashboard.putString("Right", rightPid.get() + ":" + rightPid.getSetpoint() + ":" + rightPid.getError());
-
+		SmartDashboard.putString("Left", leftTalon.get() + ":" + leftPid.getSetpoint() + ":" + leftPid.getError());
+		SmartDashboard.putString("Right", rightTalon.get() + ":" + rightPid.getSetpoint() + ":" + rightPid.getError());
+		System.out.println(rightTalon.get() + ":" + rightPid.getSetpoint() + ":" + rightPid.getError());
 	}
 
 	@Override
@@ -405,8 +402,8 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 				pidMaxVal -= 0.03;
 			}
 	
-			leftPid.setOutputRange(0, Math.abs(pidMaxVal));
-			rightPid.setOutputRange(0, Math.abs(pidMaxVal));
+			leftPid.setMaxOutput(Math.abs(pidMaxVal));
+			rightPid.setMaxOutput(Math.abs(pidMaxVal));
 		}
 	}
 
