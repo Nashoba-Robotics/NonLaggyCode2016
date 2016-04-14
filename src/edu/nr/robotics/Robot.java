@@ -28,6 +28,7 @@ import edu.nr.robotics.subsystems.climb.Elevator;
 import edu.nr.robotics.subsystems.drive.Drive;
 import edu.nr.robotics.subsystems.drive.DriveAnglePIDCommand;
 import edu.nr.robotics.subsystems.drive.DriveSetPIDSmartDashboardCommand;
+import edu.nr.robotics.subsystems.drive.DriveTurnSmartDashboardCommand;
 import edu.nr.robotics.subsystems.drive.FieldCentric;
 import edu.nr.robotics.subsystems.hood.Hood;
 import edu.nr.robotics.subsystems.hood.HoodJetsonPositionCommand;
@@ -364,7 +365,10 @@ public class Robot extends RobotBase {
 		SmartDashboard.putNumber("Drive D", RobotMap.DRIVE_D);
 		SmartDashboard.putNumber("Drive F", RobotMap.DRIVE_F);
 		
+		SmartDashboard.putNumber("Turn Constant Value", 0.3);
+		
 		SmartDashboard.putData("Set drive pid", new DriveSetPIDSmartDashboardCommand());
+		SmartDashboard.putData("Turn Smart Dashboard", new DriveTurnSmartDashboardCommand());
 
 
 	}

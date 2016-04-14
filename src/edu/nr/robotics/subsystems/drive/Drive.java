@@ -68,8 +68,6 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 			
 			leftTalonEncoder.setPIDSourceType(PIDSourceType.kRate);
 	
-			leftTalonEncoder.setReverseDirection(true);
-	
 			rightTalonEncoder.setPIDSourceType(PIDSourceType.kRate);
 	
 			rightTalonEncoder.setTicksPerRev(ticksPerRev);
@@ -383,6 +381,14 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	public void smartDashboardInfo() {
 		SmartDashboard.putNumber("Left Pos", getEncoderLeftDistance());
 		SmartDashboard.putNumber("Right Pos", getEncoderRightDistance());
+		SmartDashboard.putNumber("Average Pos", getEncoderAverageDistance());
+
+		SmartDashboard.putNumber("Left speed", getEncoderLeftSpeed());
+		SmartDashboard.putNumber("Right speed", getEncoderRightSpeed());
+		SmartDashboard.putNumber("Average speed", getEncoderAverageSpeed());
+
+		SmartDashboard.putString("Left", leftPid.get() + ":" + leftPid.getSetpoint() + ":" + leftPid.getError());
+		SmartDashboard.putString("Right", rightPid.get() + ":" + rightPid.getSetpoint() + ":" + rightPid.getError());
 
 	}
 
