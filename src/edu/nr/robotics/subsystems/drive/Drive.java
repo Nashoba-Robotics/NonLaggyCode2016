@@ -38,7 +38,6 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	private final int ticksPerRev = 256 * 60 / 24 * 48 * 4;
 	private final double wheelDiameter = 0.6375; //Feet
 	private final double distancePerRev = Math.PI * wheelDiameter;
-	//The 4.04 is a scaling factor we found...
 
 	private Drive() {
 		if(EnabledSubsystems.driveEnabled) {

@@ -1,11 +1,16 @@
 package edu.nr.robotics.subsystems.drive;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import edu.nr.lib.AngleGyroCorrectionSource;
 import edu.nr.lib.AngleUnit;
 import edu.nr.lib.NRCommand;
 import edu.nr.lib.NRPID;
 import edu.nr.lib.network.AndroidServer;
 import edu.nr.robotics.RobotMap;
+import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -45,8 +50,8 @@ public class DriveAnglePIDCommand extends NRCommand {
     	this.angle = angle;
     	this.correction = correction;
     	requires(Drive.getInstance());
+    	controller = new AngleController();
 		pid = new NRPID(RobotMap.TURN_P,RobotMap.TURN_I,RobotMap.TURN_D,0, correction, controller);
-	
 		System.out.println("Started angle PID command");
     }
 
@@ -93,14 +98,16 @@ public class DriveAnglePIDCommand extends NRCommand {
 				return;
 			}
 			
-			pid.setSetpoint(angle);
 
 		}
+		
+		pid.setSetpoint(angle);
 		
 		Drive.getInstance().setPIDEnabled(true);
 		controller = new AngleController();
 		correction.reset();
 		pid.enable();
 	}
+
 }
 
