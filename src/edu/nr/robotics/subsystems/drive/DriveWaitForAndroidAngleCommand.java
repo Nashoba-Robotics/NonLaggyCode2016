@@ -17,9 +17,12 @@ public class DriveWaitForAndroidAngleCommand extends NRCommand {
 		this.auton = auton;
 	}
 
+	double lastTime;
+	
 	@Override
 	protected boolean isFinishedNR() {	
-		
+		if(lastTime == 0)
+			lastTime = System.currentTimeMillis();
 		
 		System.out.println("Checking drive angle: current count: " + currentCount + " drive angle error: " + command.getError());
 		
@@ -28,11 +31,15 @@ public class DriveWaitForAndroidAngleCommand extends NRCommand {
 		else
 			currentCount = 0;			
 		
-		if(currentCount == 20)
+		//if(currentCount == 20)
+		if(System.currentTimeMillis() - lastTime > 250) {
 			command.setSetpoint(command.getSetpoint() + AndroidServer.getInstance().getTurnAngle());
 		
+			lastTime = System.currentTimeMillis();
+		}
+		
 		if(auton)
-			return currentCount > 10;
+			return currentCount > 40;
 		return false;
 	}
 	
