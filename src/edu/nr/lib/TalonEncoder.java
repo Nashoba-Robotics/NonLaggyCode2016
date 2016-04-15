@@ -49,7 +49,7 @@ public class TalonEncoder implements PIDSource {
 	}
 	
 	public double getRate() {
-		return talon.getEncVelocity() * (distancePerRev / ticksPerRev) / scale * (reverseDirection ? -1 : 1) * 10;//The times 10 is because the enc velocity is per 100 ms
+		return -1 * talon.getEncVelocity() * (distancePerRev / ticksPerRev) / scale * (reverseDirection ? -1 : 1) * 10;//The times 10 is because the enc velocity is per 100 ms
 	}
 
 	public void setReverseDirection(boolean b) {
