@@ -6,7 +6,6 @@ import java.util.TimerTask;
 import edu.nr.lib.AngleGyroCorrectionSource;
 import edu.nr.lib.AngleUnit;
 import edu.nr.lib.NRCommand;
-import edu.nr.lib.NRPID;
 import edu.nr.lib.network.AndroidServer;
 import edu.nr.robotics.RobotMap;
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -25,8 +24,6 @@ public class DriveAnglePIDCommand extends NRCommand {
 	AngleGyroCorrectionSource correction;
 	
 	double integralDisableDistance = 5;
-
-	double accuracyFinishCount = 0;
 	double currentCount = 0;
 	
 	boolean useAndroid;
@@ -65,8 +62,13 @@ public class DriveAnglePIDCommand extends NRCommand {
     	} else {
     		currentCount = 0;
     	}
-    	System.out.println("current count: " + currentCount);
-    	return false;//currentCount > accuracyFinishCount;
+    	
+		if(currentCount > 4)
+			pid.setPermaOut(pid.getOut());
+
+    	
+    	System.out.println("current count: " + currentCount + " use perma out: " + pid.isPermaOut());
+    	return false;
     }
 
 	@Override
@@ -80,6 +82,9 @@ public class DriveAnglePIDCommand extends NRCommand {
 	protected void onExecute() {
 		SmartDashboard.putString("GyroPID", correction.pidGet() + ":" + pid.getSetpoint());
 		SmartDashboard.putString("GyroPIDAngle", correction.pidGet() +"");
+		
+		System.out.println("Drive Angle PID Command running");
+		
 	}
 
 	@Override
@@ -87,7 +92,7 @@ public class DriveAnglePIDCommand extends NRCommand {
 		pid.setPID(DriveGyroAngleSmartDashboardCommand.turn_p,DriveGyroAngleSmartDashboardCommand.turn_i,DriveGyroAngleSmartDashboardCommand.turn_d,0);
 		if(useAndroid) {
 			if(!AndroidServer.getInstance().goodToGo()) { 
-	    		System.out.println("Android connection not good to go");
+	    		System.out.println("Drive Angle PID: Android connection not good to go");
 	    		goodToGo = false;
 	    		return;
 	    	}
@@ -109,6 +114,156 @@ public class DriveAnglePIDCommand extends NRCommand {
 		correction.reset();
 		pid.enable();
 	}
+
+	public double getError() {
+		return pid.getError();
+	}
+
+	public void setSetpoint(double turnAngle) {
+		pid.setSetpoint(turnAngle);
+	}
+	
+	public class NRPID {
+
+		double p,i,d,f;
+		
+		PIDSource source;
+		PIDOutput output;
+		
+		double setpoint = 0;
+		
+		double totalError = 0;
+		
+		double lastTime, lastError = 0;
+		
+		boolean enabled = false;
+		
+		Timer scheduler;
+		
+		double maxOutput = 1;
+		
+		double lastOut = 0;
+		
+		boolean usePermaOut = false;
+		double permaOut;
+		
+		public NRPID(double p, double i, double d, double f, PIDSource source, PIDOutput output) {
+			this.p = p;
+			this.d = d;
+			this.i = i;
+			this.f = f;
+			this.source = source;
+			this.output = output;
+			lastTime = System.currentTimeMillis();
+			
+			scheduler = new Timer();
+			scheduler.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					calculate();
+				}	
+			}, 0, 20);		
+		}
+		
+		public boolean isPermaOut() {
+			return usePermaOut;
+		}
+
+		public void setSetpoint(double setpoint) {
+			this.setpoint = setpoint;
+			totalError = 0;
+			lastError = getError();
+
+			usePermaOut = false;
+		}
+		
+		public void enable() {
+			lastError = getError();
+			lastTime = System.currentTimeMillis();
+			enabled = true;
+		}
+		
+		public void disable() {
+			enabled = false;
+			output.pidWrite(0);
+		}
+		
+		public double getError() {
+			return setpoint - source.pidGet();
+		}
+		
+		private void calculate() {
+			if(enabled) {
+				if(usePermaOut) {
+					System.out.println("Perma out: " + permaOut);
+					output.pidWrite(permaOut);
+					return;
+				}
+
+				double error = getError();
+				double out = 0;
+				
+				out += p * error;
+				out += f * setpoint;
+				
+				totalError += error * i;
+				
+				out += i * totalError;
+				
+				double dt = (System.currentTimeMillis() - lastTime)/1000.0;
+				lastTime = System.currentTimeMillis();
+				
+				double dE = error - lastError;
+				lastError = error;
+				
+				out += d * dE/dt;
+				if(Math.abs(out) > maxOutput) 
+					out = Math.signum(out) * maxOutput;
+				output.pidWrite(out);
+				lastOut = out;
+			}
+		}
+
+		public void setMaxOutput(double maxOutput) {
+			this.maxOutput = maxOutput;
+		}
+
+		public boolean isEnable() {
+			return enabled;
+		}
+
+		public void reset() {
+			if(enabled)
+				disable();
+			
+			totalError = 0;
+		}
+
+		public double getSetpoint() {
+			return setpoint;
+		}
+
+		public void setPID(double p, double i, double d, double f) {
+			this.p = p;
+			this.d = d;
+			this.i = i;
+			this.f = f;		
+		}
+		
+		public double getOut() {
+			return lastOut;
+		}
+		
+		public void setPermaOut(double out) {
+			this.permaOut = out;
+			usePermaOut = true;
+		}
+	}
+
+	public double getSetpoint() {
+		return pid.getSetpoint();
+	}
+
 
 }
 

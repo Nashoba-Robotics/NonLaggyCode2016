@@ -26,40 +26,9 @@ public class AlignCommandGroup extends CommandGroup {
     public  AlignCommandGroup() {
     	addParallel(new IntakeArmHomeHeightCommandGroup());
     	addSequential(new WaitCommand(0.25));
-        addParallel(new DriveAnglePIDCommand());
+    	DriveAnglePIDCommand command = new DriveAnglePIDCommand();
+        addParallel(command);
         addSequential(new HoodJetsonPositionCommand());
-        addSequential(new DriveWaitForAndroidAngleCommand());
-
-        addSequential(new WaitCommand(0.25));
+        addSequential(new DriveWaitForAndroidAngleCommand(command, false));
     }
-    
-    @Override
-    public void end() {
-    	if(!AndroidServer.getInstance().goodToGo()) { 
-    		System.out.println("Android connection not good to go");
-    		return;
-    	}
-    	
-    	System.out.println("Align command group started ending");
-		System.out.println("Hood: " + (Math.abs(Hood.getInstance().get() - 
-				Hood.distanceToAngle(AndroidServer.getInstance().getDistance())) > RobotMap.HOOD_THRESHOLD));
-		System.out.println("Turn:  " + Math.abs(AndroidServer.getInstance().getTurnAngle()) + " " + (Math.abs(AndroidServer.getInstance().getTurnAngle()) > RobotMap.TURN_THRESHOLD));
-		System.out.println("Shooter: " + Shooter.getInstance().getScaledSpeed() + " " + (Shooter.getInstance().getScaledSpeed() < RobotMap.SHOOTER_FAST_SPEED - RobotMap.SHOOTER_THRESHOLD));
-
-    	if(OI.getInstance().alignButton.get()) {
-    		boolean flag = false;
-    		if(Math.abs(Hood.getInstance().get() - Hood.distanceToAngle(AndroidServer.getInstance().getDistance())) > RobotMap.HOOD_THRESHOLD ) {flag = true;}
-    		if(Math.abs(AndroidServer.getInstance().getTurnAngle()) > RobotMap.TURN_THRESHOLD) {flag = true;}
-    		if(Shooter.getInstance().getScaledSpeed() < RobotMap.SHOOTER_FAST_SPEED - RobotMap.SHOOTER_THRESHOLD) {flag = true;}
-    		if(flag) {
-	    		System.out.println("Starting align again angle: " + NavX.getInstance().getYaw(AngleUnit.DEGREE) + " shooter speed: " + Shooter.getInstance().getScaledSpeed() + " Hood angle " + Hood.getInstance().get());
-	    		
-	    		OI.getInstance().alignCommand = new AlignCommandGroup();
-	    		OI.getInstance().alignCommand.start();
-	    		return;
-    		}
-    	}
-    	System.out.println("Ended align correction");
-    }
-    
 }

@@ -24,6 +24,8 @@ public class HoodJetsonPositionCommand extends NRCommand {
 		val = Hood.distanceToAngle(AndroidServer.getInstance().getDistance());
 		Hood.getInstance().enable();
 		Hood.getInstance().setSetpoint(val);
+		
+		System.out.println("Hood jetson check started");
 	}
 
 	@Override
@@ -34,6 +36,9 @@ public class HoodJetsonPositionCommand extends NRCommand {
 
 	@Override
 	protected boolean isFinishedNR() {
+		
+		System.out.println("Checking hood finish? Error: " + (Hood.getInstance().get() - val));
+		
 		if(!goodToGo)
 			return true;
 		return Math.abs(Hood.getInstance().get() - val) < 0.25;

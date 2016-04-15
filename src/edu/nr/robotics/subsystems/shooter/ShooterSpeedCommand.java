@@ -2,6 +2,7 @@ package edu.nr.robotics.subsystems.shooter;
 
 import edu.nr.lib.NRCommand;
 import edu.nr.robotics.OI;
+import edu.nr.robotics.Robot;
 import edu.nr.robotics.RobotMap;
 
 public class ShooterSpeedCommand extends NRCommand {
@@ -34,24 +35,30 @@ public class ShooterSpeedCommand extends NRCommand {
     
     @Override
 	protected void onExecute() {
+    	
+    	
     	if(useSwitch) {
-    		if(OI.getInstance().shooterOn()) {
+        	if(Robot.getInstance().isAutonomous()) {
     			goalSpeed = RobotMap.SHOOTER_FAST_SPEED;
-    		} else {
-    			goalSpeed = 0;
-    		}
+        	} else {
+	    		if(OI.getInstance().shooterOn()) {
+	    			goalSpeed = RobotMap.SHOOTER_FAST_SPEED;
+	    		} else {
+	    			goalSpeed = 0;
+	    		}
+        	}
     	}
     	
-    		if(goalSpeed == 0) {
-    			Shooter.getInstance().setMotor(0);
-    		} else {
-    	    	double speed = Shooter.getInstance().getScaledSpeed();
-    	    	double p = kP * (goalSpeed - speed);
-    	    	double f = kF * goalSpeed;
-    	    	
-    	    	double output = p + f;
-    	    	Shooter.getInstance().setMotor(output);
-    		}
+		if(goalSpeed == 0) {
+			Shooter.getInstance().setMotor(0);
+		} else {
+	    	double speed = Shooter.getInstance().getScaledSpeed();
+	    	double p = kP * (goalSpeed - speed);
+	    	double f = kF * goalSpeed;
+	    	
+	    	double output = p + f;
+	    	Shooter.getInstance().setMotor(output);
+		}
 	}
 	
 	@Override

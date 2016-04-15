@@ -8,19 +8,32 @@ public class DriveWaitForAndroidAngleCommand extends NRCommand {
 
 	int currentCount = 0;
 	
+	DriveAnglePIDCommand command;
+	
+	boolean auton;
+	
+	public DriveWaitForAndroidAngleCommand(DriveAnglePIDCommand command, boolean auton) {
+		this.command = command;
+		this.auton = auton;
+	}
+
 	@Override
-	protected boolean isFinishedNR() {
-    	if(!AndroidServer.getInstance().goodToGo()) { 
-    		System.out.println("Android connection not good to go");
-    		return false;
-    	}
-    	
-    	System.out.println("Android server wait angle: " + Math.abs(AndroidServer.getInstance().getTurnAngle()) + " current count: " + currentCount);
+	protected boolean isFinishedNR() {	
 		
-		if( Math.abs(AndroidServer.getInstance().getTurnAngle()) < RobotMap.TURN_THRESHOLD)
+		
+		System.out.println("Checking drive angle: current count: " + currentCount + " drive angle error: " + command.getError());
+		
+		if( Math.abs(command.getError()) < RobotMap.TURN_THRESHOLD)
 			currentCount++;
+		else
+			currentCount = 0;			
 		
-		return currentCount > 3;
+		if(currentCount == 20)
+			command.setSetpoint(command.getSetpoint() + AndroidServer.getInstance().getTurnAngle());
+		
+		if(auton)
+			return currentCount > 10;
+		return false;
 	}
 	
 }

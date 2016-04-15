@@ -66,7 +66,7 @@ public class AndroidServer implements Runnable {
 							    try {
 							    	distance = Double.valueOf(left);
 							    	turnAngle = -Double.valueOf(right);
-								    System.out.println("Angle: " + turnAngle + " Distance: " + distance);
+								    //System.out.println("Angle: " + turnAngle + " Distance: " + distance);
 								    SmartDashboard.putNumber("Camera distance", distance);
 								    SmartDashboard.putNumber("Camera angle", turnAngle);
 							    } catch (NumberFormatException e) {
