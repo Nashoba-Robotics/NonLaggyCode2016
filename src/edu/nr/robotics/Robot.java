@@ -27,6 +27,7 @@ import edu.nr.robotics.commandgroups.AlignCommandGroup;
 import edu.nr.robotics.subsystems.climb.Elevator;
 import edu.nr.robotics.subsystems.drive.Drive;
 import edu.nr.robotics.subsystems.drive.DriveAnglePIDCommand;
+import edu.nr.robotics.subsystems.drive.DriveGyroAngleSmartDashboardCommand;
 import edu.nr.robotics.subsystems.drive.DriveSetPIDSmartDashboardCommand;
 import edu.nr.robotics.subsystems.drive.DriveTurnSmartDashboardCommand;
 import edu.nr.robotics.subsystems.drive.FieldCentric;
@@ -359,6 +360,7 @@ public class Robot extends RobotBase {
 		
 		SmartDashboard.putNumber("Turn P", RobotMap.TURN_P);
 		SmartDashboard.putNumber("Turn I", RobotMap.TURN_I);
+		SmartDashboard.putNumber("Turn D", RobotMap.TURN_D);
 
 		SmartDashboard.putNumber("Drive P", RobotMap.DRIVE_TURN_P);
 		SmartDashboard.putNumber("Drive I", RobotMap.DRIVE_TURN_I);
@@ -366,9 +368,12 @@ public class Robot extends RobotBase {
 		SmartDashboard.putNumber("Drive F", RobotMap.DRIVE_TURN_F);
 		
 		SmartDashboard.putNumber("Turn Constant Value", 0.3);
+		SmartDashboard.putNumber("Gyro Angle", 10);
+
 		
 		SmartDashboard.putData("Set drive pid", new DriveSetPIDSmartDashboardCommand());
 		SmartDashboard.putData("Turn Smart Dashboard", new DriveTurnSmartDashboardCommand());
+		SmartDashboard.putData("Gyro Angle Smart Dashboard", new DriveGyroAngleSmartDashboardCommand());
 
 
 	}

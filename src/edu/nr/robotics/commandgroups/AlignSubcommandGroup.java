@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class AlignSubcommandGroup extends CommandGroup {
     	
     public  AlignSubcommandGroup() {
-        addSequential(new DriveAnglePIDCommand(true));
+        addSequential(new DriveAnglePIDCommand());
         addSequential(new DriveSimpleDistanceWithGyroCommand(1, 0.2));
         addSequential(new DriveSimpleDistanceWithGyroCommand(-1, 0.2));
         addSequential(new HoodJetsonPositionCommand());
