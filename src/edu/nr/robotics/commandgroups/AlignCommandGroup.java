@@ -7,8 +7,12 @@ import edu.nr.lib.network.AndroidServer;
 import edu.nr.robotics.OI;
 import edu.nr.robotics.Robot;
 import edu.nr.robotics.RobotMap;
+import edu.nr.robotics.subsystems.drive.DriveAnglePIDCommand;
+import edu.nr.robotics.subsystems.drive.DriveWaitForAndroidAngleCommand;
 import edu.nr.robotics.subsystems.hood.Hood;
+import edu.nr.robotics.subsystems.hood.HoodJetsonPositionCommand;
 import edu.nr.robotics.subsystems.intakearm.IntakeArm;
+import edu.nr.robotics.subsystems.intakearm.IntakeArmHomeHeightCommandGroup;
 import edu.nr.robotics.subsystems.shooter.Shooter;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
@@ -19,14 +23,13 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 public class AlignCommandGroup extends CommandGroup {
     
 	
-	public enum State {
-		ALIGNING, WAITING, OFF
-	}
-	
     public  AlignCommandGroup() {
-    	addSequential(new AlignStartCommand());
+    	addParallel(new IntakeArmHomeHeightCommandGroup());
     	addSequential(new WaitCommand(0.25));
-        addSequential(new AlignSubcommandGroup());
+        addParallel(new DriveAnglePIDCommand());
+        addSequential(new HoodJetsonPositionCommand());
+        addSequential(new DriveWaitForAndroidAngleCommand());
+
         addSequential(new WaitCommand(0.25));
     }
     
@@ -57,40 +60,6 @@ public class AlignCommandGroup extends CommandGroup {
     		}
     	}
     	System.out.println("Ended align correction");
-		/*Robot.getInstance().state = State.WAITING;
-    	while((!OI.getInstance().fireButton.get() || !OI.getInstance().backupFireButton.get()) && OI.getInstance().alignButton.get()) {}
-    	if((OI.getInstance().fireButton.get() || OI.getInstance().backupFireButton.get())) {
-			Robot.getInstance().fireCommand = new LaserCannonTriggerCommand();
-			Robot.getInstance().fireCommand.start();
-	    	System.out.println("Align ended after shot - angle: " + NavX.getInstance().getYaw(AngleUnit.DEGREE));
-    	} else {
-        	System.out.println("Align ended due to button release - angle: " + NavX.getInstance().getYaw(AngleUnit.DEGREE));
-    	}
-    	Robot.getInstance().state = State.OFF;
-    	System.out.println("Ended align waiting");
-    	LiveWindowClasses.readyToShoot.set(false);*/
     }
     
-    @Override
-    public void interrupted() {
-    	IntakeArm.getInstance().disable();
-    	Hood.getInstance().disable();
-    }
-    
-    @Override
-	public void initialize() {
-    	System.out.println("Align started - angle: " + NavX.getInstance().getYaw(AngleUnit.DEGREE));
-    }
-    
-    public class AlignStartCommand extends NRCommand {
-    	
-    	public AlignStartCommand() {
-    		//addSequential(new IntakeArmHomeHeightCommandGroup());
-    	}
-    	
-    	@Override
-    	public void onStart() {
-    		Robot.getInstance().state = State.ALIGNING;
-    	}
-    }
 }

@@ -26,7 +26,7 @@ public class RobotDiagram implements NamedSendable {
 
 			table.putString("~TYPE~", "robo-diagram");
 
-			table.putBoolean("Auto Align Happening", Robot.getInstance().state == AlignCommandGroup.State.ALIGNING);
+			table.putBoolean("Auto Align Happening", false);
 			table.putBoolean("All Systems Go", Shooter.getInstance().getSped());
 			
 			//Hood

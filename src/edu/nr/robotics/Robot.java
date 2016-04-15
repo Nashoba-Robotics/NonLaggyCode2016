@@ -59,7 +59,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends RobotBase {
 		
-	public AlignCommandGroup.State state;
 	RobotDiagram robotDiagram;
 	
 	public Command driveWall;
