@@ -79,11 +79,12 @@ public class DriveAnglePIDCommand extends NRCommand {
 	@Override
 	protected void onExecute() {
 		SmartDashboard.putString("GyroPID", correction.pidGet() + ":" + pid.getSetpoint());
+		SmartDashboard.putString("GyroPIDAngle", correction.pidGet() +"");
 	}
 
 	@Override
 	protected void onStart() {
-		pid.setPID(SmartDashboard.getNumber("Turn P"),SmartDashboard.getNumber("Turn I"),SmartDashboard.getNumber("Turn D"),0);
+		pid.setPID(DriveGyroAngleSmartDashboardCommand.turn_p,DriveGyroAngleSmartDashboardCommand.turn_i,DriveGyroAngleSmartDashboardCommand.turn_d,0);
 		if(useAndroid) {
 			if(!AndroidServer.getInstance().goodToGo()) { 
 	    		System.out.println("Android connection not good to go");

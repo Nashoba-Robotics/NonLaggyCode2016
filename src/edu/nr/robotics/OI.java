@@ -25,6 +25,7 @@ import edu.nr.robotics.subsystems.climb.ElevatorUnlatchCommand;
 import edu.nr.robotics.subsystems.drive.Drive;
 import edu.nr.robotics.subsystems.drive.DriveCancelCommand;
 import edu.nr.robotics.subsystems.drive.DriveConstantCommand;
+import edu.nr.robotics.subsystems.drive.DriveGyroAngleSmartDashboardCommand;
 import edu.nr.robotics.subsystems.drive.DriveResetEncodersCommand;
 import edu.nr.robotics.subsystems.hood.Hood;
 import edu.nr.robotics.subsystems.hood.HoodIncreaseDegreeCommand;
@@ -127,7 +128,7 @@ public class OI implements SmartDashboardSource, Periodic {
 		
 		new JoystickButton(driveRight, 2).whenPressed(new HoodJetsonPositionCommand());
 		
-		new JoystickButton(driveRight, 9).whenPressed(new LaserCannonTriggerCommand());
+		new JoystickButton(driveRight, 9).whenPressed(new DriveGyroAngleSmartDashboardCommand());
 	}
 
 	public void initOperatorLeft() {
