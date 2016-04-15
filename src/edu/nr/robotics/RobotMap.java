@@ -72,10 +72,15 @@ public class RobotMap {
 	public static final double TURN_P = 0.026;
 	public static final double TURN_I = 0.05;
 	public static final double HOOD_HANG_SHOT = 29;
-	public static final double DRIVE_P = 0.5;
+	public static final double DRIVE_TURN_P = 0.35;
+	public static final double DRIVE_TURN_I = 0;
+	public static final double DRIVE_TURN_D = 0.2;
+	public static final double DRIVE_TURN_F = 2.0;
+	public static final double DRIVE_P = 0.25;
 	public static final double DRIVE_I = 0;
 	public static final double DRIVE_D = 0;
 	public static final double DRIVE_F = 1;
+
 
 
 }

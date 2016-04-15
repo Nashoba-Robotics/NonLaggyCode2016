@@ -360,10 +360,10 @@ public class Robot extends RobotBase {
 		SmartDashboard.putNumber("Turn P", RobotMap.TURN_P);
 		SmartDashboard.putNumber("Turn I", RobotMap.TURN_I);
 
-		SmartDashboard.putNumber("Drive P", RobotMap.DRIVE_P);
-		SmartDashboard.putNumber("Drive I", RobotMap.DRIVE_I);
-		SmartDashboard.putNumber("Drive D", RobotMap.DRIVE_D);
-		SmartDashboard.putNumber("Drive F", RobotMap.DRIVE_F);
+		SmartDashboard.putNumber("Drive P", RobotMap.DRIVE_TURN_P);
+		SmartDashboard.putNumber("Drive I", RobotMap.DRIVE_TURN_I);
+		SmartDashboard.putNumber("Drive D", RobotMap.DRIVE_TURN_D);
+		SmartDashboard.putNumber("Drive F", RobotMap.DRIVE_TURN_F);
 		
 		SmartDashboard.putNumber("Turn Constant Value", 0.3);
 		
