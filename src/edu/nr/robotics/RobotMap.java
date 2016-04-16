@@ -53,11 +53,11 @@ public class RobotMap {
 	public static final double HOOD_TICK_TO_ANGLE_MULTIPLIER = 0.031934;
 	public static final double HOOD_THRESHOLD = 2;
 	public static final double INTAKE_ARM_THRESHOLD = 0.003;
-	public static double INTAKE_OFFSET = 0;
-	public static double INTAKE_TOP_POS = 0.655 + INTAKE_OFFSET;
-	public static double INTAKE_INTAKE_POS = 0.522 + INTAKE_OFFSET;
-	public static double INTAKE_HOME_POS = 0.522 + INTAKE_OFFSET; //home == intake
-	public static double INTAKE_BOTTOM_POS = 0.494 + INTAKE_OFFSET;
+	public static final double INTAKE_OFFSET = 0.004;
+	public static final double INTAKE_TOP_POS = 0.655 + INTAKE_OFFSET;
+	public static final double INTAKE_INTAKE_POS = 0.522 + INTAKE_OFFSET;
+	public static final double INTAKE_HOME_POS = 0.522 + INTAKE_OFFSET; //home == intake
+	public static final double INTAKE_BOTTOM_POS = 0.494 + INTAKE_OFFSET;
 	public static final double INTAKE_ARM_TICK_TO_ANGLE_MULTIPLIER = -0.00222;
 	public static final double TURN_THRESHOLD = 0.4;
 	public static final double SHOOTER_THRESHOLD = 0.05;

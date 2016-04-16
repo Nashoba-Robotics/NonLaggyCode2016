@@ -171,13 +171,6 @@ public class IntakeArm extends Subsystem implements SmartDashboardSource, Period
 				counter = 0;
 			}
 		}
-		
-		RobotMap.INTAKE_OFFSET = SmartDashboard.getNumber("Intake Offset");
-		RobotMap.INTAKE_TOP_POS = 0.655 + RobotMap.INTAKE_OFFSET;
-		RobotMap.INTAKE_INTAKE_POS = 0.522 + RobotMap.INTAKE_OFFSET;
-		RobotMap.INTAKE_HOME_POS = 0.522 + RobotMap.INTAKE_OFFSET; //home == intake
-		RobotMap.INTAKE_BOTTOM_POS = 0.494 + RobotMap.INTAKE_OFFSET;
-
 	} 
 
 	public double getError() {
