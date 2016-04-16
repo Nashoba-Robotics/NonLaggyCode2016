@@ -41,7 +41,16 @@ public class HoodJetsonPositionCommand extends NRCommand {
 		
 		if(!goodToGo)
 			return true;
-		return Math.abs(Hood.getInstance().get() - val) < 0.25;
+		return false;
+	}
+
+	public void setAngleAgain() {
+		val = Hood.distanceToAngle(AndroidServer.getInstance().getDistance());
+		Hood.getInstance().setSetpoint(val);		
+	}
+
+	public double getSetpoint() {
+		return Hood.getInstance().getSetpoint();
 	}
 
 }

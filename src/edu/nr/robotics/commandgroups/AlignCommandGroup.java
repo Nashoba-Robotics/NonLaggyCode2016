@@ -28,7 +28,8 @@ public class AlignCommandGroup extends CommandGroup {
     	addSequential(new WaitCommand(0.25));
     	DriveAnglePIDCommand command = new DriveAnglePIDCommand();
         addParallel(command);
-        addSequential(new HoodJetsonPositionCommand());
-        addSequential(new DriveWaitForAndroidAngleCommand(command, false));
+        HoodJetsonPositionCommand hoodCommand = new HoodJetsonPositionCommand();
+        addParallel(hoodCommand);
+        addSequential(new DriveWaitForAndroidAngleCommand(command,hoodCommand, false));
     }
 }

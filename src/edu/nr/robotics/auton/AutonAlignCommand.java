@@ -28,8 +28,9 @@ public class AutonAlignCommand extends CommandGroup {
     	addSequential(new WaitCommand(0.25));
     	DriveAnglePIDCommand command = new DriveAnglePIDCommand();
         addParallel(command);
-        addSequential(new HoodJetsonPositionCommand());
-        addSequential(new DriveWaitForAndroidAngleCommand(command, true));
+        HoodJetsonPositionCommand hoodCommand = new HoodJetsonPositionCommand();
+        addParallel(hoodCommand);
+        addSequential(new DriveWaitForAndroidAngleCommand(command,hoodCommand, true));
     	addSequential(new LaserCannonTriggerCommand());
     }
 }
