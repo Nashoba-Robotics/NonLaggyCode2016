@@ -18,8 +18,11 @@ public class AutonFollowInstructionsShootCommand extends CommandGroup {
     	
     	GetGyro gyro = new GetGyro();
     	addSequential(gyro);
-    	addSequential(new AutonForwardDefenseCommand((defense) Robot.getInstance().defensePicker.getSelected()));
-        addSequential(new AutonTurnPositionCommand((Robot.position) Robot.getInstance().positionPicker.getSelected(), gyro));
+    	addSequential(new AutonForwardDefenseCommand(defense.LowBar));
+        addSequential(new AutonTurnPositionCommand(Robot.position.One, gyro));
+
+    	//addSequential(new AutonForwardDefenseCommand((defense) Robot.getInstance().defensePicker.getSelected()));
+        //addSequential(new AutonTurnPositionCommand((Robot.position) Robot.getInstance().positionPicker.getSelected(), gyro));
 		addSequential(new AutonAlignCommand());
 
     }

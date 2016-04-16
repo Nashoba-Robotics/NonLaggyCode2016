@@ -251,7 +251,7 @@ public class Robot extends RobotBase {
 		defensePicker.addDefault("Other", defense.Other);
 		defensePicker.addObject("Rough Terrain", defense.RoughTerrain);
 		defensePicker.addObject("Guillotine", defense.Guillotine);
-		defensePicker.addObject("Guillotine", defense.LowBar);
+		defensePicker.addObject("Low Bar", defense.LowBar);
 		SmartDashboard.putData("Defense Picker", defensePicker);
 		
 		positionPicker = new SendableChooser();

@@ -15,6 +15,7 @@ public class WaitUntilGyroCommand extends NRCommand {
 	// Make this return true when this Command no longer needs to run execute()
 	@Override
 	protected boolean isFinishedNR() {
+		System.out.println("Error: " + (gyroCorrection.get() - angle));
 		return gyroCorrection.get() > angle;
 	}
 

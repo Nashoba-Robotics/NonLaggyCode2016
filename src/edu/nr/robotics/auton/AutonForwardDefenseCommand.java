@@ -5,6 +5,7 @@ import edu.nr.lib.WaitUntilGyroCommand;
 import edu.nr.robotics.Robot;
 import edu.nr.robotics.RobotMap;
 import edu.nr.robotics.subsystems.drive.DriveAnglePIDCommand;
+import edu.nr.robotics.subsystems.drive.DriveCancelCommand;
 import edu.nr.robotics.subsystems.drive.DriveConstantCommand;
 import edu.nr.robotics.subsystems.drive.DriveDistanceCommand;
 import edu.nr.robotics.subsystems.drive.DriveSimpleDistanceCommand;
@@ -54,8 +55,9 @@ public class AutonForwardDefenseCommand extends CommandGroup {
 	    	addSequential(new HoodMoveDownUntilLimitSwitchCommand());
 			addSequential(new IntakeArmPositionCommand(RobotMap.INTAKE_INTAKE_POS, 0.05));
 			addSequential(new DriveDistanceCommand(14, 0.6));
-			addParallel(new DriveConstantCommand(true, 0.7, 0));
+			addParallel(new DriveConstantCommand(true, 0.7, 0.1));
 			addSequential(new WaitUntilGyroCommand(RobotMap.AUTON_ONE_ALIGN_ANGLE));
+			addSequential(new DriveCancelCommand());
 			break;
 		default:
 			break;
