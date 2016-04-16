@@ -1,6 +1,8 @@
 package edu.nr.robotics.subsystems.drive;
 
+import edu.nr.lib.AngleUnit;
 import edu.nr.lib.NRCommand;
+import edu.nr.lib.navx.NavX;
 import edu.nr.lib.network.AndroidServer;
 import edu.nr.robotics.RobotMap;
 
@@ -21,6 +23,7 @@ public class DriveWaitForAndroidAngleCommand extends NRCommand {
 	
 	@Override
 	protected boolean isFinishedNR() {	
+		
 		if(lastTime == 0)
 			lastTime = System.currentTimeMillis();
 		

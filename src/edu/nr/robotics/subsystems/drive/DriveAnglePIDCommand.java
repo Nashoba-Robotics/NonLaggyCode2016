@@ -63,12 +63,15 @@ public class DriveAnglePIDCommand extends NRCommand {
     		currentCount = 0;
     	}
     	
-		if(currentCount > 4)
-			pid.setPermaOut(pid.getOut());
-
-    	
-    	System.out.println("current count: " + currentCount + " use perma out: " + pid.isPermaOut());
-    	return false;
+    	if(useAndroid) {
+			if(currentCount > 4)
+				pid.setPermaOut(pid.getOut());
+	
+	    	
+	    	System.out.println("current count: " + currentCount + " use perma out: " + pid.isPermaOut());
+	    	return false;
+    	}
+    	return currentCount > 4;
     }
 
 	@Override

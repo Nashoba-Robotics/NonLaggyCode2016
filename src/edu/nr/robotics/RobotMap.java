@@ -53,11 +53,11 @@ public class RobotMap {
 	public static final double HOOD_TICK_TO_ANGLE_MULTIPLIER = 0.031934;
 	public static final double HOOD_THRESHOLD = 2;
 	public static final double INTAKE_ARM_THRESHOLD = 0.003;
-	public static final double INTAKE_OFFSET = 0;
-	public static final double INTAKE_TOP_POS = 0.655 + INTAKE_OFFSET;
-	public static final double INTAKE_INTAKE_POS = 0.522 + INTAKE_OFFSET;
-	public static final double INTAKE_HOME_POS = 0.522 + INTAKE_OFFSET; //home == intake
-	public static final double INTAKE_BOTTOM_POS = 0.494 + INTAKE_OFFSET;
+	public static double INTAKE_OFFSET = 0;
+	public static double INTAKE_TOP_POS = 0.655 + INTAKE_OFFSET;
+	public static double INTAKE_INTAKE_POS = 0.522 + INTAKE_OFFSET;
+	public static double INTAKE_HOME_POS = 0.522 + INTAKE_OFFSET; //home == intake
+	public static double INTAKE_BOTTOM_POS = 0.494 + INTAKE_OFFSET;
 	public static final double INTAKE_ARM_TICK_TO_ANGLE_MULTIPLIER = -0.00222;
 	public static final double TURN_THRESHOLD = 0.4;
 	public static final double SHOOTER_THRESHOLD = 0.05;
@@ -81,7 +81,9 @@ public class RobotMap {
 	public static final double DRIVE_I = 0;
 	public static final double DRIVE_D = 0;
 	public static final double DRIVE_F = 1;
-
-
-
+	public static final double AUTON_ONE_ALIGN_ANGLE = -50;
+	public static final double AUTON_TWO_ALIGN_ANGLE = -40;
+	public static final double AUTON_THREE_ALIGN_ANGLE = -15;
+	public static final double AUTON_FOUR_ALIGN_ANGLE = 10;
+	public static final double AUTON_FIVE_ALIGN_ANGLE = 15;
 }
