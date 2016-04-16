@@ -269,7 +269,7 @@ public class Robot extends RobotBase {
 		autoCommandChooser.addObject("Forward no shoot Guillotine", new AutonGuillotineCommandGroup());
 		autoCommandChooser.addObject("Forward no shoot others", new AutonForwardOverCommand());
 		autoCommandChooser.addObject("Shoot (choose defense and position)", new AutonFollowInstructionsShootCommand());
-		autoCommandChooser.addObject("Forward (choose defense)", new AutonFollowInstructionsForwardCommand());
+		//autoCommandChooser.addObject("Forward (choose defense)", new AutonFollowInstructionsForwardCommand());
 		//autoCommandChooser.addObject("Forward and shoot Low Bar", new AutonForwardAlignLowBarCommand());
 		//autoCommandChooser.addObject("Forward and shoot Left", new AutonForwardAlignTwoCommand());
 		//autoCommandChooser.addObject("Forward and shoot Middle", new AutonForwardAlignFourCommand());
