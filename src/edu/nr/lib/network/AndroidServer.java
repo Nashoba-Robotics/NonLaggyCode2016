@@ -64,7 +64,7 @@ public class AndroidServer implements Runnable {
 								String left = message.substring(0, x);
 							    String right = message.substring(x+1);
 							    try {
-							    	distance = Double.valueOf(left)/*.95*/;
+							    	distance = Double.valueOf(left)*.97;
 							    	turnAngle = -Double.valueOf(right);
 								    //System.out.println("Angle: " + turnAngle + " Distance: " + distance);
 								    SmartDashboard.putNumber("Camera distance", distance);
