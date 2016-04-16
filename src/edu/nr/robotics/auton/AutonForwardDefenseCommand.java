@@ -1,6 +1,7 @@
 package edu.nr.robotics.auton;
 
 import edu.nr.lib.AngleUnit;
+import edu.nr.lib.WaitUntilGyroCommand;
 import edu.nr.robotics.Robot;
 import edu.nr.robotics.RobotMap;
 import edu.nr.robotics.subsystems.drive.DriveAnglePIDCommand;
@@ -53,6 +54,8 @@ public class AutonForwardDefenseCommand extends CommandGroup {
 	    	addSequential(new HoodMoveDownUntilLimitSwitchCommand());
 			addSequential(new IntakeArmPositionCommand(RobotMap.INTAKE_INTAKE_POS, 0.05));
 			addSequential(new DriveDistanceCommand(14, 0.6));
+			addParallel(new DriveConstantCommand(true, 0.7, 0));
+			addSequential(new WaitUntilGyroCommand(RobotMap.AUTON_ONE_ALIGN_ANGLE));
 			break;
 		default:
 			break;

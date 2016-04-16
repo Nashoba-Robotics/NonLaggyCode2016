@@ -29,24 +29,32 @@ public class DriveAnglePIDCommand extends NRCommand {
 	boolean useAndroid;
 	
 	boolean goodToGo = true;
+	
+	boolean resetCorrection;
 
 	/**
 	 * Create one for using the Android to communicate
 	 */
     public DriveAnglePIDCommand() {
-    	this(0, new AngleGyroCorrectionSource(AngleUnit.DEGREE));
+    	this(0, new AngleGyroCorrectionSource(AngleUnit.DEGREE), true);
     	this.useAndroid = true;
     }
     
     public DriveAnglePIDCommand(double angle, AngleUnit unit) {
-    	this(angle, new AngleGyroCorrectionSource(unit));    	
+    	this(angle, new AngleGyroCorrectionSource(unit), true);    	
+    	this.useAndroid = false;
+    }
+    
+    public DriveAnglePIDCommand(double angle, AngleGyroCorrectionSource correction) {
+    	this(angle, correction, false);    	
     	this.useAndroid = false;
     }
 
-    private DriveAnglePIDCommand(double angle, AngleGyroCorrectionSource correction) {
+    private DriveAnglePIDCommand(double angle, AngleGyroCorrectionSource correction, boolean resetCorrection) {
     	this.angle = angle;
     	this.correction = correction;
     	requires(Drive.getInstance());
+    	this.resetCorrection = resetCorrection;
     	controller = new AngleController();
 		pid = new NRPID(RobotMap.TURN_P,RobotMap.TURN_I,RobotMap.TURN_D,0, correction, controller);
 		System.out.println("Started angle PID command");
@@ -114,7 +122,10 @@ public class DriveAnglePIDCommand extends NRCommand {
 		
 		Drive.getInstance().setPIDEnabled(true);
 		controller = new AngleController();
-		correction.reset();
+		if(resetCorrection) {
+			correction.reset();
+			System.out.println("Resetting correction");
+		}
 		pid.enable();
 	}
 
