@@ -12,6 +12,7 @@ public class AutonFollowInstructionsForwardCommand extends CommandGroup {
 	
 	
     public  AutonFollowInstructionsForwardCommand() {
+    	
     	addSequential(new AutonForwardDefenseCommand((defense) Robot.getInstance().defensePicker.getSelected()));
 
     }

@@ -10,15 +10,18 @@ import edu.nr.lib.interfaces.Periodic;
 import edu.nr.lib.interfaces.SmartDashboardSource;
 import edu.nr.lib.navx.NavX;
 import edu.nr.lib.network.AndroidServer;
+import edu.nr.robotics.Robot.defense;
 import edu.nr.robotics.Robot.position;
 import edu.nr.robotics.auton.AutonAlignCommand;
 import edu.nr.robotics.auton.AutonDoNothingCommand;
 import edu.nr.robotics.auton.AutonFollowInstructionsForwardCommand;
 import edu.nr.robotics.auton.AutonFollowInstructionsShootCommand;
+import edu.nr.robotics.auton.AutonForwardDefenseCommand;
 import edu.nr.robotics.auton.AutonForwardLowBarCommand;
 import edu.nr.robotics.auton.AutonForwardOverCommand;
 import edu.nr.robotics.auton.AutonForwardRoughTerrainCommand;
 import edu.nr.robotics.auton.AutonGuillotineCommandGroup;
+import edu.nr.robotics.auton.AutonTurnPositionCommand;
 import edu.nr.robotics.commandgroups.AlignCommandGroup;
 import edu.nr.robotics.subsystems.climb.Elevator;
 import edu.nr.robotics.subsystems.drive.Drive;
@@ -177,6 +180,10 @@ public class Robot extends RobotBase {
 				if (!m_autonomousInitialized) {
 					LiveWindow.setEnabled(false);
 					autonomousCommand = (Command) autoCommandChooser.getSelected();
+					if(autonomousCommand instanceof AutonFollowInstructionsShootCommand)
+						autonomousCommand = new AutonFollowInstructionsShootCommand();
+					else if(autonomousCommand instanceof AutonFollowInstructionsForwardCommand)
+						autonomousCommand = new AutonFollowInstructionsForwardCommand();
 					autonomousCommand.start();
 					initialize();
 					m_autonomousInitialized = true;
