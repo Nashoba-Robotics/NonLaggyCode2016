@@ -156,7 +156,7 @@ public class Robot extends RobotBase {
 					m_teleopInitialized = false;
 					m_testInitialized = false;
 				}
-		        if (nextPeriodReady()) 
+		        //if (nextPeriodReady()) 
 		        	FRCNetworkCommunicationsLibrary.FRCNetworkCommunicationObserveUserProgramDisabled();
 			} else if (isTest()) {
 				// call TestInit() if we are now just entering test mode from
@@ -169,7 +169,7 @@ public class Robot extends RobotBase {
 					m_teleopInitialized = false;
 					m_disabledInitialized = false;
 				}
-		        if (nextPeriodReady()) 
+		        //if (nextPeriodReady()) 
 		        	FRCNetworkCommunicationsLibrary.FRCNetworkCommunicationObserveUserProgramTest();
 			} else if (isAutonomous()) {
 				// call Autonomous_Init() if this is the first time
@@ -184,7 +184,7 @@ public class Robot extends RobotBase {
 					m_teleopInitialized = false;
 					m_disabledInitialized = false;
 				}
-		        if (nextPeriodReady()) 
+		        //if (nextPeriodReady()) 
 		        	FRCNetworkCommunicationsLibrary.FRCNetworkCommunicationObserveUserProgramAutonomous();
 			} else {
 				// call Teleop_Init() if this is the first time
@@ -203,10 +203,10 @@ public class Robot extends RobotBase {
 					m_autonomousInitialized = false;
 					m_disabledInitialized = false;
 				}
-		        if (nextPeriodReady()) 
+		        //if (nextPeriodReady()) 
 		        	FRCNetworkCommunicationsLibrary.FRCNetworkCommunicationObserveUserProgramTeleop();
 			}
-	        if (nextPeriodReady()) 
+	        //if (nextPeriodReady()) 
 	        	periodic();
 	        m_ds.waitForData();
 		}
@@ -251,6 +251,7 @@ public class Robot extends RobotBase {
 		defensePicker.addDefault("Other", defense.Other);
 		defensePicker.addObject("Rough Terrain", defense.RoughTerrain);
 		defensePicker.addObject("Guillotine", defense.Guillotine);
+		defensePicker.addObject("Guillotine", defense.LowBar);
 		SmartDashboard.putData("Defense Picker", defensePicker);
 		
 		positionPicker = new SendableChooser();
@@ -258,6 +259,7 @@ public class Robot extends RobotBase {
 		positionPicker.addObject("Three", position.Three);
 		positionPicker.addObject("Four", position.Four);
 		positionPicker.addObject("Five", position.Five);
+		positionPicker.addObject("One", position.One);
 		SmartDashboard.putData("Position Picker", positionPicker);
 		
 		autoCommandChooser = new SendableChooser();

@@ -29,7 +29,7 @@ public class DriveWaitForAndroidAngleCommand extends NRCommand {
 		
 		System.out.println("Checking drive angle: current count: " + currentCount + " drive angle error: " + command.getError());
 		
-		if( Math.abs(command.getError()) < RobotMap.TURN_THRESHOLD)
+		if( Math.abs(AndroidServer.getInstance().getTurnAngle()) < RobotMap.TURN_THRESHOLD)
 			currentCount++;
 		else
 			currentCount = 0;			
@@ -37,12 +37,12 @@ public class DriveWaitForAndroidAngleCommand extends NRCommand {
 		//if(currentCount == 20)
 		if(System.currentTimeMillis() - lastTime > 250) {
 			command.setSetpoint(command.getSetpoint() + AndroidServer.getInstance().getTurnAngle());
-		
+			System.out.println("Setting setpoint. New drive angle error: " + command.getError());
 			lastTime = System.currentTimeMillis();
 		}
 		
 		if(auton)
-			return currentCount > 40;
+			return currentCount > 5;
 		return false;
 	}
 	

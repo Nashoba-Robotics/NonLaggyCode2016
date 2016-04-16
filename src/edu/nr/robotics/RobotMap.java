@@ -81,9 +81,9 @@ public class RobotMap {
 	public static final double DRIVE_I = 0;
 	public static final double DRIVE_D = 0;
 	public static final double DRIVE_F = 1;
-	public static final double AUTON_ONE_ALIGN_ANGLE = -50;
-	public static final double AUTON_TWO_ALIGN_ANGLE = -40;
-	public static final double AUTON_THREE_ALIGN_ANGLE = -15;
-	public static final double AUTON_FOUR_ALIGN_ANGLE = 10;
-	public static final double AUTON_FIVE_ALIGN_ANGLE = 15;
+	public static final double AUTON_ONE_ALIGN_ANGLE = 50;
+	public static final double AUTON_TWO_ALIGN_ANGLE = 40;
+	public static final double AUTON_THREE_ALIGN_ANGLE = 15;
+	public static final double AUTON_FOUR_ALIGN_ANGLE = -10;
+	public static final double AUTON_FIVE_ALIGN_ANGLE = -15;
 }

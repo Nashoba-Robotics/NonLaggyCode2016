@@ -8,6 +8,7 @@ import edu.nr.lib.AngleUnit;
 import edu.nr.lib.NRCommand;
 import edu.nr.lib.network.AndroidServer;
 import edu.nr.robotics.RobotMap;
+import edu.nr.robotics.auton.AutonFollowInstructionsShootCommand.GetGyro;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -30,6 +31,8 @@ public class DriveAnglePIDCommand extends NRCommand {
 	
 	boolean goodToGo = true;
 	
+	GetGyro getGyro;
+	
 	boolean resetCorrection;
 
 	/**
@@ -45,8 +48,9 @@ public class DriveAnglePIDCommand extends NRCommand {
     	this.useAndroid = false;
     }
     
-    public DriveAnglePIDCommand(double angle, AngleGyroCorrectionSource correction) {
-    	this(angle, correction, false);    	
+    public DriveAnglePIDCommand(double angle, GetGyro getGyro) {
+    	this(angle, null, false);  
+    	this.getGyro = getGyro;
     	this.useAndroid = false;
     }
 
@@ -118,6 +122,14 @@ public class DriveAnglePIDCommand extends NRCommand {
 
 		}
 		
+		if(getGyro != null) {
+			correction = getGyro.getCorrection();
+			pid.setSource(correction);
+		}
+		
+		if(correction == null)
+			correction = new AngleGyroCorrectionSource(AngleUnit.DEGREE);
+		
 		pid.setSetpoint(angle);
 		
 		Drive.getInstance().setPIDEnabled(true);
@@ -179,6 +191,10 @@ public class DriveAnglePIDCommand extends NRCommand {
 			}, 0, 20);		
 		}
 		
+		public void setSource(PIDSource source) {
+			this.source = source;
+		}
+
 		public boolean isPermaOut() {
 			return usePermaOut;
 		}
