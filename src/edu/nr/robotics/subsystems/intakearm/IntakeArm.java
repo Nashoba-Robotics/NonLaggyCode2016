@@ -35,7 +35,7 @@ public class IntakeArm extends Subsystem implements SmartDashboardSource, Period
 			talon.setInverted(true);
 			pot = new AnalogPotentiometer(RobotMap.INTAKE_ARM_POT);
 			pot.setPIDSourceType(PIDSourceType.kDisplacement);
-			pid = new PID(421.8*0.1, 421.8*0.0001, 0.00, pot, talon);
+			pid = new PID(RobotMap.INTAKE_ARM_P, RobotMap.INTAKE_ARM_I, RobotMap.INTAKE_ARM_D, pot, talon);
 			
 			LiveWindow.addSensor("Intake Arm", "PID", pid);
 			
@@ -177,6 +177,10 @@ public class IntakeArm extends Subsystem implements SmartDashboardSource, Period
 		if(pid != null)
 			return pid.getError();
 		return 0;
+	}
+
+	public void setPID(double p, double i, double d) {
+		pid.setPID(p, i, d);
 	}
 }
 
