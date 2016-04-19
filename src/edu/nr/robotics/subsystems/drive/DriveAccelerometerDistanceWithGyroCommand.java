@@ -2,7 +2,7 @@ package edu.nr.robotics.subsystems.drive;
 
 import edu.nr.lib.AngleGyroCorrection;
 import edu.nr.lib.NRCommand;
-import edu.nr.lib.navx.NavX;
+import edu.nr.lib.NavX;
 
 /**
  *
@@ -39,8 +39,7 @@ public class DriveAccelerometerDistanceWithGyroCommand extends NRCommand {
 
 	@Override
 	protected void onExecute() {
-		velCurrent += NavX.getInstance().getX();
-		distCurrent += velCurrent;
+		distCurrent += NavX.getInstance().getDisplacementX();
 		Drive.getInstance().arcadeDrive(speed, gyroCorrection.getTurnValue());
 	}
 

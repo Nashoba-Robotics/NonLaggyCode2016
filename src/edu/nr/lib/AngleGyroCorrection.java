@@ -1,18 +1,17 @@
 package edu.nr.lib;
 
 import edu.nr.lib.interfaces.GyroCorrection;
-import edu.nr.lib.navx.BaseNavX;
-import edu.nr.lib.navx.NavX;
+import edu.nr.lib.NavX;
 
 public class AngleGyroCorrection extends GyroCorrection {
 
 	private double initialAngle;
 	double goalAngle;
-	BaseNavX navx;
+	NavX navx;
 	
 	AngleUnit unit;
 	
-	public AngleGyroCorrection(double angle, BaseNavX navx, AngleUnit unit) {
+	public AngleGyroCorrection(double angle, NavX navx, AngleUnit unit) {
 		if(navx == null) {
 			navx = NavX.getInstance();
 		}
@@ -30,7 +29,7 @@ public class AngleGyroCorrection extends GyroCorrection {
 		this(0, unit);
 	}
 	
-	public AngleGyroCorrection(BaseNavX navx) {
+	public AngleGyroCorrection(NavX navx) {
 		this(0, navx, AngleUnit.DEGREE);
 	}
 	
@@ -38,7 +37,7 @@ public class AngleGyroCorrection extends GyroCorrection {
 		this(0, AngleUnit.DEGREE);
 	}
 	
-	public AngleGyroCorrection(BaseNavX navx, AngleUnit unit) {
+	public AngleGyroCorrection(NavX navx, AngleUnit unit) {
 		this(0, navx, unit);
 	}
 

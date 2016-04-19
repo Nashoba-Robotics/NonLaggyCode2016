@@ -21,7 +21,7 @@
 
   <!-- Any other property in build.properties can also be overridden. -->
 
-  <property name="classpath" value="lib/wpilib/java/current/lib/WPILib.jar:lib/wpilib/java/current/lib/NetworkTables.jar:lib/RIOdroid.jar"/>
+  <property name="classpath" value="lib/wpilib/java/current/lib/WPILib.jar:lib/wpilib/java/current/lib/NetworkTables.jar:lib/RIOdroid.jar:lib/navx_frc.jar"/>
 
   <property environment="env"/>
   <condition property="wpilib.root" value="lib" else="${user.home}">
@@ -43,6 +43,7 @@
 	
   <path id="compile">
     <pathelement location="lib/RIOdroid.jar" />
+    <pathelement location="lib/navx_frc.jar" />
   </path>
 
 

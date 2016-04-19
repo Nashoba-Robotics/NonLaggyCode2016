@@ -8,7 +8,7 @@ import edu.nr.lib.AngleUnit;
 import edu.nr.lib.WaitUntilGyroCommand;
 import edu.nr.lib.interfaces.Periodic;
 import edu.nr.lib.interfaces.SmartDashboardSource;
-import edu.nr.lib.navx.NavX;
+import edu.nr.lib.NavX;
 import edu.nr.lib.network.AndroidServer;
 import edu.nr.robotics.Robot.defense;
 import edu.nr.robotics.Robot.position;
@@ -373,9 +373,6 @@ public class Robot extends RobotBase {
 		smartDashboardSources.add(IntakeRoller.getInstance());
 		smartDashboardSources.add(OI.getInstance());
 		smartDashboardSources.add(LoaderRoller.getInstance());
-		
-		LiveWindow.addSensor("Drive", "Gyro", NavX.getInstance());
-
 		
 		periodics.add(Drive.getInstance());
 		periodics.add(OI.getInstance());
