@@ -26,6 +26,8 @@ import edu.nr.robotics.commandgroups.AlignCommandGroup;
 import edu.nr.robotics.subsystems.climb.Elevator;
 import edu.nr.robotics.subsystems.drive.Drive;
 import edu.nr.robotics.subsystems.drive.DriveAnglePIDCommand;
+import edu.nr.robotics.subsystems.drive.DriveConstantCommand;
+import edu.nr.robotics.subsystems.drive.DriveConstantSmartDashboardCommand;
 import edu.nr.robotics.subsystems.drive.DriveGyroAngleSmartDashboardCommand;
 import edu.nr.robotics.subsystems.drive.DriveSetPIDSmartDashboardCommand;
 import edu.nr.robotics.subsystems.drive.DriveSetTurnPIDSmartDashboardCommand;
@@ -321,6 +323,8 @@ public class Robot extends RobotBase {
 		SmartDashboard.putData("Set drive pid", new DriveSetPIDSmartDashboardCommand());
 		SmartDashboard.putData("Turn Smart Dashboard", new DriveTurnSmartDashboardCommand());
 		SmartDashboard.putData("Gyro Set Numbers Smart Dashboard", new DriveSetTurnPIDSmartDashboardCommand());
+		SmartDashboard.putData("Drive Constant command", new DriveConstantSmartDashboardCommand(true,true,true));
+		SmartDashboard.putNumber("Drive Constant Value", 0.5);
 
 		
 		SmartDashboard.putNumber("Intake Offset", RobotMap.INTAKE_OFFSET);
