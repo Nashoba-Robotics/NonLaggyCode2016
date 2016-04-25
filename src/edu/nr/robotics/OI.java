@@ -276,15 +276,15 @@ public class OI implements SmartDashboardSource, Periodic {
 		if(new JoystickButton(driveRight, 6).get() || new JoystickButton(driveRight, 7).get() || new JoystickButton(driveRight, 10).get() || new JoystickButton(driveRight, 11).get() || new JoystickButton(driveRight, 8).get()  || new JoystickButton(driveRight, 9).get())
 			return 0;
 
-		return -snapDriveJoysticks(driveRight.getX());
+		return snapDriveJoysticks(driveRight.getX());
 	}
 
 	public double getTankLeftValue() {
-		return -snapDriveJoysticks(driveLeft.getY());
+		return -snapDriveJoysticks(driveRight.getY());
 	}
 
 	public double getTankRightValue() {
-		return snapDriveJoysticks(driveRight.getY());
+		return snapDriveJoysticks(driveLeft.getY());
 	}
 
 	public double getDriveLeftXValue() {

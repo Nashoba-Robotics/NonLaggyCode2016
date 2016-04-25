@@ -321,6 +321,7 @@ public class Robot extends RobotBase {
 
 		
 		SmartDashboard.putData("Set drive pid", new DriveSetPIDSmartDashboardCommand());
+		SmartDashboard.putData("Gyro Angle SmartDashboard Command", new DriveGyroAngleSmartDashboardCommand());
 		SmartDashboard.putData("Turn Smart Dashboard", new DriveTurnSmartDashboardCommand());
 		SmartDashboard.putData("Gyro Set Numbers Smart Dashboard", new DriveSetTurnPIDSmartDashboardCommand());
 		SmartDashboard.putData("Drive Constant command", new DriveConstantSmartDashboardCommand(true,true,true));
@@ -401,6 +402,8 @@ public class Robot extends RobotBase {
 
 		
 		periodics.forEach(Periodic::periodic);
+		
+		OI.getInstance().speedMultiplier = SmartDashboard.getNumber("Speed Multiplier");
 		
 		FieldCentric.getInstance().update();
 		Scheduler.getInstance().run();

@@ -96,10 +96,9 @@ public class DriveAnglePIDCommand extends NRCommand {
 	@Override
 	protected void onExecute() {
 		SmartDashboard.putString("GyroPID", correction.pidGet() + ":" + pid.getSetpoint());
-		SmartDashboard.putString("GyroPIDAngle", correction.pidGet() +"");
+		SmartDashboard.putNumber("GyroPIDAngle", correction.pidGet());
 		
 		System.out.println("Drive Angle PID Command running");
-		
 	}
 
 	@Override

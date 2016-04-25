@@ -387,6 +387,14 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 
 	@Override
 	public void periodic() {
+		if(leftTalon != null && leftTalon.getSetpoint() == 0)  {
+			leftTalon.clearIAccum();
+			leftTalon.ClearIaccum();
+		}
+		if(rightTalon != null && rightTalon.getSetpoint() == 0) {
+			rightTalon.clearIAccum();
+			rightTalon.ClearIaccum();
+		}
 	}
 
 	public void setPID(double p, double i, double d, double f) {
