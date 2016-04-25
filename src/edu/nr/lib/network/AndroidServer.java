@@ -42,7 +42,7 @@ public class AndroidServer implements Runnable {
 		while(true) {
 			try {
 				goodToGo = true;
-				setData(0,0,System.currentTimeMillis());
+				setData(null);
 				Socket clientSocket;
 				try {
 					clientSocket = new Socket(defaultIpAddress, defaultPort);
@@ -52,21 +52,24 @@ public class AndroidServer implements Runnable {
 							String message = inFromServer.readLine();
 							if(message == null) {
 								clientSocket.close();
-								setData(0,0,System.currentTimeMillis());
+								setData(null);
 								goodToGo = false;
 								Thread.sleep(1000);								
 								break;
 							} 								
 							goodToGo = true;
 							int x = message.indexOf(':');
+							int y = message.indexOf(';');
 							if (x > 0) {
-								String left = message.substring(0, x);
-							    String right = message.substring(x+1);
+								String distance_ = message.substring(0, x);
+							    String turnAngle_ = message.substring(x+1, y);
+							    String time_ = message.substring(y+1);
 							    try {
-							    	double distance = Double.valueOf(left)*.97;
-							    	double turnAngle = -Double.valueOf(right);
-							    	setData(turnAngle, distance, System.currentTimeMillis());
-								    //System.out.println("Angle: " + turnAngle + " Distance: " + distance);
+							    	double distance = Double.valueOf(distance_)*.97;
+							    	double turnAngle = -Double.valueOf(turnAngle_);
+							    	long time = Long.valueOf(time_);
+							    	setData(turnAngle, distance, System.currentTimeMillis() - time);
+								    System.out.println("Angle: " + turnAngle + " Distance: " + distance + " time: " + time);
 								    SmartDashboard.putNumber("Camera distance", distance);
 								    SmartDashboard.putNumber("Camera angle", turnAngle);
 							    } catch (NumberFormatException e) {
@@ -77,7 +80,7 @@ public class AndroidServer implements Runnable {
 					} catch (SocketTimeoutException e) {
 						e.printStackTrace();
 						clientSocket.close();
-						setData(0,0,System.currentTimeMillis());
+						setData(null);
 						goodToGo = false;
 					} 
 				} catch (UnknownHostException e) {
@@ -93,6 +96,8 @@ public class AndroidServer implements Runnable {
 			}
 		}
 	}
+
+	
 
 	public double getTurnAngle() {
 		return data.getTurnAngle();
@@ -112,6 +117,10 @@ public class AndroidServer implements Runnable {
 	
 	public void deregisterListener(AndroidServerListener listener) {
 		listeners.remove(listener);
+	}
+	
+	private void setData(Object object) {
+		setData(0,0,0);
 	}
 	
 	public void setData(double turnAngle, double distance, long time) {

@@ -1,6 +1,8 @@
 package edu.nr.robotics;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
 
 import com.ni.vision.VisionException;
 
@@ -237,6 +239,7 @@ public class Robot extends RobotBase {
 	private void robotInit() {
 		System.out.println("Robot Init Started");
 		
+		
 		new Thread(new Runnable() {
 			
 			@Override
@@ -407,6 +410,8 @@ public class Robot extends RobotBase {
 		smartDashboardSources.forEach(SmartDashboardSource::smartDashboardInfo);
 		
 		SmartDashboard.putData(robotDiagram);
+		
+		long currentTime = System.currentTimeMillis();
 	}
 
 	/**
@@ -427,4 +432,6 @@ public class Robot extends RobotBase {
 			Elevator.getInstance().setMotorValue(0);
 		}
 	}
+	
+	
 }

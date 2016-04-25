@@ -4,6 +4,7 @@ import edu.nr.lib.NRCommand;
 import edu.nr.lib.network.AndroidData;
 import edu.nr.lib.network.AndroidServer;
 import edu.nr.lib.network.AndroidServerListener;
+import edu.nr.robotics.Robot;
 import edu.nr.robotics.RobotMap;
 import edu.nr.robotics.subsystems.hood.Hood;
 import edu.nr.robotics.subsystems.hood.HoodJetsonPositionCommand;
@@ -49,7 +50,7 @@ public class DriveWaitForAndroidAngleCommand extends NRCommand implements Androi
 			hoodcommand.setAngleAgain();
 		}
 		if(Math.abs(data.getTurnAngle()) > .5 || firstTime) {
-			command.setSetpoint(command.getSetpoint() + data.getTurnAngle());
+			command.setSetpoint(command.getSetpoint() + data.getTurnAngle() - command.getGyroErrorAtTime(data.getTime()));
 			System.out.println("Setting setpoint. New drive angle error: " + command.getError());
 			firstTime = false;
 		} 		
