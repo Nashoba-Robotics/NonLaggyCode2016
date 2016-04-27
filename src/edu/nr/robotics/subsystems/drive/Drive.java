@@ -1,8 +1,6 @@
 package edu.nr.robotics.subsystems.drive;
 
 import edu.nr.lib.NRMath;
-import edu.nr.lib.NRPID;
-import edu.nr.lib.TalonEncoder;
 import edu.nr.lib.interfaces.Periodic;
 import edu.nr.lib.interfaces.SmartDashboardSource;
 import edu.nr.robotics.EnabledSubsystems;
@@ -21,30 +19,43 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  *
  */
 public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
-
+	
 	/**
 	 *  This is a constant that is used for driving with PID control
 	 */
 	public static final double JOYSTICK_DRIVE_P = 0.25;
 
 	private static Drive singleton;
-	private NRPID leftPid, rightPid;
-	double pidMaxVal;
 	CANTalon leftTalon, rightTalon, tempLeftTalon, tempRightTalon;
-	TalonEncoder leftTalonEncoder, rightTalonEncoder;
 	
 	// These values are right so that one distance  
 	// unit given by the encoders is one meter
-	private final int ticksPerRev = 256 * 60 / 24 * 48 * 4;
-	private final double wheelDiameter = 0.6375; //Feet
-	private final double distancePerRev = Math.PI * wheelDiameter;
+	private final static double ticksPerRev = /*256 * 60 / 24 * 48 * 4*/ 360;
+	private final static double wheelDiameter = 0.3333;//0.6375; //Feet
+	private final static double distancePerRev = Math.PI * wheelDiameter;
+	private final static double maxRPS = RobotMap.MAX_SPEED / distancePerRev;
+	private final static double maxRPM = maxRPS * 60;
 
 	private Drive() {
 		if(EnabledSubsystems.driveEnabled) {
 			leftTalon = new CANTalon(RobotMap.TALON_LEFT_B);
+			
+			leftTalon.changeControlMode(TalonControlMode.Speed);
+			
 			leftTalon.enableBrakeMode(true);
 			leftTalon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 			leftTalon.setEncPosition(0);
+			
+			leftTalon.reverseSensor(true);
+			
+			
+			leftTalon.configEncoderCodesPerRev((int)ticksPerRev);
+
+			leftTalon.setF(RobotMap.DRIVE_F); 
+			leftTalon.setP(RobotMap.DRIVE_P); 
+			leftTalon.setI(RobotMap.DRIVE_I); 
+			leftTalon.setD(RobotMap.DRIVE_D); 
+			
 	
 			tempLeftTalon = new CANTalon(RobotMap.TALON_LEFT_A);
 			tempLeftTalon.changeControlMode(TalonControlMode.Follower);
@@ -53,44 +64,25 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 			
 			rightTalon = new CANTalon(RobotMap.TALON_RIGHT_A);
 			rightTalon.enableBrakeMode(true);
-			rightTalon.setInverted(true);
 			rightTalon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+			rightTalon.reverseSensor(true);
 			rightTalon.setEncPosition(0);
+			rightTalon.changeControlMode(TalonControlMode.Speed);
+			
+			rightTalon.configEncoderCodesPerRev((int)ticksPerRev);
+			
+			rightTalon.setF(RobotMap.DRIVE_F); 
+			rightTalon.setP(RobotMap.DRIVE_P); 
+			rightTalon.setI(RobotMap.DRIVE_I); 
+			rightTalon.setD(RobotMap.DRIVE_D); 
+			
+
+
 	
 			tempRightTalon = new CANTalon(RobotMap.TALON_RIGHT_B);
 			tempRightTalon.changeControlMode(TalonControlMode.Follower);
 			tempRightTalon.set(rightTalon.getDeviceID());
 			tempRightTalon.enableBrakeMode(true);
-	
-			leftTalonEncoder = new TalonEncoder(leftTalon);
-			rightTalonEncoder = new TalonEncoder(rightTalon);
-			
-			leftTalonEncoder.setPIDSourceType(PIDSourceType.kRate);
-	
-			rightTalonEncoder.setPIDSourceType(PIDSourceType.kRate);
-	
-			rightTalonEncoder.setTicksPerRev(ticksPerRev);
-			leftTalonEncoder.setTicksPerRev(ticksPerRev);
-			
-			rightTalonEncoder.setDistancePerRev(distancePerRev);
-			rightTalonEncoder.setScale(RobotMap.MAX_SPEED);
-	
-			leftTalonEncoder.setDistancePerRev(distancePerRev);
-			leftTalonEncoder.setScale(RobotMap.MAX_SPEED);
-			
-			
-			
-			leftPid = new NRPID(JOYSTICK_DRIVE_P, 0, 0, 1, leftTalonEncoder, leftTalon);
-			rightPid = new NRPID(JOYSTICK_DRIVE_P, 0, 0, 1, rightTalonEncoder, rightTalon);
-			
-			pidMaxVal = 1.0;
-			rightPid.setMaxOutput(pidMaxVal);
-			leftPid.setMaxOutput(pidMaxVal);
-			
-	
-					
-			LiveWindow.addSensor("Drive", "Distance", LiveWindowClasses.driveEncodersDistance);
-			LiveWindow.addSensor("Drive", "Speed", LiveWindowClasses.driveEncodersSpeed);
 		}
 	}
 
@@ -232,10 +224,10 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 		if (enable) {
 			setPIDEnabled(true);
 		}
-		if(leftPid != null)
-			leftPid.setSetpoint(left);
-		if(rightPid != null)
-			rightPid.setSetpoint(right);
+		if(leftTalon != null)
+			leftTalon.setSetpoint(-left*maxRPM);
+		if(rightTalon != null)
+			rightTalon.setSetpoint(right*maxRPM);
 	}
 
 	/**
@@ -250,7 +242,7 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	public void setRawMotorSpeed(double left, double right) {
 		setPIDEnabled(false);
 		if(leftTalon != null)
-			leftTalon.set(left);
+			leftTalon.set(-left);
 		if(rightTalon != null)
 			rightTalon.set(right);
 	}
@@ -262,8 +254,8 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	 * @return whether the PIDs are enabled
 	 */
 	public boolean getPIDEnabled() {
-		if(leftPid != null && rightPid != null)
-			return leftPid.isEnable() && rightPid.isEnable();
+		if(leftTalon != null && rightTalon != null)
+			return leftTalon.getControlMode() == TalonControlMode.Speed && rightTalon.getControlMode() == TalonControlMode.Speed;
 		return false;
 	}
 
@@ -278,16 +270,18 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	 *            whether to enable (true) or disable (false)
 	 */
 	public void setPIDEnabled(boolean enabled) {
-		if(leftPid != null && rightPid != null) {
+		if(leftTalon != null && rightTalon != null) {
 			if (enabled) {
 				if(!getPIDEnabled()) {
-					leftPid.enable();
-					rightPid.enable();
+					leftTalon.changeControlMode(TalonControlMode.Speed);
+					rightTalon.changeControlMode(TalonControlMode.Speed);
 				}
 			} else {
 				if(getPIDEnabled()) {
-					leftPid.reset();
-					rightPid.reset();
+					leftTalon.clearIAccum();
+					rightTalon.clearIAccum();
+					leftTalon.changeControlMode(TalonControlMode.PercentVbus);
+					rightTalon.changeControlMode(TalonControlMode.PercentVbus);
 				}
 			}
 		}
@@ -297,10 +291,10 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	 * Resets both the left and right encoders
 	 */
 	public void resetEncoders() {
-		if(leftTalonEncoder != null)
-			leftTalonEncoder.reset();
-		if(rightTalonEncoder != null)
-			rightTalonEncoder.reset();
+		if(leftTalon != null)
+			leftTalon.setPosition(0);
+		if(rightTalon != null)
+			rightTalon.setPosition(0);
 	}
 
 	/**
@@ -309,8 +303,8 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	 * @return The distance the left encoder has driven since the last reset as scaled by the value from setDistancePerPulse().
 	 */
 	public double getEncoderLeftDistance() {
-		if(leftTalonEncoder != null)
-			return -leftTalonEncoder.getDisplacement();
+		if(leftTalon != null)
+			return leftTalon.getPosition() * distancePerRev ;
 		return 0;
 	}
 
@@ -320,8 +314,8 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	 * @return The distance the right encoder has driven since the last reset as scaled by the value from setDistancePerPulse().
 	 */
 	public double getEncoderRightDistance() {
-		if(rightTalonEncoder != null)
-			return -rightTalonEncoder.getDisplacement();
+		if(rightTalon != null)
+			return rightTalon.getPosition() * distancePerRev;
 		return 0;
 	}
 
@@ -332,8 +326,8 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	 * @return The current rate of the encoder
 	 */
 	public double getEncoderLeftSpeed() {
-		if(leftTalonEncoder != null)
-			return -leftTalonEncoder.getRate();
+		if(leftTalon != null)
+			return leftTalon.getSpeed() * distancePerRev * 10;
 		return 0;
 	}
 
@@ -344,8 +338,8 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	 * @return The current rate of the encoder
 	 */
 	public double getEncoderRightSpeed() {
-		if(rightTalonEncoder != null)
-			return -rightTalonEncoder.getRate();
+		if(rightTalon != null)
+			return rightTalon.getSpeed() * distancePerRev * 10;
 		return 0;
 	}
 
@@ -378,42 +372,36 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 		SmartDashboard.putNumber("Left Pos", getEncoderLeftDistance());
 		SmartDashboard.putNumber("Right Pos", getEncoderRightDistance());
 		SmartDashboard.putNumber("Average Pos", getEncoderAverageDistance());
-
+		
 		SmartDashboard.putNumber("Left speed", getEncoderLeftSpeed());
 		SmartDashboard.putNumber("Right speed", getEncoderRightSpeed());
 		SmartDashboard.putNumber("Average speed", getEncoderAverageSpeed());
-
-		SmartDashboard.putString("Left", leftTalonEncoder.get() + ":" + leftPid.getSetpoint() + ":" + leftPid.getError());
-		SmartDashboard.putString("Right", rightTalonEncoder.get() + ":" + rightPid.getSetpoint() + ":" + rightPid.getError());
 		
-		SmartDashboard.putString("Left:Right Power", leftTalon.get() + ":" + rightTalon.get());
-		
+		if(leftTalon != null)
+			SmartDashboard.putString("Left", leftTalon.getSpeed() + ":" + leftTalon.getSetpoint() + ":" + (leftTalon.getClosedLoopError()));
+		if(rightTalon != null)
+			SmartDashboard.putString("Right", rightTalon.getSpeed() + ":" + rightTalon.getSetpoint() + ":" + (rightTalon.getClosedLoopError()) );
+				
 		SmartDashboard.putData(this);
 	}
 
 	@Override
 	public void periodic() {
-		if(leftTalon != null && rightTalon != null && tempLeftTalon != null && tempRightTalon != null && leftPid != null && rightPid != null) {
-			if(pidMaxVal > 1.0) {
-				pidMaxVal = 1.0;
-			}
-			if(pidMaxVal < 1.0 && leftTalon.getOutputCurrent() < 40 && tempLeftTalon.getOutputCurrent() < 40 
-					&& rightTalon.getOutputCurrent() < 40 && tempRightTalon.getOutputCurrent() < 40) {
-				pidMaxVal += 0.01;
-			} else {
-				pidMaxVal -= 0.03;
-			}
-	
-			leftPid.setMaxOutput(Math.abs(pidMaxVal));
-			rightPid.setMaxOutput(Math.abs(pidMaxVal));
+		if(leftTalon != null && leftTalon.getSetpoint() == 0)  {
+			leftTalon.clearIAccum();
+			leftTalon.ClearIaccum();
+		}
+		if(rightTalon != null && rightTalon.getSetpoint() == 0) {
+			rightTalon.clearIAccum();
+			rightTalon.ClearIaccum();
 		}
 	}
 
 	public void setPID(double p, double i, double d, double f) {
-		if(leftPid != null)
-			leftPid.setPID(p, i, d, f);
-		if(rightPid != null)
-			rightPid.setPID(p, i, d, f);
+		if(leftTalon != null)
+			leftTalon.setPID(p, i, d, f, 0, 0, 0);
+		if(rightTalon != null)
+			rightTalon.setPID(p, i, d, f, 0, 0, 0);
 	}
 
 }
