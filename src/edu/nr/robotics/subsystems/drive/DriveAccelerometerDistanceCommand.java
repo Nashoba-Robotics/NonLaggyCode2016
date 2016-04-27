@@ -1,7 +1,7 @@
 package edu.nr.robotics.subsystems.drive;
 
 import edu.nr.lib.NRCommand;
-import edu.nr.lib.navx.NavX;
+import edu.nr.lib.NavX;
 
 /**
  *
@@ -35,8 +35,7 @@ public class DriveAccelerometerDistanceCommand extends NRCommand {
 
 	@Override
 	protected void onExecute() {
-		velCurrent += NavX.getInstance().getX();
-		distCurrent += velCurrent;
+		distCurrent += NavX.getInstance().getDisplacementX();
 		Drive.getInstance().arcadeDrive(speed, 0);
 	}
 

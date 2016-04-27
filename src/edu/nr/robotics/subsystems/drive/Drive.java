@@ -376,7 +376,7 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 		SmartDashboard.putNumber("Left speed", getEncoderLeftSpeed());
 		SmartDashboard.putNumber("Right speed", getEncoderRightSpeed());
 		SmartDashboard.putNumber("Average speed", getEncoderAverageSpeed());
-		
+
 		if(leftTalon != null)
 			SmartDashboard.putString("Left", leftTalon.getSpeed() + ":" + leftTalon.getSetpoint() + ":" + (leftTalon.getClosedLoopError()));
 		if(rightTalon != null)
