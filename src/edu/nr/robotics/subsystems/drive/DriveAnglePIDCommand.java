@@ -132,12 +132,13 @@ public class DriveAnglePIDCommand extends NRCommand {
 		
 		if(getGyro != null) {
 			correction = getGyro.getCorrection();
-			pid.setSource(correction);
 		}
 		
 		if(correction == null)
 			correction = new AngleGyroCorrectionSource(AngleUnit.DEGREE);
 		
+		pid.setSource(correction);
+
 		pid.setSetpoint(angle);
 		
 		Drive.getInstance().setPIDEnabled(true);

@@ -52,9 +52,6 @@ public class AutonForwardDefenseCommand extends CommandGroup {
 	    	addSequential(new HoodMoveDownUntilLimitSwitchCommand());
 			addSequential(new IntakeArmPositionCommand(RobotMap.INTAKE_INTAKE_POS, 0.05));
 			addSequential(new DriveDistanceCommand(14, 0.6));
-			addParallel(new DriveConstantCommand(true, 0.7, 0.1));
-			addSequential(new WaitUntilGyroCommand(RobotMap.AUTON_ONE_ALIGN_ANGLE));
-			addSequential(new DriveCancelCommand());
 			break;
 		default:
 			break;

@@ -209,6 +209,10 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Turn I", RobotMap.TURN_I);
 		SmartDashboard.putNumber("Turn D", RobotMap.TURN_D);
 
+		SmartDashboard.putNumber("Intake Arm P", RobotMap.INTAKE_ARM_P);
+		SmartDashboard.putNumber("Intake Arm I", RobotMap.INTAKE_ARM_I);
+		SmartDashboard.putNumber("Intake Arm D", RobotMap.INTAKE_ARM_D);
+
 		SmartDashboard.putNumber("Drive P", RobotMap.DRIVE_TURN_P);
 		SmartDashboard.putNumber("Drive I", RobotMap.DRIVE_TURN_I);
 		SmartDashboard.putNumber("Drive D", RobotMap.DRIVE_TURN_D);
