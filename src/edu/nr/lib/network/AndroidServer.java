@@ -32,13 +32,12 @@ public class AndroidServer implements Runnable {
 	public static final int defaultPort = 5432;
 	private static final String defaultIpAddress = "127.0.0.1";
 		
-	AndroidData data;
+	AndroidData data = new AndroidData(0,0,0);
 	
 	boolean goodToGo = false;
 
 	@Override
 	public void run() {
-		
 		while(true) {
 			try {
 				goodToGo = true;
@@ -69,7 +68,7 @@ public class AndroidServer implements Runnable {
 							    	double turnAngle = -Double.valueOf(turnAngle_);
 							    	long time = Long.valueOf(time_);
 							    	setData(turnAngle, distance, System.currentTimeMillis() - time);
-								    System.out.println("Angle: " + turnAngle + " Distance: " + distance + " time: " + time);
+								    //System.out.println("Angle: " + turnAngle + " Distance: " + distance + " time: " + time);
 								    SmartDashboard.putNumber("Camera distance", distance);
 								    SmartDashboard.putNumber("Camera angle", turnAngle);
 							    } catch (NumberFormatException e) {

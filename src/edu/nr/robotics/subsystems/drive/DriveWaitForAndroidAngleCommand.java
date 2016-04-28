@@ -1,6 +1,8 @@
 package edu.nr.robotics.subsystems.drive;
 
+import edu.nr.lib.AngleUnit;
 import edu.nr.lib.NRCommand;
+import edu.nr.lib.NavX;
 import edu.nr.lib.network.AndroidData;
 import edu.nr.lib.network.AndroidServer;
 import edu.nr.lib.network.AndroidServerListener;
@@ -24,7 +26,6 @@ public class DriveWaitForAndroidAngleCommand extends NRCommand implements Androi
 		this.command = drivecommand;
 		this.hoodcommand = hoodcommand;
 		this.auton = auton;
-		AndroidServer.getInstance().registerListener(this);
 	}
 	
 	@Override
@@ -40,6 +41,11 @@ public class DriveWaitForAndroidAngleCommand extends NRCommand implements Androi
 	protected void onEnd() {
 		AndroidServer.getInstance().deregisterListener(this);
 	}
+	
+	@Override
+	protected void onStart() {
+		AndroidServer.getInstance().registerListener(this);
+	}
 
 	@Override
 	public void onAndroidData(AndroidData data) {
@@ -50,8 +56,7 @@ public class DriveWaitForAndroidAngleCommand extends NRCommand implements Androi
 			hoodcommand.setAngleAgain();
 		}
 		if(Math.abs(data.getTurnAngle()) > .5 || firstTime) {
-			command.setSetpoint(command.getSetpoint() + data.getTurnAngle() - command.getGyroErrorAtTime(data.getTime()));
-			System.out.println("Setting setpoint. New drive angle error: " + command.getError());
+			command.setSetpoint(command.getSetpoint() + data.getTurnAngle()/4);
 			firstTime = false;
 		} 		
 		if( Math.abs(data.getTurnAngle()) < RobotMap.TURN_THRESHOLD)

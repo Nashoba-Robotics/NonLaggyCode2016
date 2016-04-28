@@ -87,7 +87,7 @@ public class DriveAnglePIDCommand extends NRCommand {
 				pid.setPermaOut(pid.getOut());
 	
 	    	
-	    	System.out.println("current count: " + currentCount + " use perma out: " + pid.isPermaOut());
+	    	//System.out.println("current count: " + currentCount + " use perma out: " + pid.isPermaOut());
 	    	return false;
     	}
     	return false; //TODO: change back...
@@ -104,10 +104,10 @@ public class DriveAnglePIDCommand extends NRCommand {
 	
 	@Override
 	protected void onExecute() {
-		SmartDashboard.putString("GyroPID", correction.pidGet() + ":" + pid.getSetpoint());
+		SmartDashboard.putString("GyroPID", correction.pidGet() + ":" + pid.getSetpoint() + ":" + AndroidServer.getInstance().getTurnAngle() + ":0.5:-0.5");
 		SmartDashboard.putNumber("GyroPIDAngle", correction.pidGet());
 		
-		System.out.println("Drive Angle PID Command running");
+		//System.out.println("Drive Angle PID Command running");
 	}
 
 	@Override
@@ -259,7 +259,7 @@ public class DriveAnglePIDCommand extends NRCommand {
 					output.pidWrite(out);
 					lastOut = out;					
 				}
-				gyroData.add(new DegreeTimeTuple(System.currentTimeMillis(), NavX.getInstance().getYaw(AngleUnit.DEGREE)));
+				gyroData.add(new DegreeTimeTuple(System.currentTimeMillis(), getError()));
 			}
 		}
 
