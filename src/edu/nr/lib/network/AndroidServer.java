@@ -7,12 +7,15 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AndroidServer implements Runnable {
 	
 	private static AndroidServer singleton;
+	
+	private ArrayList<AndroidServerListener> listeners = new ArrayList<>();
 	
 	public static AndroidServer getInstance() {
 		if(singleton == null)
@@ -28,10 +31,8 @@ public class AndroidServer implements Runnable {
 
 	public static final int defaultPort = 5432;
 	private static final String defaultIpAddress = "127.0.0.1";
-	
-	
-	double distance;
-	double turnAngle;
+		
+	AndroidData data;
 	
 	boolean goodToGo = false;
 
@@ -41,8 +42,7 @@ public class AndroidServer implements Runnable {
 		while(true) {
 			try {
 				goodToGo = true;
-				distance = 0;
-				turnAngle = 0;
+				setData(null);
 				Socket clientSocket;
 				try {
 					clientSocket = new Socket(defaultIpAddress, defaultPort);
@@ -52,21 +52,24 @@ public class AndroidServer implements Runnable {
 							String message = inFromServer.readLine();
 							if(message == null) {
 								clientSocket.close();
-								distance = 0;
-								turnAngle = 0;
+								setData(null);
 								goodToGo = false;
 								Thread.sleep(1000);								
 								break;
 							} 								
 							goodToGo = true;
 							int x = message.indexOf(':');
+							int y = message.indexOf(';');
 							if (x > 0) {
-								String left = message.substring(0, x);
-							    String right = message.substring(x+1);
+								String distance_ = message.substring(0, x);
+							    String turnAngle_ = message.substring(x+1, y);
+							    String time_ = message.substring(y+1);
 							    try {
-							    	distance = Double.valueOf(left)*.97;
-							    	turnAngle = -Double.valueOf(right);
-								    //System.out.println("Angle: " + turnAngle + " Distance: " + distance);
+							    	double distance = Double.valueOf(distance_)*.97;
+							    	double turnAngle = -Double.valueOf(turnAngle_);
+							    	long time = Long.valueOf(time_);
+							    	setData(turnAngle, distance, System.currentTimeMillis() - time);
+								    System.out.println("Angle: " + turnAngle + " Distance: " + distance + " time: " + time);
 								    SmartDashboard.putNumber("Camera distance", distance);
 								    SmartDashboard.putNumber("Camera angle", turnAngle);
 							    } catch (NumberFormatException e) {
@@ -77,8 +80,7 @@ public class AndroidServer implements Runnable {
 					} catch (SocketTimeoutException e) {
 						e.printStackTrace();
 						clientSocket.close();
-						distance = 0;
-						turnAngle = 0;
+						setData(null);
 						goodToGo = false;
 					} 
 				} catch (UnknownHostException e) {
@@ -95,16 +97,37 @@ public class AndroidServer implements Runnable {
 		}
 	}
 
+	
+
 	public double getTurnAngle() {
-		return turnAngle;
+		return data.getTurnAngle();
 	}
 
 	public double getDistance() {
-		return distance;
+		return data.getDistance();
 	}
 	
 	public boolean goodToGo() {
 		return goodToGo;
+	}
+	
+	public void registerListener(AndroidServerListener listener) {
+		listeners.add(listener);
+	}
+	
+	public void deregisterListener(AndroidServerListener listener) {
+		listeners.remove(listener);
+	}
+	
+	private void setData(Object object) {
+		setData(0,0,0);
+	}
+	
+	public void setData(double turnAngle, double distance, long time) {
+		data = new AndroidData(turnAngle, distance, time);
+		listeners.forEach((listener) -> {
+			listener.onAndroidData(data);
+		});
 	}
 	
 	public static void executeCommand(String command) {
@@ -130,4 +153,5 @@ public class AndroidServer implements Runnable {
 		System.out.println(output.toString());
 
 	}
+
 }

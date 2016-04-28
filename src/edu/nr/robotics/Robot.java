@@ -1,6 +1,8 @@
 package edu.nr.robotics;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
 
 import com.ni.vision.VisionException;
 
@@ -337,6 +339,8 @@ public class Robot extends IterativeRobot {
 		smartDashboardSources.forEach(SmartDashboardSource::smartDashboardInfo);
 
 		SmartDashboard.putData(robotDiagram);
+		
+		long currentTime = System.currentTimeMillis();
 	}
 
 	/**
@@ -372,4 +376,6 @@ public class Robot extends IterativeRobot {
 	 */
 	public void testInit() {
 	}
+	
+	
 }
