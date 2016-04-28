@@ -38,6 +38,7 @@ import edu.nr.robotics.subsystems.drive.FieldCentric;
 import edu.nr.robotics.subsystems.hood.Hood;
 import edu.nr.robotics.subsystems.hood.HoodJetsonPositionCommand;
 import edu.nr.robotics.subsystems.intakearm.IntakeArm;
+import edu.nr.robotics.subsystems.intakearm.IntakeArmSetPIDSmartDashboardCommand;
 import edu.nr.robotics.subsystems.intakeroller.IntakeRoller;
 import edu.nr.robotics.subsystems.loaderroller.LaserCannonTriggerCommand;
 import edu.nr.robotics.subsystems.loaderroller.LoaderRoller;
@@ -232,6 +233,8 @@ public class Robot extends IterativeRobot {
 		
 		SmartDashboard.putString("GyroPID", "0:0");
 		SmartDashboard.putNumber("GyroPIDAngle", 0);
+		
+		SmartDashboard.putData("Set Intake Arm PID", new IntakeArmSetPIDSmartDashboardCommand());
 
 
 	}

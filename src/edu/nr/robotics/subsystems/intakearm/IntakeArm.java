@@ -170,7 +170,10 @@ public class IntakeArm extends Subsystem implements SmartDashboardSource, Period
 			} else {
 				counter = 0;
 			}
+			
+
 		}
+		SmartDashboard.putString("Intake Arm PID current and setpoint", getSetpoint() + ":" + get() + ":" + (RobotMap.INTAKE_ARM_THRESHOLD*2/3 + getSetpoint()) + ":" + (-RobotMap.INTAKE_ARM_THRESHOLD*2/3 + getSetpoint()));
 	} 
 
 	public double getError() {
