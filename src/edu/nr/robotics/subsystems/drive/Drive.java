@@ -28,10 +28,9 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	private static Drive singleton;
 	CANTalon leftTalon, rightTalon, tempLeftTalon, tempRightTalon;
 	
-	// These values are right so that one distance  
-	// unit given by the encoders is one meter
-	private final static double ticksPerRev = /*256 * 60 / 24 * 48 * 4*/ 360;
-	private final static double wheelDiameter = 0.3333;//0.6375; //Feet
+	
+	private final static double ticksPerRev = 256 * 60 / 24 * 48;
+	private final static double wheelDiameter = 0.6375; //Feet
 	private final static double distancePerRev = Math.PI * wheelDiameter;
 	private final static double maxRPS = RobotMap.MAX_SPEED / distancePerRev;
 	private final static double maxRPM = maxRPS * 60;
@@ -65,7 +64,7 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 			rightTalon = new CANTalon(RobotMap.TALON_RIGHT_A);
 			rightTalon.enableBrakeMode(true);
 			rightTalon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-			rightTalon.reverseSensor(true);
+			rightTalon.reverseSensor(false);
 			rightTalon.setEncPosition(0);
 			rightTalon.changeControlMode(TalonControlMode.Speed);
 			
@@ -378,9 +377,9 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 		SmartDashboard.putNumber("Average speed", getEncoderAverageSpeed());
 
 		if(leftTalon != null)
-			SmartDashboard.putString("Left", leftTalon.getSpeed() + ":" + leftTalon.getSetpoint() + ":" + (leftTalon.getClosedLoopError()));
+			SmartDashboard.putString("Left", leftTalon.getSpeed() + ":" + leftTalon.getSetpoint() + ":" + (leftTalon.getClosedLoopError()/100.0));
 		if(rightTalon != null)
-			SmartDashboard.putString("Right", rightTalon.getSpeed() + ":" + rightTalon.getSetpoint() + ":" + (rightTalon.getClosedLoopError()) );
+			SmartDashboard.putString("Right", rightTalon.getSpeed() + ":" + rightTalon.getSetpoint() + ":" + (rightTalon.getClosedLoopError()/100.0) );
 				
 		SmartDashboard.putData(this);
 	}

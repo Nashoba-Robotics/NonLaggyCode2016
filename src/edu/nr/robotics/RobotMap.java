@@ -69,18 +69,18 @@ public class RobotMap {
 	public static final double ELEVATOR_RESET_UP_DISTANCE = 12000;
 	public static final double ELEVATOR_UNLATCH_DISTANCE = 5650;
 
-	public static final double TURN_P = 0.055;
-	public static final double TURN_I = 0.05;
-	public static final double TURN_D = 0.004;
+	public static final double TURN_P = 0.023;
+	public static final double TURN_I = 0.035;
+	public static final double TURN_D = 0.00055;
 	public static final double HOOD_HANG_SHOT = 29;
-	public static final double DRIVE_TURN_P = 0.35;
-	public static final double DRIVE_TURN_I = 0;
-	public static final double DRIVE_TURN_D = 0.2;
-	public static final double DRIVE_TURN_F = 2.0;
-	public static final double DRIVE_P = 0.25;
+	public static final double DRIVE_TURN_P = 0.1;
+	public static final double DRIVE_TURN_I = 0.00007;
+	public static final double DRIVE_TURN_D = 1;
+	public static final double DRIVE_TURN_F = 0.03;
+	public static final double DRIVE_P = 0.03;
 	public static final double DRIVE_I = 0;
 	public static final double DRIVE_D = 0;
-	public static final double DRIVE_F = 1;
+	public static final double DRIVE_F = 0.02;
 	public static final double AUTON_ONE_ALIGN_ANGLE = 50;
 	public static final double AUTON_TWO_ALIGN_ANGLE = 40;
 	public static final double AUTON_THREE_ALIGN_ANGLE = 15;

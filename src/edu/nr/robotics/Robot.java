@@ -223,6 +223,10 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Drive Constant Value", 0.5);
 
 		SmartDashboard.putNumber("Intake Offset", RobotMap.INTAKE_OFFSET);
+		
+		SmartDashboard.putString("GyroPID", "0:0");
+		SmartDashboard.putNumber("GyroPIDAngle", 0);
+
 
 	}
 
