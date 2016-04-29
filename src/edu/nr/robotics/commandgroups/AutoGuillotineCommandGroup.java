@@ -20,9 +20,9 @@ public class AutoGuillotineCommandGroup extends CommandGroup {
 	
     public  AutoGuillotineCommandGroup() {
     	addSequential(new IntakeArmPositionCommand(RobotMap.INTAKE_BOTTOM_POS, 0.5));
-    	addParallel(new DriveConstantCommand(false, true, true, 0.4));
+    	addParallel(new DriveConstantCommand(false, true, true, -0.4));
     	addSequential(new WaitCommand(0.5));
-        addParallel(new DriveConstantCommand(false, true, true , 0.2));
+        addParallel(new DriveConstantCommand(false, true, true , -0.2));
         addSequential(new IntakeArmMoveUpUntilPositionCommand(RobotMap.INTAKE_TOP_POS + 0.08));
         //addParallel(new IntakeArmPositionCommand(RobotMap.INTAKE_TOP_POS, 0.08));
         addSequential(new DriveDistanceCommand(5,0.75));

@@ -23,8 +23,8 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 public class AutonAlignCommand extends CommandGroup {
     	
     public  AutonAlignCommand() {
-    	addParallel(new IntakeArmHomeHeightCommandGroup());
-    	addSequential(new HoodMoveDownUntilLimitSwitchCommand());
+    	//addParallel(new IntakeArmHomeHeightCommandGroup());
+    	//addSequential(new HoodMoveDownUntilLimitSwitchCommand());
     	addSequential(new WaitCommand(0.25));
     	DriveAnglePIDCommand command = new DriveAnglePIDCommand();
         addParallel(command);

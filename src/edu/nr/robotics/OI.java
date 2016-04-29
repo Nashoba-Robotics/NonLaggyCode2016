@@ -104,7 +104,7 @@ public class OI implements SmartDashboardSource, Periodic {
 	public void initDriveLeft() {
 		//Drive Left: (0)
 		//->  1: Stall forward
-		Robot.getInstance().driveWall = new DriveConstantCommand(true, true, true, .25);
+		Robot.getInstance().driveWall = new DriveConstantCommand(true, true, true, -.25);
 		new JoystickButton(driveLeft, 1).whenPressed(Robot.getInstance().driveWall);
 		new JoystickButton(driveLeft, 1).whenReleased(new DriveCancelCommand());
 		//->  2: Reverse drive direction
@@ -269,14 +269,14 @@ public class OI implements SmartDashboardSource, Periodic {
 	}
 
 	public double getArcadeMoveValue() {
-		return snapDriveJoysticks(driveLeft.getY()) * (driveLeft.getRawButton(2) ? -1 : 1);
+		return snapDriveJoysticks(driveLeft.getY()) * (driveLeft.getRawButton(2) ? 1 : -1);
 	}
 
 	public double getArcadeTurnValue() {
 		if(new JoystickButton(driveRight, 6).get() || new JoystickButton(driveRight, 7).get() || new JoystickButton(driveRight, 10).get() || new JoystickButton(driveRight, 11).get() || new JoystickButton(driveRight, 8).get()  || new JoystickButton(driveRight, 9).get())
 			return 0;
 
-		return snapDriveJoysticks(driveRight.getX());
+		return -snapDriveJoysticks(driveRight.getX());
 	}
 
 	public double getTankLeftValue() {

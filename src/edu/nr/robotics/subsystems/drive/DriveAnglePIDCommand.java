@@ -90,8 +90,7 @@ public class DriveAnglePIDCommand extends NRCommand {
 	    	//System.out.println("current count: " + currentCount + " use perma out: " + pid.isPermaOut());
 	    	return false;
     	}
-    	return false; //TODO: change back...
-    	//return currentCount > 4;
+    	return currentCount > 4;
     }
 
 	@Override
@@ -113,6 +112,7 @@ public class DriveAnglePIDCommand extends NRCommand {
 	@Override
 	protected void onStart() {
 		pid.setPID(DriveGyroAngleSmartDashboardCommand.turn_p,DriveGyroAngleSmartDashboardCommand.turn_i,DriveGyroAngleSmartDashboardCommand.turn_d,0);
+				
 		if(useAndroid) {
 			if(!AndroidServer.getInstance().goodToGo()) { 
 	    		System.out.println("Drive Angle PID: Android connection not good to go");

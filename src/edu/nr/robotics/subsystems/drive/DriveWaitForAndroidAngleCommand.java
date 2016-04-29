@@ -33,7 +33,7 @@ public class DriveWaitForAndroidAngleCommand extends NRCommand implements Androi
 		System.out.println("Checking drive angle: current count: " + currentCount + " drive angle error: " + command.getError());
 		
 		if(auton)
-			return currentCount > 5 && (Math.abs(Hood.getInstance().get() - hoodcommand.getSetpoint()) < 0.25);
+			return currentCount >= 8 && (Math.abs(Hood.getInstance().get() - hoodcommand.getSetpoint()) < 0.25);
 		return false;
 	}
 	
@@ -45,17 +45,21 @@ public class DriveWaitForAndroidAngleCommand extends NRCommand implements Androi
 	@Override
 	protected void onStart() {
 		AndroidServer.getInstance().registerListener(this);
+		firstTime = false;
+		currentCount = 0;
 	}
 
 	@Override
 	public void onAndroidData(AndroidData data) {
-		if(Math.abs(data.getTurnAngle()) > .5)
-			firstTime = true;
-
-		if(Math.abs(data.getTurnAngle()) <= .5 && firstTime) {
+		if(data.getDistance() == 0 && data.getTurnAngle() == 0)
+			return;
+		
+		if(Math.abs(data.getTurnAngle()) <= .5 && firstTime == false) {
 			hoodcommand.setAngleAgain();
+			firstTime = true;
 		}
-		if(Math.abs(data.getTurnAngle()) > .5 || firstTime) {
+		if(Math.abs(data.getTurnAngle()) > .5) {
+			hoodcommand.setAngleAgain();
 			command.setSetpoint(command.getSetpoint() + data.getTurnAngle()/4);
 			firstTime = false;
 		} 		

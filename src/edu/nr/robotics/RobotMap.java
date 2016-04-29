@@ -51,9 +51,9 @@ public class RobotMap {
 	public static final double HOOD_BOTTOM_POSITION = 0;
 	public static final double HOOD_TOP_POSITION = 75.46;
 	public static final double HOOD_TICK_TO_ANGLE_MULTIPLIER = 0.031934;
-	public static final double HOOD_THRESHOLD = 2;
+	public static final double HOOD_THRESHOLD = 0.2;
 	public static final double INTAKE_ARM_THRESHOLD = 0.003;
-	public static final double INTAKE_OFFSET = -0.004;
+	public static final double INTAKE_OFFSET = 0.002;
 	public static final double INTAKE_TOP_POS = 0.655 + INTAKE_OFFSET;
 	public static final double INTAKE_INTAKE_POS = 0.522 + INTAKE_OFFSET;
 	public static final double INTAKE_HOME_POS = 0.522 + INTAKE_OFFSET; //home == intake
@@ -77,17 +77,18 @@ public class RobotMap {
 	public static final double DRIVE_TURN_I = 0.00007;
 	public static final double DRIVE_TURN_D = 1;
 	public static final double DRIVE_TURN_F = 0.03;
-	public static final double DRIVE_P = 0.03;
+	public static final double DRIVE_P = 0.01;
 	public static final double DRIVE_I = 0;
 	public static final double DRIVE_D = 0;
 	public static final double DRIVE_F = 0.02;
-	public static final double AUTON_ONE_ALIGN_ANGLE = 50;
-	public static final double AUTON_TWO_ALIGN_ANGLE = 40;
-	public static final double AUTON_THREE_ALIGN_ANGLE = 15;
+	public static final double AUTON_ONE_ALIGN_ANGLE = 40;
+	public static final double AUTON_TWO_ALIGN_ANGLE = 25;
+	public static final double AUTON_THREE_ALIGN_ANGLE = 10;
 	public static final double AUTON_FOUR_ALIGN_ANGLE = -10;
-	public static final double AUTON_FIVE_ALIGN_ANGLE = -35;
+	public static final double AUTON_FIVE_ALIGN_ANGLE = -15;
 	
 	public static final double INTAKE_ARM_P = 60;
 	public static final double INTAKE_ARM_I = 0;
-	public static final double INTAKE_ARM_D = 0.1;
+	public static final double INTAKE_ARM_D = 0;
+	public static final int DRIVE_VOLT_RAMP_RATE = 240;
 }

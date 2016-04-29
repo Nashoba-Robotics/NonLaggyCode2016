@@ -27,7 +27,7 @@ public class RobotDiagram implements NamedSendable {
 			table.putString("~TYPE~", "robo-diagram");
 
 			table.putBoolean("Auto Align Happening", false);
-			table.putBoolean("All Systems Go", Shooter.getInstance().getSped());
+			table.putBoolean("All Systems Go", Math.abs(AndroidServer.getInstance().getTurnAngle()) < 0.5 && Shooter.getInstance().getSped() && Math.abs(Hood.distanceToAngle(AndroidServer.getInstance().getDistance()) - Hood.getInstance().get()) < RobotMap.HOOD_THRESHOLD);
 			
 			//Hood
 			table.putBoolean("Hood Bottom", Hood.getInstance().isAtPosition(Hood.Position.BOTTOM));
@@ -70,7 +70,7 @@ public class RobotDiagram implements NamedSendable {
 			//Shooter
 			table.putNumber("Shooter Speed", Shooter.getInstance().getScaledSpeed());
 			
-			table.putBoolean("Got Low", Hood.getInstance().isAtBottom() && IntakeArm.getInstance().get() < RobotMap.INTAKE_INTAKE_POS + 0.02);
+			table.putBoolean("Got Low", Hood.getInstance().isBotLimitSwitchClosed() && IntakeArm.getInstance().get() < RobotMap.INTAKE_INTAKE_POS + 0.02);
 			
 
 		}

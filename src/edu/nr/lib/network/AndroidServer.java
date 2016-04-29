@@ -64,7 +64,7 @@ public class AndroidServer implements Runnable {
 							    String turnAngle_ = message.substring(x+1, y);
 							    String time_ = message.substring(y+1);
 							    try {
-							    	double distance = Double.valueOf(distance_)*.97;
+							    	double distance = Double.valueOf(distance_)*.95;
 							    	double turnAngle = -Double.valueOf(turnAngle_);
 							    	long time = Long.valueOf(time_);
 							    	setData(turnAngle, distance, System.currentTimeMillis() - time);

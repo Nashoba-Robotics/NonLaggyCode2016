@@ -38,6 +38,7 @@ import edu.nr.robotics.subsystems.drive.FieldCentric;
 import edu.nr.robotics.subsystems.hood.Hood;
 import edu.nr.robotics.subsystems.hood.HoodJetsonPositionCommand;
 import edu.nr.robotics.subsystems.intakearm.IntakeArm;
+import edu.nr.robotics.subsystems.intakearm.IntakeArmMoveUpUntilPositionCommand;
 import edu.nr.robotics.subsystems.intakearm.IntakeArmSetPIDSmartDashboardCommand;
 import edu.nr.robotics.subsystems.intakeroller.IntakeRoller;
 import edu.nr.robotics.subsystems.loaderroller.LaserCannonTriggerCommand;
@@ -89,7 +90,7 @@ public class Robot extends IterativeRobot {
 	public SendableChooser positionPicker;
 
 	public enum defense {
-		RoughTerrain, Guillotine, LowBar, Other
+		RoughTerrain, Guillotine, LowBar, Other, Cheval
 	}
 
 	public enum position {
@@ -152,16 +153,17 @@ public class Robot extends IterativeRobot {
 		defensePicker = new SendableChooser();
 		defensePicker.addDefault("Other", defense.Other);
 		defensePicker.addObject("Rough Terrain", defense.RoughTerrain);
+		defensePicker.addObject("Shovel of Fries", defense.Cheval);
 		defensePicker.addObject("Guillotine", defense.Guillotine);
 		defensePicker.addObject("Low Bar", defense.LowBar);
 		SmartDashboard.putData("Defense Picker", defensePicker);
 
 		positionPicker = new SendableChooser();
+		positionPicker.addObject("One", position.One);
 		positionPicker.addDefault("Two", position.Two);
 		positionPicker.addObject("Three", position.Three);
 		positionPicker.addObject("Four", position.Four);
 		positionPicker.addObject("Five", position.Five);
-		positionPicker.addObject("One", position.One);
 		SmartDashboard.putData("Position Picker", positionPicker);
 
 		autoCommandChooser = new SendableChooser();
@@ -174,17 +176,6 @@ public class Robot extends IterativeRobot {
 		autoCommandChooser.addObject("Forward no shoot Guillotine", new AutonGuillotineCommandGroup());
 		autoCommandChooser.addObject("Forward no shoot others", new AutonForwardOverCommand());
 		autoCommandChooser.addObject("Shoot (choose defense and position)", new AutonFollowInstructionsShootCommand());
-		// autoCommandChooser.addObject("Forward (choose defense)", new
-		// AutonFollowInstructionsForwardCommand());
-		// autoCommandChooser.addObject("Forward and shoot Low Bar", new
-		// AutonForwardAlignLowBarCommand());
-		// autoCommandChooser.addObject("Forward and shoot Left", new
-		// AutonForwardAlignTwoCommand());
-		// autoCommandChooser.addObject("Forward and shoot Middle", new
-		// AutonForwardAlignFourCommand());
-		// autoCommandChooser.addObject("Forward and shoot Right", new
-		// AutonForwardAlignFiveCommand());
-
 		// Add more options like:
 		// autoCommandChooser.addObject(String name, Command command);
 		SmartDashboard.putData("Autonomous Chooser", autoCommandChooser);
@@ -235,6 +226,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("GyroPIDAngle", 0);
 		
 		SmartDashboard.putData("Set Intake Arm PID", new IntakeArmSetPIDSmartDashboardCommand());
+		
+		SmartDashboard.putData("Go intake arm up",new IntakeArmMoveUpUntilPositionCommand(RobotMap.INTAKE_INTAKE_POS));
 
 
 	}
@@ -366,6 +359,12 @@ public class Robot extends IterativeRobot {
 	 * Initialization code for autonomous mode
 	 */
 	public void autonomousInit() {
+		autonomousCommand = (Command) autoCommandChooser.getSelected();
+		if(autonomousCommand instanceof AutonFollowInstructionsShootCommand)
+			autonomousCommand = new AutonFollowInstructionsShootCommand();
+		else if(autonomousCommand instanceof AutonFollowInstructionsForwardCommand)
+			autonomousCommand = new AutonFollowInstructionsForwardCommand();
+		autonomousCommand.start();
 	}
 
 	/**

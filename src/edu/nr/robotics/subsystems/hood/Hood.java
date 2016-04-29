@@ -162,9 +162,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic {
 	public void smartDashboardInfo() {
 		SmartDashboard.putNumber("Hood Angle", get());
 		SmartDashboard.putNumber("Hood Distance", angleToDistance(get()));
-
-		LiveWindowClasses.hoodBottomSwitch.set(isBotLimitSwitchClosed());
-		LiveWindowClasses.hoodTopSwitch.set(isTopLimitSwitchClosed());
+		SmartDashboard.putString("Hood PID", get() + ":" + getSetpoint() + ":" + (getSetpoint()-RobotMap.HOOD_THRESHOLD) + ":" + (getSetpoint()+RobotMap.HOOD_THRESHOLD));
 	}
 
 	public boolean isAtPosition(Position pos) {

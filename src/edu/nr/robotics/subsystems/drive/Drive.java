@@ -61,8 +61,10 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 			tempLeftTalon.set(leftTalon.getDeviceID());
 			tempLeftTalon.enableBrakeMode(true);
 			
+			
 			rightTalon = new CANTalon(RobotMap.TALON_RIGHT_A);
 			rightTalon.enableBrakeMode(true);
+
 			rightTalon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 			rightTalon.reverseSensor(false);
 			rightTalon.setEncPosition(0);
@@ -74,9 +76,6 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 			rightTalon.setP(RobotMap.DRIVE_P); 
 			rightTalon.setI(RobotMap.DRIVE_I); 
 			rightTalon.setD(RobotMap.DRIVE_D); 
-			
-
-
 	
 			tempRightTalon = new CANTalon(RobotMap.TALON_RIGHT_B);
 			tempRightTalon.changeControlMode(TalonControlMode.Follower);
@@ -111,8 +110,13 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	public void setTalonRampRate(double rampRate) {
 		if(leftTalon != null)
 			leftTalon.setVoltageRampRate(rampRate);
+		if(tempLeftTalon != null)
+			tempLeftTalon.setVoltageRampRate(rampRate);
 		if(rightTalon != null)
 			rightTalon.setVoltageRampRate(rampRate);
+		if(tempRightTalon != null)
+			tempRightTalon.setVoltageRampRate(rampRate);
+
 	}
 
 	/**
@@ -190,9 +194,9 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	 */
 	public void tankDrive(double left, double right) {
 		if (getPIDEnabled()) {
-			setPIDSetpoint(left, right);
+			setPIDSetpoint(-left, -right);
 		} else {
-			setRawMotorSpeed(left, right);
+			setRawMotorSpeed(-left, -right);
 		}
 	}
 
@@ -314,7 +318,7 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	 */
 	public double getEncoderRightDistance() {
 		if(rightTalon != null)
-			return rightTalon.getPosition() * distancePerRev;
+			return -rightTalon.getPosition() * distancePerRev;
 		return 0;
 	}
 
@@ -338,7 +342,7 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	 */
 	public double getEncoderRightSpeed() {
 		if(rightTalon != null)
-			return rightTalon.getSpeed() * distancePerRev * 10;
+			return -rightTalon.getSpeed() * distancePerRev * 10;
 		return 0;
 	}
 
@@ -402,5 +406,4 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 		if(rightTalon != null)
 			rightTalon.setPID(p, i, d, f, 0, 0, 0);
 	}
-
 }

@@ -1,6 +1,7 @@
 package edu.nr.robotics.subsystems.intakearm;
 
 import edu.nr.lib.NRCommand;
+import edu.nr.robotics.RobotMap;
 
 /**
  *
@@ -22,13 +23,13 @@ public class IntakeArmMoveUpUntilPositionCommand extends NRCommand {
     // Called repeatedly when this Command is scheduled to run
     @Override
 	protected void onExecute() {
-    	IntakeArm.getInstance().setSetpoint(0);
+    	IntakeArm.getInstance().setSetpoint(RobotMap.INTAKE_TOP_POS + 0.1);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
 	protected boolean isFinishedNR() {
-        return IntakeArm.getInstance().get() < val;
+        return IntakeArm.getInstance().get() > val;
     }
 
     // Called once after isFinished returns true
