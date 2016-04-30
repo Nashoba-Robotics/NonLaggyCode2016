@@ -230,6 +230,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Go intake arm up",new IntakeArmMoveUpUntilPositionCommand(RobotMap.INTAKE_INTAKE_POS));
 
 
+		SmartDashboard.putNumber("Android Adjust Factor", RobotMap.ANDROID_ADJUST_FACTOR);
+		
 	}
 
 	private void initCamera() {

@@ -91,4 +91,5 @@ public class RobotMap {
 	public static final double INTAKE_ARM_I = 0;
 	public static final double INTAKE_ARM_D = 0;
 	public static final int DRIVE_VOLT_RAMP_RATE = 240;
+	public static final double ANDROID_ADJUST_FACTOR = 0.95;
 }
