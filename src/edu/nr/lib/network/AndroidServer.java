@@ -66,7 +66,6 @@ public class AndroidServer implements Runnable {
 							    try {
 							    	double distance = Double.valueOf(distance_)/*SmartDashboard.getNumber("Android Adjust Factor")*/;
 							    	
-							    	//TODO: decide on old/new balls
 							    	//For old balls:
 							    	//distance = distance * ((distance*0.0142857) + 0.821429);
 							    	//Oldish:
@@ -74,9 +73,9 @@ public class AndroidServer implements Runnable {
 							    	//Middle:
 							    	//distance = distance * ((distance*0.02000) + 0.83002);
 							    	//Newish:
-							    	//distance = distance * ((distance*0.022855) + 0.834315);
+							    	distance = distance * ((distance*0.022855) + 0.834315);
 							    	//For new balls:
-							    	distance = distance * ((distance*0.0257143) + 0.838571);
+							    	//distance = distance * ((distance*0.0257143) + 0.838571);
 
 							    	double turnAngle = -Double.valueOf(turnAngle_);
 							    	long time = Long.valueOf(time_);
