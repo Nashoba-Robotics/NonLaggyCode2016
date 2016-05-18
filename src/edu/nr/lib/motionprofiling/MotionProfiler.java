@@ -39,5 +39,5 @@ public interface MotionProfiler {
 	 * Sets the trajectory for the profiler
 	 * @param trajectory
 	 */
-	public void setTrajectory(SimpleOneDimensionalTrajectory trajectory);
+	public void setTrajectory(Trajectory trajectory);
 }

@@ -122,11 +122,5 @@ public class OneDimensionalMotionProfiler extends TimerTask implements MotionPro
 	public void setTrajectory(Trajectory trajectory) {
 		this.trajectory = trajectory;
 	}
-
-	@Override
-	public void setTrajectory(SimpleOneDimensionalTrajectory trajectory) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 }
