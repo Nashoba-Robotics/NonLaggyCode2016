@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class OneDimensionalMotionProfiler extends TimerTask {
+public class OneDimensionalMotionProfiler extends TimerTask implements MotionProfiler  {
 
 	private final Timer timer;
 	
@@ -28,7 +28,7 @@ public class OneDimensionalMotionProfiler extends TimerTask {
 		
 	private Trajectory trajectory;
 	
-	public OneDimensionalMotionProfiler(PIDOutput out, PIDSource source, Trajectory trajectory, double ka, double kp, double kd, long period) {
+	public OneDimensionalMotionProfiler(PIDOutput out, PIDSource source, SimpleOneDimensionalTrajectory trajectory, double ka, double kp, double kd, long period) {
 		this.out = out;
 		this.source = source;
 		this.period = period;
@@ -42,7 +42,7 @@ public class OneDimensionalMotionProfiler extends TimerTask {
 		this.kd = kd;
 	}
 	
-	public OneDimensionalMotionProfiler(PIDOutput out, PIDSource source, Trajectory trajectory, double ka, double kp, double kd) {
+	public OneDimensionalMotionProfiler(PIDOutput out, PIDSource source, SimpleOneDimensionalTrajectory trajectory, double ka, double kp, double kd) {
 		this(out, source, trajectory, ka, kp, kd, defaultPeriod);
 	}
 	
@@ -56,7 +56,7 @@ public class OneDimensionalMotionProfiler extends TimerTask {
 
 			double output = 0;
 						
-			output += trajectory.getGoalVelocity(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime) / trajectory.maxVelocity;
+			output += trajectory.getGoalVelocity(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime) / trajectory.getMaxVelocity();
 			
 			output += trajectory.getGoalAccel(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime) * ka;
 			
@@ -114,84 +114,18 @@ public class OneDimensionalMotionProfiler extends TimerTask {
 	public void setSource(PIDSource source) {
 		this.source = source;
 	}
+	
+	/**
+	 * Sets the trajectory for the profiler
+	 * @param trajectory
+	 */
+	public void setTrajectory(Trajectory trajectory) {
+		this.trajectory = trajectory;
+	}
 
-	public class Trajectory {
-		
-		double maxVelocity;
-		double maxAccel;
-		
-		double totalTime;
-		double speedUpTime;
-		double speedDownTime;
-		double timeAtFull;
-		
-		public Trajectory(double goalDistance, double maxVelocity, double maxAccel) {
-			this.maxVelocity = maxVelocity;
-			this.maxAccel = maxAccel;
-			speedUpTime = speedDownTime = maxVelocity / maxAccel;
-			double timeToEndOfFull = goalDistance / maxVelocity;
-			totalTime = timeToEndOfFull + speedDownTime;
-			timeAtFull = timeToEndOfFull - speedUpTime;
-			if(1/2 * maxVelocity * speedUpTime + 1/2 * maxVelocity * speedDownTime + maxVelocity * timeAtFull != goalDistance) {
-				System.err.println("Something's gone wrong in trajectory calculation!!!");
-			}
-		}
-
-		public double getGoalVelocity(double time) {
-			if(time < 0) return 0;
-			if(time < speedUpTime) return time * maxAccel;
-			if(time < speedUpTime + timeAtFull) return maxVelocity;
-			double timeSlowingDownSoFar = time - (speedUpTime + timeAtFull);
-			if(time < totalTime) return timeSlowingDownSoFar * -maxAccel;
-			return 0;
-		}
-		
-		public double getGoalPosition(double time) {
-			if(time < 0) return 0;
-			
-			if(time < speedUpTime) {
-				//We're on the positive slope of the trapezoid
-				return 1/2 * time * time * maxAccel;
-			}
-			
-			double speedUpDistance =  1/2 * speedUpTime * maxVelocity;
-			
-			if(time < speedUpTime + timeAtFull) {
-				//We're on the top part of the trapezoid
-				double timeAtFullSoFar = time - speedUpTime;
-				return speedUpDistance + timeAtFullSoFar * maxVelocity;
-			}
-			
-			double fullSpeedDistance = maxVelocity * timeAtFull;
-			
-			if(time < totalTime) {
-				//We're on the negative slope of the trapezoid
-				double timeSlowingDownSoFar = time - (speedUpTime + timeAtFull);
-				double currentVelocity = maxVelocity + timeSlowingDownSoFar * -maxAccel;
-				return speedUpDistance + fullSpeedDistance + (maxVelocity + currentVelocity)/2 * timeSlowingDownSoFar;
-			}
-			
-			double speedDownDistance = 1/2 * speedDownTime * maxVelocity;
-			
-			return speedUpDistance + fullSpeedDistance + speedDownDistance;
-		}
-
-		public double getGoalAccel(double time) {
-			if(time < 0) return 0;
-			if(time < speedUpTime) return maxAccel;
-			if(time < speedUpTime + timeAtFull) return 0;
-			if(time < totalTime) return -maxAccel;
-			return 0;
-		}
-		
-		public double getMaxVelocity() {
-			return maxVelocity;
-		}
-
-		public double getMaxAccel() {
-			return maxAccel;
-		}
-
+	@Override
+	public void setTrajectory(SimpleOneDimensionalTrajectory trajectory) {
+		// TODO Auto-generated method stub
 		
 	}
 	
