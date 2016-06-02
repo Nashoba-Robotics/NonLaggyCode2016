@@ -8,6 +8,8 @@ import edu.nr.robotics.EnabledSubsystems;
 import edu.nr.robotics.LiveWindowClasses;
 import edu.nr.robotics.RobotMap;
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -16,11 +18,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  *
  */
-public class Hood extends Subsystem implements SmartDashboardSource, Periodic {
+public class Hood extends Subsystem implements SmartDashboardSource, Periodic, PIDOutput, PIDSource {
     
+	public static final double MAX_ACC = 100;
+	public static final double MAX_VEL = 30;
+	
+	
 	CANTalon talon;	
 	TalonEncoder enc;
 	PID pid;
+	
+	//Max acceleration for motion profiling is 100 degrees per second per second
+	//Max velocity for motion profiling is 30 degrees per second
 	
 	double maxSpeed = 1.0;
 	
@@ -162,6 +171,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic {
 	public void smartDashboardInfo() {
 		SmartDashboard.putNumber("Hood Angle", get());
 		SmartDashboard.putNumber("Hood Distance", angleToDistance(get()));
+		SmartDashboard.putNumber("Hood Velocity", enc.getRateWithoutScaling());
 		SmartDashboard.putString("Hood PID", get() + ":" + getSetpoint() + ":" + (getSetpoint()-RobotMap.HOOD_THRESHOLD) + ":" + (getSetpoint()+RobotMap.HOOD_THRESHOLD));
 	}
 
@@ -213,6 +223,31 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic {
 	public static double angleToDistance(double angle) {
 		angle += 0.1;
 		return 0.334902 * Math.exp(0.0657678 * angle);
+	}
+
+	@Override
+	public void pidWrite(double output) {
+		setMotor(output);
+	}
+
+	PIDSourceType pidSource;
+	
+	@Override
+	public void setPIDSourceType(PIDSourceType pidSource) {
+		this.pidSource = pidSource;
+	}
+
+	@Override
+	public PIDSourceType getPIDSourceType() {
+		return pidSource;
+	}
+
+	@Override
+	public double pidGet() {
+		if(pidSource == PIDSourceType.kDisplacement)
+			return get();
+		else
+			return enc.getRateWithoutScaling();
 	}
 
 	

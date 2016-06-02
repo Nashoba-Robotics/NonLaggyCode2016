@@ -6,65 +6,69 @@ public class SimpleOneDimensionalTrajectory implements Trajectory {
 	double maxAccel;
 	
 	double totalTime;
-	double speedUpTime;
-	double speedDownTime;
-	double timeAtFull;
+	double timeAccelPlus;
+	double timeAccelMinus;
+	double timeAtCruise;
 	
 	public SimpleOneDimensionalTrajectory(double goalDistance, double maxVelocity, double maxAccel) {
 		this.maxVelocity = maxVelocity;
 		this.maxAccel = maxAccel;
-		speedUpTime = speedDownTime = maxVelocity / maxAccel;
+		timeAccelPlus = timeAccelMinus = maxVelocity / maxAccel;
 		double timeToEndOfFull = goalDistance / maxVelocity;
-		totalTime = timeToEndOfFull + speedDownTime;
-		timeAtFull = timeToEndOfFull - speedUpTime;
-		if(1/2 * maxVelocity * speedUpTime + 1/2 * maxVelocity * speedDownTime + maxVelocity * timeAtFull != goalDistance) {
-			System.err.println("Something's gone wrong in trajectory calculation!!!");
+		totalTime = timeToEndOfFull + timeAccelMinus;
+		timeAtCruise = timeToEndOfFull - timeAccelPlus;
+		if(1/2 * maxVelocity * timeAccelPlus + 1/2 * maxVelocity * timeAccelMinus + maxVelocity * timeAtCruise != goalDistance) {
+			System.err.println("Something's gone wrong in trajectory calculation!!! goal: " + goalDistance + " I say: " + (1/2 * maxVelocity * timeAccelPlus + 1/2 * maxVelocity * timeAccelMinus + maxVelocity * timeAtCruise));
+		}
+		
+		if(timeAccelPlus + timeAccelMinus + timeAtCruise != totalTime) {
+			System.err.println("Something's gone wrong in trajectory calculation (part 2)!!! total time: " + totalTime + " I say: " + (timeAccelPlus + timeAccelMinus + timeAtCruise));
 		}
 	}
 
 	public double getGoalVelocity(double time) {
 		if(time < 0) return 0;
-		if(time < speedUpTime) return time * maxAccel;
-		if(time < speedUpTime + timeAtFull) return maxVelocity;
-		double timeSlowingDownSoFar = time - (speedUpTime + timeAtFull);
-		if(time < totalTime) return timeSlowingDownSoFar * -maxAccel;
+		if(time < timeAccelPlus) return time * maxAccel;
+		if(time < timeAccelPlus + timeAtCruise) return maxVelocity;
+		double timeSlowingDownSoFar = time - (timeAccelPlus + timeAtCruise);
+		if(time < totalTime) return maxVelocity + timeSlowingDownSoFar * -maxAccel;
 		return 0;
 	}
 	
 	public double getGoalPosition(double time) {
 		if(time < 0) return 0;
 		
-		if(time < speedUpTime) {
+		if(time < timeAccelPlus) {
 			//We're on the positive slope of the trapezoid
 			return 1/2 * time * time * maxAccel;
 		}
 		
-		double speedUpDistance =  1/2 * speedUpTime * maxVelocity;
+		double speedUpDistance =  1/2 * timeAccelPlus * maxVelocity;
 		
-		if(time < speedUpTime + timeAtFull) {
+		if(time < timeAccelPlus + timeAtCruise) {
 			//We're on the top part of the trapezoid
-			double timeAtFullSoFar = time - speedUpTime;
+			double timeAtFullSoFar = time - timeAccelPlus;
 			return speedUpDistance + timeAtFullSoFar * maxVelocity;
 		}
 		
-		double fullSpeedDistance = maxVelocity * timeAtFull;
+		double fullSpeedDistance = maxVelocity * timeAtCruise;
 		
 		if(time < totalTime) {
 			//We're on the negative slope of the trapezoid
-			double timeSlowingDownSoFar = time - (speedUpTime + timeAtFull);
+			double timeSlowingDownSoFar = time - (timeAccelPlus + timeAtCruise);
 			double currentVelocity = maxVelocity + timeSlowingDownSoFar * -maxAccel;
 			return speedUpDistance + fullSpeedDistance + (maxVelocity + currentVelocity)/2 * timeSlowingDownSoFar;
 		}
 		
-		double speedDownDistance = 1/2 * speedDownTime * maxVelocity;
+		double speedDownDistance = 1/2 * timeAccelMinus * maxVelocity;
 		
 		return speedUpDistance + fullSpeedDistance + speedDownDistance;
 	}
 
 	public double getGoalAccel(double time) {
 		if(time < 0) return 0;
-		if(time < speedUpTime) return maxAccel;
-		if(time < speedUpTime + timeAtFull) return 0;
+		if(time < timeAccelPlus) return maxAccel;
+		if(time < timeAccelPlus + timeAtCruise) return 0;
 		if(time < totalTime) return -maxAccel;
 		return 0;
 	}

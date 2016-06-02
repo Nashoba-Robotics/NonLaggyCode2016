@@ -10,6 +10,10 @@ import edu.nr.lib.AngleUnit;
 import edu.nr.lib.WaitUntilGyroCommand;
 import edu.nr.lib.interfaces.Periodic;
 import edu.nr.lib.interfaces.SmartDashboardSource;
+import edu.nr.lib.motionprofiling.MotionProfiler;
+import edu.nr.lib.motionprofiling.OneDimensionalMotionProfiler;
+import edu.nr.lib.motionprofiling.SimpleOneDimensionalTrajectory;
+import edu.nr.lib.motionprofiling.Trajectory;
 import edu.nr.lib.NavX;
 import edu.nr.lib.network.AndroidServer;
 import edu.nr.robotics.Robot.defense;
@@ -67,6 +71,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot {
 
 	RobotDiagram robotDiagram;
+	
+	public MotionProfiler profiler;
 
 	public Command driveWall;
 
@@ -146,6 +152,10 @@ public class Robot extends IterativeRobot {
 		initSubsystems();
 		initSmartDashboard();
 		robotDiagram = new RobotDiagram();
+		
+		Trajectory traj = new SimpleOneDimensionalTrajectory(40, Hood.MAX_VEL, Hood.MAX_ACC);
+		profiler = new OneDimensionalMotionProfiler(Hood.getInstance(), Hood.getInstance(), traj,0,0,0);
+
 	}
 
 	private void initSmartDashboard() {
@@ -231,6 +241,7 @@ public class Robot extends IterativeRobot {
 
 
 		SmartDashboard.putNumber("Android Adjust Factor", RobotMap.ANDROID_ADJUST_FACTOR);
+		
 		
 	}
 

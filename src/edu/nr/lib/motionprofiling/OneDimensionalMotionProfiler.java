@@ -28,7 +28,7 @@ public class OneDimensionalMotionProfiler extends TimerTask implements MotionPro
 		
 	private Trajectory trajectory;
 	
-	public OneDimensionalMotionProfiler(PIDOutput out, PIDSource source, SimpleOneDimensionalTrajectory trajectory, double ka, double kp, double kd, long period) {
+	public OneDimensionalMotionProfiler(PIDOutput out, PIDSource source, Trajectory trajectory, double ka, double kp, double kd, long period) {
 		this.out = out;
 		this.source = source;
 		this.period = period;
@@ -42,7 +42,7 @@ public class OneDimensionalMotionProfiler extends TimerTask implements MotionPro
 		this.kd = kd;
 	}
 	
-	public OneDimensionalMotionProfiler(PIDOutput out, PIDSource source, SimpleOneDimensionalTrajectory trajectory, double ka, double kp, double kd) {
+	public OneDimensionalMotionProfiler(PIDOutput out, PIDSource source, Trajectory trajectory, double ka, double kp, double kd) {
 		this(out, source, trajectory, ka, kp, kd, defaultPeriod);
 	}
 	
@@ -69,34 +69,37 @@ public class OneDimensionalMotionProfiler extends TimerTask implements MotionPro
 			
 			out.pidWrite(output);
 			
-			SmartDashboard.putNumber("Motion Profiler Output", output);
+			source.setPIDSourceType(PIDSourceType.kRate);
+			SmartDashboard.putString("Motion Profiler V", output + ":" + source.pidGet()/trajectory.getMaxVelocity());
+			source.setPIDSourceType(PIDSourceType.kDisplacement);
+			SmartDashboard.putString("Motion Profiler X", trajectory.getGoalPosition(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime) + ":" + source.pidGet());
 		}
 		prevTime = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
 	}
 		
 	/**
-	 * Stop the profiler from running
+	 * Stop the profiler from running and resets it
 	 */
 	public void disable() {
 		enabled = false;
+		reset();
 	}
 	
 	/**
-	 * Start the profiler running
+	 * Reset the profiler and start it running
 	 */
 	public void enable() {
 		enabled = true;
+		reset();
 	}
 	
 	/**
 	 * Reset the previous time to the current time.
-	 * TODO: reset motion profiler
 	 * Doesn't disable the controller
 	 */
 	public void reset() {
 		errorLast = 0;
-		startTime = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
-		prevTime = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
+		startTime = prevTime = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
 	}
 
 	/**

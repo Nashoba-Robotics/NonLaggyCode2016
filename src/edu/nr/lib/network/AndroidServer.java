@@ -45,17 +45,21 @@ public class AndroidServer implements Runnable {
 				Socket clientSocket;
 				try {
 					clientSocket = new Socket(defaultIpAddress, defaultPort);
+					clientSocket.setSoTimeout(1000);
+					System.out.println("Connected to client android");
 					try {
 						while(true) {
 							BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 							String message = inFromServer.readLine();
 							if(message == null) {
+								System.out.println("Null response from server");
 								clientSocket.close();
 								setData(null);
 								goodToGo = false;
 								Thread.sleep(1000);								
 								break;
-							} 								
+							}
+							System.out.println("Message: " + message);
 							goodToGo = true;
 							int x = message.indexOf(':');
 							int y = message.indexOf(';');
@@ -64,7 +68,7 @@ public class AndroidServer implements Runnable {
 							    String turnAngle_ = message.substring(x+1, y);
 							    String time_ = message.substring(y+1);
 							    try {
-							    	double distance = Double.valueOf(distance_)/*SmartDashboard.getNumber("Android Adjust Factor")*/;
+							    	double distance = Double.valueOf(distance_);/*SmartDashboard.getNumber("Android Adjust Factor");*/
 							    	
 							    	//For old balls:
 							    	//distance = distance * ((distance*0.0142857) + 0.821429);
@@ -80,7 +84,7 @@ public class AndroidServer implements Runnable {
 							    	double turnAngle = -Double.valueOf(turnAngle_);
 							    	long time = Long.valueOf(time_);
 							    	setData(turnAngle, distance, System.currentTimeMillis() - time);
-								    //System.out.println("Angle: " + turnAngle + " Distance: " + distance + " time: " + time);
+								    System.out.println("Angle: " + turnAngle + " Distance: " + distance + " time: " + time);
 								    SmartDashboard.putNumber("Camera distance", distance);
 								    SmartDashboard.putNumber("Camera angle", turnAngle);
 							    } catch (NumberFormatException e) {

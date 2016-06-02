@@ -93,7 +93,7 @@ public class TalonEncoder implements PIDSource {
 	 * @return rate
 	 */
 	public double getRateWithoutScaling() {
-		return talon.getEncVelocity() * (distancePerRev / ticksPerRev) * (reverseDirection ? -1 : 1);
+		return talon.getEncVelocity() * (distancePerRev / ticksPerRev) * (reverseDirection ? -1 : 1) * 10;
 	}
 
 }
