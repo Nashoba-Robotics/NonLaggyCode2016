@@ -45,7 +45,6 @@ public class AndroidServer implements Runnable {
 				Socket clientSocket;
 				try {
 					clientSocket = new Socket(defaultIpAddress, defaultPort);
-					clientSocket.setSoTimeout(1000);
 					System.out.println("Connected to client android");
 					try {
 						while(true) {
