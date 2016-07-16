@@ -284,11 +284,11 @@ public class OI implements SmartDashboardSource, Periodic {
 	}
 
 	public double getTankLeftValue() {
-		return -snapDriveJoysticks(driveRight.getY());
+		return -snapDriveJoysticks(driveLeft.getY());
 	}
 
 	public double getTankRightValue() {
-		return snapDriveJoysticks(driveLeft.getY());
+		return snapDriveJoysticks(driveRight.getY());
 	}
 
 	public double getDriveLeftXValue() {

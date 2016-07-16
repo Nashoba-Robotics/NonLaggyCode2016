@@ -180,7 +180,7 @@ public class Robot extends IterativeRobot {
 		autoCommandChooser.addDefault("Do Nothing", new AutonDoNothingCommand());
 		// autoCommandChooser.addObject("Follow instructions", new
 		// AutonFollowInstructionsCommand());
-		autoCommandChooser.addObject("Align and shoot", new AutonAlignCommand());
+		//autoCommandChooser.addObject("Align and shoot", new AutonAlignCommand());
 		autoCommandChooser.addObject("Forward no shoot Low Bar", new AutonForwardLowBarCommand());
 		autoCommandChooser.addObject("Forward no shoot Rough Terrain", new AutonForwardRoughTerrainCommand());
 		autoCommandChooser.addObject("Forward no shoot Guillotine", new AutonGuillotineCommandGroup());
