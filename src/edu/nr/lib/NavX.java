@@ -1,8 +1,10 @@
 package edu.nr.lib;
 
 import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SPI;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.nr.robotics.Robot;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class NavX {
@@ -28,8 +30,8 @@ public class NavX {
             /* See http://navx-mxp.kauailabs.com/guidance/selecting-an-interface/ for details. */
             ahrs = new AHRS(SPI.Port.kOnboardCS0); 
 			//ahrs = new AHRS(SerialPort.Port.kUSB);
-        } catch (RuntimeException ex ) {
-            DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
+        } catch (Exception ex ) {
+            System.out.println("Error instantiating navX MXP:  " + ex.getMessage());
         }	
 	}
 
