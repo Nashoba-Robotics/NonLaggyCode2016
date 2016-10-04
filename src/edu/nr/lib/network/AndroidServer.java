@@ -39,7 +39,6 @@ public class AndroidServer implements Runnable {
 	@Override
 	public void run() {
 		while(true) {
-			try {
 				goodToGo = true;
 				setData(null);
 				Socket clientSocket;
@@ -96,18 +95,21 @@ public class AndroidServer implements Runnable {
 						clientSocket.close();
 						setData(null);
 						goodToGo = false;
+					} catch (InterruptedException e) {
+						e.printStackTrace();
 					} 
 				} catch (UnknownHostException e) {
 					System.out.println("Unknown host to connect to");
 				} catch (ConnectException e) {
 					goodToGo = false;
-					Thread.sleep(1000);
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
-				} 
-			} catch(Exception e) {
-				
-			}
+				}
 		}
 	}
 
