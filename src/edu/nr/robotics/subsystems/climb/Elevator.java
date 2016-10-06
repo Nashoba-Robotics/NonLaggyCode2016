@@ -25,7 +25,7 @@ public class Elevator extends Subsystem implements SmartDashboardSource {
 		if(EnabledSubsystems.climbEnabled) {
 			talon = new CANTalon(RobotMap.ELEVATOR_TALON);
 			talon.enableBrakeMode(true);
-			enc = new TalonEncoder(talon);
+			enc = new TalonEncoder(talon, false);
 			LiveWindow.addSensor("Elevator", "Speed", LiveWindowClasses.elevatorSpeed);
 		}
 		

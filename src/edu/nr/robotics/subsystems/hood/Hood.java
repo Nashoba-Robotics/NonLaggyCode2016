@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
+import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
+import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,6 +24,8 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
     
 	public static final double MAX_ACC = 100;
 	public static final double MAX_VEL = 30;
+	
+	public static final double MAX_RPM = 83.325;
 	
 	
 	CANTalon talon;	
@@ -48,15 +52,27 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 		if(EnabledSubsystems.hoodEnabled) {
 			talon = new CANTalon(RobotMap.HOOD_TALON);
 			talon.enableBrakeMode(true);
-			enc = new TalonEncoder(talon);
+			
+			talon.changeControlMode(TalonControlMode.Speed);
+			
+			talon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+			
+			talon.setEncPosition(0);
+			
+			talon.configEncoderCodesPerRev(256);
+			
+			talon.setF(8);
+			talon.setP(10);
+			
+			enc = new TalonEncoder(talon,true);
 			enc.setPIDSourceType(PIDSourceType.kDisplacement);
 			enc.setDistancePerRev(RobotMap.HOOD_TICK_TO_ANGLE_MULTIPLIER);
-			pid = new PID(0.25, 0.00, 0.001, enc, talon);
+			/*pid = new PID(0.25, 0.00, 0.001, enc, talon);
 			
 			LiveWindow.addSensor("Hood", "Bottom Switch", LiveWindowClasses.hoodBottomSwitch);
 			LiveWindow.addSensor("Hood", "Top Switch", LiveWindowClasses.hoodTopSwitch);
 			
-			LiveWindow.addSensor("Hood", "PID", pid);
+			LiveWindow.addSensor("Hood", "PID", pid);*/
 		}
 	}
 
@@ -89,7 +105,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 		if(pid != null)
 			pid.disable();
 		if(talon != null)
-			talon.set(speed);
+			talon.setSetpoint(speed * MAX_RPM); //1.39 is the max rpm
 	}
 	
 	/**
@@ -171,8 +187,23 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	public void smartDashboardInfo() {
 		SmartDashboard.putNumber("Hood Angle", get());
 		SmartDashboard.putNumber("Hood Distance", angleToDistance(get()));
-		SmartDashboard.putNumber("Hood Velocity", enc.getRateWithoutScaling());
-		SmartDashboard.putString("Hood PID", get() + ":" + getSetpoint() + ":" + (getSetpoint()-RobotMap.HOOD_THRESHOLD) + ":" + (getSetpoint()+RobotMap.HOOD_THRESHOLD));
+		if(enc != null) {
+			SmartDashboard.putNumber("Hood Velocity", enc.getRateWithoutScaling());
+			SmartDashboard.putNumber("Hood Acceleration", enc.getAccelWithoutScaling());
+		}
+		SmartDashboard.putString("Hood PID", 
+				talon.getSpeed() /*rpm at the encoder shaft*/ 
+				/ 11.11 /*gear ratio*/ 
+				* 360 /*degrees per rotation*/ 
+				/ 60 /*seconds per minute*/ 
+				
+				+ ":" + talon.getSetpoint()/*rpm at the encoder shaft*/ 
+				/ 11.11 /*gear ratio*/ 
+				* 360 /*degrees per rotation*/ 
+				/ 60 /*seconds per minute*/ );
+		//SmartDashboard.putString("Hood PID", get() + ":" + getSetpoint() + ":" + (getSetpoint()-RobotMap.HOOD_THRESHOLD) + ":" + (getSetpoint()+RobotMap.HOOD_THRESHOLD));
+		
+
 	}
 
 	public boolean isAtPosition(Position pos) {

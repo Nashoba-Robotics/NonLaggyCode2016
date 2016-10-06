@@ -41,6 +41,8 @@ import edu.nr.robotics.subsystems.drive.DriveTurnSmartDashboardCommand;
 import edu.nr.robotics.subsystems.drive.FieldCentric;
 import edu.nr.robotics.subsystems.hood.Hood;
 import edu.nr.robotics.subsystems.hood.HoodJetsonPositionCommand;
+import edu.nr.robotics.subsystems.hood.HoodProfilerEnableCommand;
+import edu.nr.robotics.subsystems.hood.HoodSmartDashboardVelocityCommand;
 import edu.nr.robotics.subsystems.intakearm.IntakeArm;
 import edu.nr.robotics.subsystems.intakearm.IntakeArmMoveUpUntilPositionCommand;
 import edu.nr.robotics.subsystems.intakearm.IntakeArmSetPIDSmartDashboardCommand;
@@ -198,7 +200,13 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Gyro angle command", new WaitUntilGyroCommand(20));
 
 		SmartDashboard.putData("Hood Jetson angle command", new HoodJetsonPositionCommand());
+		
+		SmartDashboard.putData("Hood enable motion profiler", new HoodProfilerEnableCommand());
 
+		SmartDashboard.putNumber("Hood velocity for setting (deg per s)", 0);
+		
+		SmartDashboard.putData("Hood go at SmartDashboard speed", new HoodSmartDashboardVelocityCommand());
+		
 		SmartDashboard.putData("Turn 3 degree command", new DriveAnglePIDCommand(-15, AngleUnit.DEGREE));
 
 		LiveWindow.addSensor("Jetson", "Ready to shoot", LiveWindowClasses.readyToShoot);
