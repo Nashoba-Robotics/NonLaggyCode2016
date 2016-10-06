@@ -37,31 +37,39 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 
 	private Drive() {
 		if(EnabledSubsystems.driveEnabled) {
+			//Set the left talon variable to be for the talon connected to RobotMap.TALON_LEFT_B (set to 3)
 			leftTalon = new CANTalon(RobotMap.TALON_LEFT_B);
 			
+			//Go to speed mode instead of voltage mode (the default), or some other mode, like motion profiling
 			leftTalon.changeControlMode(TalonControlMode.Speed);
 			
+			//Enable brake mode
 			leftTalon.enableBrakeMode(true);
+			
+			//Tell the talon that it uses a quad encoder that has moved 0 ticks so far
 			leftTalon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 			leftTalon.setEncPosition(0);
 			
+			//Reverses the sensor on the left talon. The right talon is not reversed. This is because they are on opposite sides of the robot.
 			leftTalon.reverseSensor(true);
 			
-			
+			//Tell the left talon that it has ticksPerRev (set to 30,720, this is from Greg) ticks per revolution.
 			leftTalon.configEncoderCodesPerRev((int)ticksPerRev);
 
+			//Set the FPID values. The I and D values are current set to 0, the F is set to 0.02, the P is set to 0.01.
+			//These values were found through subjective testing
 			leftTalon.setF(RobotMap.DRIVE_F); 
 			leftTalon.setP(RobotMap.DRIVE_P); 
 			leftTalon.setI(RobotMap.DRIVE_I); 
 			leftTalon.setD(RobotMap.DRIVE_D); 
 			
-	
+			//This is setting the secondary talon on the left side (in port RobotMap.TALON_LEFT_A) to follow the primary talon on the left side.
 			tempLeftTalon = new CANTalon(RobotMap.TALON_LEFT_A);
 			tempLeftTalon.changeControlMode(TalonControlMode.Follower);
 			tempLeftTalon.set(leftTalon.getDeviceID());
 			tempLeftTalon.enableBrakeMode(true);
 			
-			
+			//The same thing as above happens for the right talon
 			rightTalon = new CANTalon(RobotMap.TALON_RIGHT_A);
 			rightTalon.enableBrakeMode(true);
 
@@ -83,7 +91,7 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 			tempRightTalon.enableBrakeMode(true);
 		}
 	}
-
+	
 	public static Drive getInstance() {
 		init();
 		return singleton;
