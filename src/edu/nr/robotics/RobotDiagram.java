@@ -27,22 +27,22 @@ public class RobotDiagram implements NamedSendable {
 			table.putString("~TYPE~", "robo-diagram");
 
 			table.putBoolean("Auto Align Happening", false);
-			table.putBoolean("All Systems Go", Math.abs(AndroidServer.getInstance().getTurnAngle()) < 0.5 && Shooter.getInstance().getSped() && Math.abs(Hood.distanceToAngle(AndroidServer.getInstance().getDistance()) - Hood.getInstance().get()) < RobotMap.HOOD_THRESHOLD);
+			table.putBoolean("All Systems Go", Math.abs(AndroidServer.getInstance().getTurnAngle()) < 0.5 && Shooter.getInstance().getSped() && Math.abs(Hood.distanceToAngle(AndroidServer.getInstance().getDistance()) - Hood.getInstance().getDisplacement()) < RobotMap.HOOD_THRESHOLD);
 			
 			//Hood
-			table.putBoolean("Hood Bottom", Hood.getInstance().isAtPosition(Hood.Position.BOTTOM));
-			table.putBoolean("Hood Top", Hood.getInstance().isAtPosition(Hood.Position.TOP));
-			table.putNumber("Hood Angle", Hood.getInstance().get());
+			table.putBoolean("Hood Bottom", Hood.Position.BOTTOM.isAtPosition());
+			table.putBoolean("Hood Top", Hood.Position.TOP.isAtPosition());
+			table.putNumber("Hood Angle", Hood.getInstance().getDisplacement());
 			
 	    	boolean hoodAtThreshold;
 	    	if(!AndroidServer.getInstance().goodToGo()) { 
 	    		hoodAtThreshold = false;
 	    	} else {
-	    		hoodAtThreshold = Math.abs(Hood.getInstance().get() - Hood.distanceToAngle(AndroidServer.getInstance().getDistance())) > RobotMap.HOOD_THRESHOLD;
+	    		hoodAtThreshold = Math.abs(Hood.getInstance().getDisplacement() - Hood.distanceToAngle(AndroidServer.getInstance().getDistance())) > RobotMap.HOOD_THRESHOLD;
 	    	}
 	    	
 			table.putBoolean("Hood at Threshold", hoodAtThreshold);
-			table.putNumber("Shot distance at angle", Hood.angleToDistance(Hood.getInstance().get()));
+			table.putNumber("Shot distance at angle", Hood.angleToDistance(Hood.getInstance().getDisplacement()));
 			
 			//Intake Arm
 			table.putBoolean("Intake Top Stop", IntakeArm.getInstance().get() > RobotMap.INTAKE_TOP_POS + RobotMap.INTAKE_ARM_THRESHOLD);

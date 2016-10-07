@@ -15,7 +15,7 @@ public class HoodMoveDownUntilLimitSwitchCommand extends NRCommand {
     
     @Override
 	protected void onStart() {
-    	Hood.getInstance().disable();
+    	Hood.getInstance().disablePID();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -34,6 +34,6 @@ public class HoodMoveDownUntilLimitSwitchCommand extends NRCommand {
     @Override
     protected void onEnd(boolean interrupted) {
     	Hood.getInstance().setSetpoint(0);
-    	Hood.getInstance().enable();
+    	Hood.getInstance().enablePID();
     }
 }

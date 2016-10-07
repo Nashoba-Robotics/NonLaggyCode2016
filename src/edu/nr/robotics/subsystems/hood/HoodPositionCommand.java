@@ -22,7 +22,7 @@ public class HoodPositionCommand extends NRCommand {
 
 	@Override
 	protected void onStart() {
-		Hood.getInstance().enable();
+		Hood.getInstance().enablePID();
 		prevSpeed = Hood.getInstance().getMaxSpeed();
 		Hood.getInstance().setMaxSpeedPID(speed);
 	}
@@ -39,7 +39,7 @@ public class HoodPositionCommand extends NRCommand {
 
 	@Override
 	protected boolean isFinishedNR() {
-		return Math.abs(Hood.getInstance().get() - val) < 0.005;
+		return Math.abs(Hood.getInstance().getDisplacement() - val) < 0.005;
 	}
 
 }

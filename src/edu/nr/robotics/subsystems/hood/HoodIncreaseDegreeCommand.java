@@ -14,8 +14,8 @@ public class HoodIncreaseDegreeCommand extends NRCommand {
 
 	@Override
 	protected void onStart() {
-		prevVal = Hood.getInstance().get();
-		Hood.getInstance().enable();
+		prevVal = Hood.getInstance().getDisplacement();
+		Hood.getInstance().enablePID();
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public class HoodIncreaseDegreeCommand extends NRCommand {
 
 	@Override
 	protected boolean isFinishedNR() {
-		return Math.abs(Hood.getInstance().get() - (val + prevVal)) < 0.3 || ((val > 0) ? Hood.getInstance().isTopLimitSwitchClosed() : Hood.getInstance().isBotLimitSwitchClosed());
+		return Math.abs(Hood.getInstance().getDisplacement() - (val + prevVal)) < 0.3 || ((val > 0) ? Hood.getInstance().isTopLimitSwitchClosed() : Hood.getInstance().isBotLimitSwitchClosed());
 	}
 
 }

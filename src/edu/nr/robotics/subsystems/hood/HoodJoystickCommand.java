@@ -14,8 +14,8 @@ public class HoodJoystickCommand extends NRCommand {
     
     @Override
     protected void onStart() {
-    	if(Hood.getInstance().isEnable())
-    		Hood.getInstance().disable();
+    	if(Hood.getInstance().isPIDEnabled())
+    		Hood.getInstance().disablePID();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -32,6 +32,6 @@ public class HoodJoystickCommand extends NRCommand {
     
     @Override
 	protected void onEnd(boolean interrupted) {
-    	Hood.getInstance().enable();
+    	Hood.getInstance().enablePID();
     }
 }

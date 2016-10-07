@@ -21,6 +21,6 @@ public class HoodBottomCommand extends CommandGroup {
 	
 	@Override
 	public boolean isFinished() {
-		return Hood.getInstance().isAtBottom();
+		return Hood.Position.BOTTOM.isAtPosition();
 	}
 }

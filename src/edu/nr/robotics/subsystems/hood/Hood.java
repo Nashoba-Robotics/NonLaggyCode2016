@@ -46,6 +46,19 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 		Position(double position) {
 			this.pos = position;
 		}
+		
+		private static boolean isAtPosition(Position pos, double angle) {
+			return pos.pos < angle + RobotMap.HOOD_THRESHOLD && pos.pos > angle - RobotMap.HOOD_THRESHOLD;
+		}
+		
+		private static boolean isAtPosition(Position pos) {
+			return isAtPosition(pos,Hood.getInstance().enc.get());
+		}
+		
+		public boolean isAtPosition() {
+			return isAtPosition(this);
+		}
+		
 	}
 	
 	private Hood() {
@@ -61,18 +74,18 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 			
 			talon.configEncoderCodesPerRev(256);
 			
-			talon.setF(8);
+			talon.setF(7.13);
 			talon.setP(10);
 			
 			enc = new TalonEncoder(talon,true);
 			enc.setPIDSourceType(PIDSourceType.kDisplacement);
 			enc.setDistancePerRev(RobotMap.HOOD_TICK_TO_ANGLE_MULTIPLIER);
-			/*pid = new PID(0.25, 0.00, 0.001, enc, talon);
+			pid = new PID(0.25, 0.00, 0.001, enc, talon);
 			
 			LiveWindow.addSensor("Hood", "Bottom Switch", LiveWindowClasses.hoodBottomSwitch);
 			LiveWindow.addSensor("Hood", "Top Switch", LiveWindowClasses.hoodTopSwitch);
 			
-			LiveWindow.addSensor("Hood", "PID", pid);*/
+			LiveWindow.addSensor("Hood", "PID", pid);
 		}
 	}
 
@@ -105,7 +118,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 		if(pid != null)
 			pid.disable();
 		if(talon != null)
-			talon.setSetpoint(speed * MAX_RPM); //1.39 is the max rpm
+			talon.setSetpoint(speed * MAX_RPM);
 	}
 	
 	/**
@@ -133,7 +146,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	/**
 	 * Enable the PID
 	 */
-	public void enable() {
+	public void enablePID() {
 		if(pid != null)
 			pid.enable();
 	}
@@ -141,7 +154,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	/**
 	 * Disable the PID
 	 */
-	public void disable() {
+	public void disablePID() {
 		if(pid != null)
 			pid.disable();
 	}
@@ -150,7 +163,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	 * Gets whether the PID is enabled or not
 	 * @return whether the PID is enabled
 	 */
-	public boolean isEnable() {
+	public boolean isPIDEnabled() {
 		if(pid != null)
 			return pid.isEnable();
 		return false;
@@ -160,7 +173,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	 * Gets the value of the encoder
 	 * @return the value of the encoder
 	 */
-	public double get() {
+	public double getDisplacement() {
 		if(enc != null)
 			return enc.get() ;
 		return 0;
@@ -170,9 +183,9 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	 * Gets whether the motor is still moving
 	 * @return whether the motor is still moving
 	 */
-	public boolean getMoving() {
-		if(pid != null)
-			return Math.abs(pid.getError()) > 0.05;
+	public boolean isMoving() {
+		if(enc != null)
+			return Math.abs(enc.getRateWithoutScaling()) > 0.05;
 		return false;
 		//0.05 is a number I just made up
 	}
@@ -185,8 +198,8 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	
 	@Override
 	public void smartDashboardInfo() {
-		SmartDashboard.putNumber("Hood Angle", get());
-		SmartDashboard.putNumber("Hood Distance", angleToDistance(get()));
+		SmartDashboard.putNumber("Hood Angle", getDisplacement());
+		SmartDashboard.putNumber("Hood Distance", angleToDistance(getDisplacement()));
 		if(enc != null) {
 			SmartDashboard.putNumber("Hood Velocity", enc.getRateWithoutScaling());
 			SmartDashboard.putNumber("Hood Acceleration", enc.getAccelWithoutScaling());
@@ -201,23 +214,10 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 				/ 11.11 /*gear ratio*/ 
 				* 360 /*degrees per rotation*/ 
 				/ 60 /*seconds per minute*/ );
-		//SmartDashboard.putString("Hood PID", get() + ":" + getSetpoint() + ":" + (getSetpoint()-RobotMap.HOOD_THRESHOLD) + ":" + (getSetpoint()+RobotMap.HOOD_THRESHOLD));
 		
-
-	}
-
-	public boolean isAtPosition(Position pos) {
-		if(enc != null)
-			return enc.get() + RobotMap.HOOD_THRESHOLD > pos.pos &&  enc.get() - RobotMap.HOOD_THRESHOLD < pos.pos;
-		return false;
-	}
-
-	public boolean isAtBottom() {
-		return isAtPosition(Position.BOTTOM);
-	}
-
-	public boolean isAtTop() {
-		return isAtPosition(Position.TOP);
+		
+		SmartDashboard.putString("Hood PID", getDisplacement() + ":" + getSetpoint() + ":" + (getSetpoint()-RobotMap.HOOD_THRESHOLD) + ":" + (getSetpoint()+RobotMap.HOOD_THRESHOLD));
+		
 	}
 
 	@Override
@@ -276,7 +276,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	@Override
 	public double pidGet() {
 		if(pidSource == PIDSourceType.kDisplacement)
-			return get();
+			return getDisplacement();
 		else
 			return enc.getRateWithoutScaling();
 	}

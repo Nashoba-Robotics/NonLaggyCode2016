@@ -372,7 +372,7 @@ public class Robot extends IterativeRobot {
 		// Fix intake arm cancelling
 		IntakeRoller.getInstance().setRollerSpeed(0);
 		LoaderRoller.getInstance().setLoaderSpeed(0);
-		Hood.getInstance().disable();
+		Hood.getInstance().disablePID();
 		Elevator.getInstance().setMotorValue(0);
 	}
 
