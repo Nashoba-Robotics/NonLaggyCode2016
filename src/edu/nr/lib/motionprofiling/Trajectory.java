@@ -8,5 +8,9 @@ public interface Trajectory {
 
 	public double getGoalAccel(double time);
 
-	public double getMaxVelocity();
+	public double getMaxPossibleVelocity();
+	
+	public double getMaxUsedVelocity();
+
+	public double getMaxUsedAccel();
 }

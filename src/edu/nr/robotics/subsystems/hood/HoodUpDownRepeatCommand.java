@@ -1,11 +1,16 @@
 package edu.nr.robotics.subsystems.hood;
 
 import edu.nr.lib.NRCommand;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.nr.robotics.OI;
 
-public class HoodSmartDashboardVelocityCommand extends NRCommand {
+/**
+ *
+ */
+public class HoodUpDownRepeatCommand extends NRCommand {
+
+	double moveValue = 0;
 	
-    public HoodSmartDashboardVelocityCommand() {
+    public HoodUpDownRepeatCommand(double moveValue) {
         requires(Hood.getInstance());
     }
     
@@ -14,11 +19,24 @@ public class HoodSmartDashboardVelocityCommand extends NRCommand {
     	if(Hood.getInstance().isPIDEnabled())
     		Hood.getInstance().disablePID();
     }
-
+    
+    boolean goingUp = true;
+    
     // Called repeatedly when this Command is scheduled to run
     @Override
 	protected void onExecute() {
-    	Hood.getInstance().setMotorInDPS(SmartDashboard.getNumber("Hood velocity for setting (deg per s)"));
+    	if(goingUp) {
+    		Hood.getInstance().setMotor(moveValue);
+    	} else {
+    		Hood.getInstance().setMotor(-moveValue);
+    	}
+    	if(Hood.getInstance().isTopLimitSwitchClosed()) {
+			goingUp = false;
+		}
+
+    	if(Hood.getInstance().isBotLimitSwitchClosed()) {
+			goingUp = true;
+		}
     }
 
     // Make this return true when this Command no longer needs to run execute()

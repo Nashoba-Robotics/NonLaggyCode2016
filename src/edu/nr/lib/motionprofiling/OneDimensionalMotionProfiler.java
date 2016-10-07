@@ -23,28 +23,34 @@ public class OneDimensionalMotionProfiler extends TimerTask implements MotionPro
 	private PIDOutput out;
 	private PIDSource source;
 	
-	private double ka, kp, kd;
+	private double ka, kp, kd, kv;
 	private double errorLast;
+	
+	private double initialPosition;
 		
 	private Trajectory trajectory;
 	
-	public OneDimensionalMotionProfiler(PIDOutput out, PIDSource source, Trajectory trajectory, double ka, double kp, double kd, long period) {
+	public OneDimensionalMotionProfiler(PIDOutput out, PIDSource source, Trajectory trajectory, double ka, double kp, double kd, double kvMult, long period) {
 		this.out = out;
 		this.source = source;
 		this.period = period;
 		this.trajectory = trajectory;
 		timer = new Timer();
 		timer.schedule(this, 0, this.period);
-		prevTime = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
+		reset();
 		this.source.setPIDSourceType(PIDSourceType.kDisplacement);
 		this.ka = ka;
 		this.kp = kp;
 		this.kd = kd;
+		this.kv = 1/trajectory.getMaxUsedVelocity() * kvMult;
 	}
 	
-	public OneDimensionalMotionProfiler(PIDOutput out, PIDSource source, Trajectory trajectory, double ka, double kp, double kd) {
-		this(out, source, trajectory, ka, kp, kd, defaultPeriod);
+	public OneDimensionalMotionProfiler(PIDOutput out, PIDSource source, Trajectory trajectory, double ka, double kp, double kd, double kvMult) {
+		this(out, source, trajectory, ka, kp, kd, kvMult, defaultPeriod);
 	}
+	
+	double timeOfVChange = 0;
+	double prevV;
 	
 	@Override
 	public void run() {
@@ -56,9 +62,9 @@ public class OneDimensionalMotionProfiler extends TimerTask implements MotionPro
 
 			double output = 0;
 						
-			output += trajectory.getGoalVelocity(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime) / trajectory.getMaxVelocity();
+			output += trajectory.getGoalVelocity(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime) * kv;
 			
-			output += trajectory.getGoalAccel(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime) * ka;
+			output += trajectory.getGoalAccel(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime) / trajectory.getMaxUsedAccel() * ka;
 			
 			double error = trajectory.getGoalPosition(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime) - source.pidGet();
 			
@@ -67,13 +73,21 @@ public class OneDimensionalMotionProfiler extends TimerTask implements MotionPro
 			output += (error - errorLast) / dt * kd;
 			errorLast = error;
 			
-			out.pidWrite(output);
+			out.pidWrite(output * trajectory.getMaxUsedVelocity() / trajectory.getMaxPossibleVelocity());
 			
 			source.setPIDSourceType(PIDSourceType.kRate);
-			SmartDashboard.putString("Motion Profiler V", output + ":" + source.pidGet()/trajectory.getMaxVelocity());
+			SmartDashboard.putString("Motion Profiler V", source.pidGet() + ":" + output * trajectory.getMaxUsedVelocity());
 			source.setPIDSourceType(PIDSourceType.kDisplacement);
-			SmartDashboard.putString("Motion Profiler X", trajectory.getGoalPosition(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime) + ":" + source.pidGet());
+			SmartDashboard.putString("Motion Profiler X", source.pidGet() + ":" + (trajectory.getGoalPosition(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime) + initialPosition));
 		}
+		
+		if(source.pidGet() != prevV) {
+			//System.out.println("delta t for motion profiler: " + (edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - timeOfVChange));
+			timeOfVChange = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
+			prevV = source.pidGet();
+		}
+		System.out.println("delta t for motion profiler: " + (edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - prevTime));
+
 		prevTime = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
 	}
 		
@@ -100,6 +114,10 @@ public class OneDimensionalMotionProfiler extends TimerTask implements MotionPro
 	public void reset() {
 		errorLast = 0;
 		startTime = prevTime = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
+		PIDSourceType type = source.getPIDSourceType();
+		source.setPIDSourceType(PIDSourceType.kDisplacement);
+		initialPosition = source.pidGet();
+		source.setPIDSourceType(type);
 	}
 
 	/**

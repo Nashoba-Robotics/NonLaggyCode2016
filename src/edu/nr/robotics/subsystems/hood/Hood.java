@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Hood extends Subsystem implements SmartDashboardSource, Periodic, PIDOutput, PIDSource {
     
 	public static final double MAX_ACC = 100;
-	public static final double MAX_VEL = 30;
+	public static final double MAX_VEL = 45; //TODO: find more accurately
 	
 	public static final double MAX_RPM = 83.325;
 	
@@ -74,18 +74,18 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 			
 			talon.configEncoderCodesPerRev(256);
 			
-			talon.setF(7.13);
-			talon.setP(10);
+			talon.setF(7.3);
+			talon.setP(2);
 			
 			enc = new TalonEncoder(talon,true);
 			enc.setPIDSourceType(PIDSourceType.kDisplacement);
 			enc.setDistancePerRev(RobotMap.HOOD_TICK_TO_ANGLE_MULTIPLIER);
-			pid = new PID(0.25, 0.00, 0.001, enc, talon);
+			//pid = new PID(0.25, 0.00, 0.001, enc, talon);
 			
 			LiveWindow.addSensor("Hood", "Bottom Switch", LiveWindowClasses.hoodBottomSwitch);
 			LiveWindow.addSensor("Hood", "Top Switch", LiveWindowClasses.hoodTopSwitch);
 			
-			LiveWindow.addSensor("Hood", "PID", pid);
+			//LiveWindow.addSensor("Hood", "PID", pid);
 		}
 	}
 
@@ -115,10 +115,24 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	 * @param speed the speed to set the motor to, from -1 to 1
 	 */
 	public void setMotor(double speed) {
-		if(pid != null)
-			pid.disable();
+		disablePID();
 		if(talon != null)
 			talon.setSetpoint(speed * MAX_RPM);
+	}
+
+	public void setMotorInRPM(double rpm) {
+		disablePID();
+		if(talon != null)
+			talon.setSetpoint(rpm);
+	}
+	
+	public void setMotorInDPS(double degpersec) {
+		disablePID();
+		if(talon != null)
+			talon.setSetpoint(degpersec 
+				* 11.11 /*gear ratio*/ 
+				/ 360 /*degrees per rotation*/ 
+				* 60 /*seconds per minute*/ );
 	}
 	
 	/**
@@ -155,7 +169,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	 * Disable the PID
 	 */
 	public void disablePID() {
-		if(pid != null)
+		if(pid != null && pid.isEnable())
 			pid.disable();
 	}
 	
@@ -204,7 +218,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 			SmartDashboard.putNumber("Hood Velocity", enc.getRateWithoutScaling());
 			SmartDashboard.putNumber("Hood Acceleration", enc.getAccelWithoutScaling());
 		}
-		SmartDashboard.putString("Hood PID", 
+		SmartDashboard.putString("Hood Velocity PID", 
 				talon.getSpeed() /*rpm at the encoder shaft*/ 
 				/ 11.11 /*gear ratio*/ 
 				* 360 /*degrees per rotation*/ 
@@ -216,7 +230,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 				/ 60 /*seconds per minute*/ );
 		
 		
-		SmartDashboard.putString("Hood PID", getDisplacement() + ":" + getSetpoint() + ":" + (getSetpoint()-RobotMap.HOOD_THRESHOLD) + ":" + (getSetpoint()+RobotMap.HOOD_THRESHOLD));
+		SmartDashboard.putString("Hood Displacement PID", getDisplacement() + ":" + getSetpoint() + ":" + (getSetpoint()-RobotMap.HOOD_THRESHOLD) + ":" + (getSetpoint()+RobotMap.HOOD_THRESHOLD));
 		
 	}
 

@@ -155,8 +155,8 @@ public class Robot extends IterativeRobot {
 		initSmartDashboard();
 		robotDiagram = new RobotDiagram();
 		
-		Trajectory traj = new SimpleOneDimensionalTrajectory(40, Hood.MAX_VEL, Hood.MAX_ACC);
-		profiler = new OneDimensionalMotionProfiler(Hood.getInstance(), Hood.getInstance(), traj,0,0,0);
+		Trajectory traj = new SimpleOneDimensionalTrajectory(40, Hood.MAX_VEL, Hood.MAX_VEL * 2.0/3.0, Hood.MAX_ACC);
+		profiler = new OneDimensionalMotionProfiler(Hood.getInstance(), Hood.getInstance(), traj,0.25,0.0,0.0,1.1);
 
 	}
 
