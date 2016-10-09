@@ -3,9 +3,8 @@ package edu.nr.lib;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.nr.robotics.Robot;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.nr.lib.units.Angle;
+import edu.nr.lib.units.Angle.Unit;
 
 public class NavX {
 	
@@ -39,13 +38,8 @@ public class NavX {
 		return ahrs.getDisplacementX();
 	}
 
-	public double getYaw(AngleUnit unit) {
-		if(unit == AngleUnit.DEGREE)
-			return ahrs.getAngle();
-		if(unit == AngleUnit.RADIAN)
-			return Math.toRadians(ahrs.getAngle());
-		System.err.println("Angle unit: " + unit + " is not known by the NavX getYaw method");
-		return 0;
+	public Angle getYaw() {
+		return new Angle(Unit.DEGREE,ahrs.getAngle());
 	}
 	
 }

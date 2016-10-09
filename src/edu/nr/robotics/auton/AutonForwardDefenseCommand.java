@@ -1,7 +1,7 @@
 package edu.nr.robotics.auton;
 
-import edu.nr.lib.AngleUnit;
 import edu.nr.lib.WaitUntilGyroCommand;
+import edu.nr.lib.units.Angle;
 import edu.nr.robotics.Robot;
 import edu.nr.robotics.RobotMap;
 import edu.nr.robotics.commandgroups.AutoShovelOfFriesCommandGroup;

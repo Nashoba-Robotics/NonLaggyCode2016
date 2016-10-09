@@ -1,5 +1,8 @@
 package edu.nr.robotics;
 
+import edu.nr.lib.units.Angle;
+import edu.nr.lib.units.Angle.Unit;
+
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
  * to a variable name. This provides flexibility changing wiring, makes checking
@@ -59,7 +62,7 @@ public class RobotMap {
 	public static final double INTAKE_HOME_POS = 0.522 + INTAKE_OFFSET; //home == intake
 	public static final double INTAKE_BOTTOM_POS = 0.494 + INTAKE_OFFSET;
 	public static final double INTAKE_ARM_TICK_TO_ANGLE_MULTIPLIER = -0.00222;
-	public static final double TURN_THRESHOLD = 0.4;
+	public static final Angle TURN_THRESHOLD = new Angle(Unit.DEGREE,0.4);
 	public static final double SHOOTER_THRESHOLD = 0.05;
 	
 	public static final double ELEVATOR_UP_SPEED = 1;
@@ -81,11 +84,11 @@ public class RobotMap {
 	public static final double DRIVE_I = 0;
 	public static final double DRIVE_D = 0;
 	public static final double DRIVE_F = 0.02;
-	public static final double AUTON_ONE_ALIGN_ANGLE = 40;
-	public static final double AUTON_TWO_ALIGN_ANGLE = 25;
-	public static final double AUTON_THREE_ALIGN_ANGLE = 10;
-	public static final double AUTON_FOUR_ALIGN_ANGLE = -10;
-	public static final double AUTON_FIVE_ALIGN_ANGLE = -15;
+	public static final Angle AUTON_ONE_ALIGN_ANGLE = new Angle(Unit.DEGREE,40);
+	public static final Angle AUTON_TWO_ALIGN_ANGLE = new Angle(Unit.DEGREE,25);
+	public static final Angle AUTON_THREE_ALIGN_ANGLE = new Angle(Unit.DEGREE,10);
+	public static final Angle AUTON_FOUR_ALIGN_ANGLE = new Angle(Unit.DEGREE,-10);
+	public static final Angle AUTON_FIVE_ALIGN_ANGLE = new Angle(Unit.DEGREE,-15);
 	
 	public static final double INTAKE_ARM_P = 60;
 	public static final double INTAKE_ARM_I = 0;

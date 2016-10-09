@@ -1,60 +1,82 @@
 package edu.nr.lib;
 
-import edu.nr.lib.interfaces.GyroCorrection;
+import edu.nr.lib.units.Angle;
+import edu.nr.lib.units.Angle.Unit;
 import edu.nr.lib.NavX;
 
-public class AngleGyroCorrection extends GyroCorrection {
+public class AngleGyroCorrection {
 
-	private double initialAngle;
-	double goalAngle;
+	private static final double ANGLE_CORRECTION_INTENSITY = 0.05, MAX_ANGLE_CORRECTION_SPEED = 0.2;
+	private boolean initialized = false;
+	
+	public double getTurnValue(double correctionIntensity)
+	{
+		if(initialized == false)
+		{
+			reset();
+			initialized = true;
+		}
+		
+		double turn = getAngleError().get(Unit.DEGREE) * correctionIntensity;
+    	if(turn<0)
+    		turn = Math.max(-MAX_ANGLE_CORRECTION_SPEED, turn);
+    	else
+    		turn = Math.min(MAX_ANGLE_CORRECTION_SPEED, turn);
+    	
+    	return turn;
+	}
+	
+	public double getTurnValue()
+	{
+		return this.getTurnValue(ANGLE_CORRECTION_INTENSITY);
+	}
+			
+	/**
+	 * Causes the initial angle value to be reset the next time getTurnValue() is called. Use this in the end() and interrupted()
+	 * functions of commands to make sure when the commands are restarted, the initial angle value is reset.
+	 */
+	public void clearInitialValue()
+	{
+		initialized = false;
+	}
+	
+	private Angle initialAngle;
+	Angle goalAngle;
 	NavX navx;
-	
-	AngleUnit unit;
-	
-	public AngleGyroCorrection(double angle, NavX navx, AngleUnit unit) {
+		
+	public AngleGyroCorrection(Angle angle, NavX navx) {
 		if(navx == null) {
 			navx = NavX.getInstance();
 		}
 		this.navx = navx;
 		goalAngle = angle;
-		this.unit = unit;
-		initialAngle = navx.getYaw(unit);
+		initialAngle = navx.getYaw();
 	}
 	
-	public AngleGyroCorrection(double angle, AngleUnit unit) {
-		this(angle, NavX.getInstance(), unit);
-	}
-	
-	public AngleGyroCorrection(AngleUnit unit) {
-		this(0, unit);
+	public AngleGyroCorrection(Angle angle) {
+		this(angle, NavX.getInstance());
 	}
 	
 	public AngleGyroCorrection(NavX navx) {
-		this(0, navx, AngleUnit.DEGREE);
+		this(Angle.zero, navx);
 	}
 	
 	public AngleGyroCorrection() {
-		this(0, AngleUnit.DEGREE);
-	}
-	
-	public AngleGyroCorrection(NavX navx, AngleUnit unit) {
-		this(0, navx, unit);
+		this(Angle.zero);
 	}
 
-	public double get() {
-		return getAngleErrorDegrees();
+	public Angle get() {
+		return getAngleError();
 	}
 	
-	@Override
-	public double getAngleErrorDegrees()
+	public Angle getAngleError()
 	{
 		//Error is just based off initial angle
-    	return (navx.getYaw(unit) - initialAngle) + goalAngle;
+    	return new Angle(Unit.REVOLUTION,(navx.getYaw().get(Unit.REVOLUTION) - initialAngle.get(Unit.REVOLUTION)) + goalAngle.get(Unit.REVOLUTION));
 	}
 	
-	@Override
 	public void reset()
 	{
-		initialAngle = navx.getYaw(unit);
+		initialAngle = navx.getYaw();
 	}
 }

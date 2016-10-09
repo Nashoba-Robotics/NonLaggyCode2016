@@ -1,9 +1,9 @@
 package edu.nr.robotics.auton;
 
-import edu.nr.lib.AngleUnit;
 import edu.nr.lib.NRCommand;
 import edu.nr.lib.NavX;
 import edu.nr.lib.network.AndroidServer;
+import edu.nr.lib.units.Angle;
 import edu.nr.robotics.RobotMap;
 import edu.nr.robotics.commandgroups.AlignCommandGroup;
 import edu.nr.robotics.subsystems.drive.DriveAnglePIDCommand;

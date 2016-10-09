@@ -1,11 +1,12 @@
 package edu.nr.robotics.subsystems.drive;
 
-import edu.nr.lib.AngleUnit;
 import edu.nr.lib.NRCommand;
 import edu.nr.lib.NavX;
 import edu.nr.lib.network.AndroidData;
 import edu.nr.lib.network.AndroidServer;
 import edu.nr.lib.network.AndroidServerListener;
+import edu.nr.lib.units.Angle;
+import edu.nr.lib.units.Angle.Unit;
 import edu.nr.robotics.Robot;
 import edu.nr.robotics.RobotMap;
 import edu.nr.robotics.subsystems.hood.Hood;
@@ -51,19 +52,19 @@ public class DriveWaitForAndroidAngleCommand extends NRCommand implements Androi
 
 	@Override
 	public void onAndroidData(AndroidData data) {
-		if(data.getDistance() == 0 && data.getTurnAngle() == 0)
+		if(data.getDistance() == 0 && data.getTurnAngle().get(Unit.REVOLUTION) == 0)
 			return;
 		
-		if(Math.abs(data.getTurnAngle()) <= .5 && firstTime == false) {
+		if(Math.abs(data.getTurnAngle().get(Unit.DEGREE)) <= .5 && firstTime == false) {
 			hoodcommand.setAngleAgain();
 			firstTime = true;
 		}
-		if(Math.abs(data.getTurnAngle()) > .5) {
+		if(Math.abs(data.getTurnAngle().get(Unit.DEGREE)) > .5) {
 			hoodcommand.setAngleAgain();
-			command.setSetpoint(command.getSetpoint() + data.getTurnAngle()/4);
+			command.setSetpoint(command.getSetpoint() + data.getTurnAngle().get(Unit.DEGREE)/4);
 			firstTime = false;
 		} 		
-		if( Math.abs(data.getTurnAngle()) < RobotMap.TURN_THRESHOLD)
+		if( Math.abs(data.getTurnAngle().get(Unit.DEGREE)) < RobotMap.TURN_THRESHOLD.get(Unit.DEGREE))
 			currentCount++;
 		else
 			currentCount = 0;			

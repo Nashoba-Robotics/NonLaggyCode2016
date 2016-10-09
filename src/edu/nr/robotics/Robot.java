@@ -6,7 +6,6 @@ import java.util.HashMap;
 
 import com.ni.vision.VisionException;
 
-import edu.nr.lib.AngleUnit;
 import edu.nr.lib.WaitUntilGyroCommand;
 import edu.nr.lib.interfaces.Periodic;
 import edu.nr.lib.interfaces.SmartDashboardSource;
@@ -16,6 +15,8 @@ import edu.nr.lib.motionprofiling.SimpleOneDimensionalTrajectory;
 import edu.nr.lib.motionprofiling.Trajectory;
 import edu.nr.lib.NavX;
 import edu.nr.lib.network.AndroidServer;
+import edu.nr.lib.units.Angle;
+import edu.nr.lib.units.Angle.Unit;
 import edu.nr.robotics.Robot.defense;
 import edu.nr.robotics.Robot.position;
 import edu.nr.robotics.auton.AutonAlignCommand;
@@ -195,11 +196,11 @@ public class Robot extends IterativeRobot {
 		OI.getInstance().drivingModeChooser.addObject("tank", DrivingMode.TANK);
 		SmartDashboard.putData("Driving Mode Chooser", OI.getInstance().drivingModeChooser);
 
-		SmartDashboard.putData("Gyro angle command", new WaitUntilGyroCommand(20));
+		SmartDashboard.putData("Gyro angle command", new WaitUntilGyroCommand(new Angle(Unit.DEGREE,20)));
 
 		SmartDashboard.putData("Hood Jetson angle command", new HoodJetsonPositionCommand());
 
-		SmartDashboard.putData("Turn 3 degree command", new DriveAnglePIDCommand(-15, AngleUnit.DEGREE));
+		SmartDashboard.putData("Turn 3 degree command", new DriveAnglePIDCommand(new Angle(Unit.DEGREE,-15)));
 
 		LiveWindow.addSensor("Jetson", "Ready to shoot", LiveWindowClasses.readyToShoot);
 

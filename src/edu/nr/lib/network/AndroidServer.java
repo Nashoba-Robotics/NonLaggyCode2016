@@ -9,6 +9,8 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import edu.nr.lib.units.Angle;
+import edu.nr.lib.units.Angle.Unit;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AndroidServer implements Runnable {
@@ -32,7 +34,7 @@ public class AndroidServer implements Runnable {
 	public static final int defaultPort = 5432;
 	private static final String defaultIpAddress = "127.0.0.1";
 		
-	AndroidData data = new AndroidData(0,0,0);
+	AndroidData data = new AndroidData(Angle.zero,0,0);
 	
 	boolean goodToGo = false;
 
@@ -81,9 +83,11 @@ public class AndroidServer implements Runnable {
 
 							    	double turnAngle = -Double.valueOf(turnAngle_);
 							    	long time = Long.valueOf(time_);
-							    	setData(turnAngle, distance, System.currentTimeMillis() - time);
-								    System.out.println("Angle: " + turnAngle + " Distance: " + distance + " time: " + time);
-								    SmartDashboard.putNumber("Camera distance", distance);
+
+							    	setData(new Angle(Unit.DEGREE, turnAngle), distance, System.currentTimeMillis() - time);
+								    //System.out.println("Angle: " + turnAngle + " Distance: " + distance + " time: " + time);
+
+							    	SmartDashboard.putNumber("Camera distance", distance);
 								    SmartDashboard.putNumber("Camera angle", turnAngle);
 							    } catch (NumberFormatException e) {
 							    	System.err.println("Coudln't parse number from Nexus. Recieved Message: " + message);
@@ -115,7 +119,7 @@ public class AndroidServer implements Runnable {
 
 	
 
-	public double getTurnAngle() {
+	public Angle getTurnAngle() {
 		return data.getTurnAngle();
 	}
 
@@ -136,10 +140,10 @@ public class AndroidServer implements Runnable {
 	}
 	
 	private void setData(Object object) {
-		setData(0,0,0);
+		setData(Angle.zero,0,0);
 	}
 	
-	public void setData(double turnAngle, double distance, long time) {
+	public void setData(Angle turnAngle, double distance, long time) {
 		data = new AndroidData(turnAngle, distance, time);
 		listeners.forEach((listener) -> {
 			listener.onAndroidData(data);

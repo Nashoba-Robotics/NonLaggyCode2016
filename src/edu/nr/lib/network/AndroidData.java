@@ -1,18 +1,20 @@
 package edu.nr.lib.network;
 
+import edu.nr.lib.units.Angle;
+
 public class AndroidData {
 
-	public double turnAngle;
+	public Angle turnAngle;
 	public double distance;
 	public long time;
 	
-	public AndroidData(double turnAngle, double distance, long time) {
+	public AndroidData(Angle turnAngle, double distance, long time) {
 		this.turnAngle = turnAngle;
 		this.distance = distance;
 		this.time = time;
 	}
 	
-	public double getTurnAngle() {
+	public Angle getTurnAngle() {
 		return turnAngle;
 	}
 

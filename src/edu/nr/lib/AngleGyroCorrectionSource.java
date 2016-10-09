@@ -1,5 +1,7 @@
 package edu.nr.lib;
 
+import edu.nr.lib.units.Angle;
+import edu.nr.lib.units.Angle.Unit;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 
@@ -7,13 +9,9 @@ public class AngleGyroCorrectionSource extends AngleGyroCorrection implements PI
 
 	PIDSourceType type;
 	
-	public AngleGyroCorrectionSource(double angle, NavX navx, AngleUnit unit) {
-		super(angle, navx, unit);
+	public AngleGyroCorrectionSource(Angle angle, NavX navx) {
+		super(angle, navx);
 		type = PIDSourceType.kDisplacement;
-	}
-	
-	public AngleGyroCorrectionSource(double angle, AngleUnit unit) {
-		super(angle, unit);
 	}
 	
 	public AngleGyroCorrectionSource(NavX navx) {
@@ -24,8 +22,8 @@ public class AngleGyroCorrectionSource extends AngleGyroCorrection implements PI
 		super();
 	}
 	
-	public AngleGyroCorrectionSource(AngleUnit unit) {
-		super(unit);
+	public AngleGyroCorrectionSource(Angle angle) {
+		super(angle);
 	}
 
 	@Override
@@ -41,10 +39,6 @@ public class AngleGyroCorrectionSource extends AngleGyroCorrection implements PI
 
 	@Override
 	public double pidGet() {
-		return super.getAngleErrorDegrees();
-	}
-
-	public AngleUnit getUnit() {
-		return unit;
+		return super.getAngleError().get(Unit.DEGREE);
 	}
 }

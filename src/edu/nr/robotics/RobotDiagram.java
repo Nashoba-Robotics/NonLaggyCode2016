@@ -1,6 +1,7 @@
 package edu.nr.robotics;
 
 import edu.nr.lib.network.AndroidServer;
+import edu.nr.lib.units.Angle.Unit;
 import edu.nr.robotics.commandgroups.AlignCommandGroup;
 import edu.nr.robotics.subsystems.climb.Elevator;
 import edu.nr.robotics.subsystems.hood.Hood;
@@ -27,7 +28,7 @@ public class RobotDiagram implements NamedSendable {
 			table.putString("~TYPE~", "robo-diagram");
 
 			table.putBoolean("Auto Align Happening", false);
-			table.putBoolean("All Systems Go", Math.abs(AndroidServer.getInstance().getTurnAngle()) < 0.5 && Shooter.getInstance().getSped() && Math.abs(Hood.distanceToAngle(AndroidServer.getInstance().getDistance()) - Hood.getInstance().get()) < RobotMap.HOOD_THRESHOLD);
+			table.putBoolean("All Systems Go", Math.abs(AndroidServer.getInstance().getTurnAngle().get(Unit.DEGREE)) < 0.5 && Shooter.getInstance().getSped() && Math.abs(Hood.distanceToAngle(AndroidServer.getInstance().getDistance()) - Hood.getInstance().get()) < RobotMap.HOOD_THRESHOLD);
 			
 			//Hood
 			table.putBoolean("Hood Bottom", Hood.getInstance().isAtPosition(Hood.Position.BOTTOM));

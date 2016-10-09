@@ -1,6 +1,7 @@
 package edu.nr.robotics.auton;
 
-import edu.nr.lib.AngleUnit;
+import edu.nr.lib.units.Angle;
+import edu.nr.lib.units.Angle.Unit;
 import edu.nr.robotics.RobotMap;
 import edu.nr.robotics.subsystems.drive.DriveAnglePIDCommand;
 import edu.nr.robotics.subsystems.drive.DriveSimpleDistanceWithGyroCommand;
@@ -29,11 +30,11 @@ public class AutonOverAlignShootCommandGroup extends CommandGroup {
     	
         addSequential(new DriveSimpleDistanceWithGyroCommand(overDistance, 1.0));
         if(pos == Positions.one) {
-        	addSequential(new DriveAnglePIDCommand(50, AngleUnit.DEGREE));
+        	addSequential(new DriveAnglePIDCommand(new Angle(Unit.DEGREE, 50)));
         } else if (pos == Positions.two) {
-        	addSequential(new DriveAnglePIDCommand(30, AngleUnit.DEGREE));
+        	addSequential(new DriveAnglePIDCommand(new Angle(Unit.DEGREE, 30)));
         } else if (pos == Positions.five) {
-        	addSequential(new DriveAnglePIDCommand(-30, AngleUnit.DEGREE));
+        	addSequential(new DriveAnglePIDCommand(new Angle(Unit.DEGREE, -30)));
         }
         addSequential(new AutonAlignCommand());
     }

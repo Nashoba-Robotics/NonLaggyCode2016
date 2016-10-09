@@ -1,8 +1,9 @@
 package edu.nr.robotics.subsystems.drive;
 
-import edu.nr.lib.AngleUnit;
 import edu.nr.lib.Position;
 import edu.nr.lib.interfaces.SmartDashboardSource;
+import edu.nr.lib.units.Angle;
+import edu.nr.lib.units.Angle.Unit;
 import edu.nr.lib.NavX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -12,7 +13,7 @@ public class FieldCentric implements SmartDashboardSource {
 
 	private static FieldCentric singleton;
 	private final double initialTheta;
-	private double initialGyro = 0;
+	private Angle initialGyro = Angle.zero;
 	private double x = 0, y = 0, dis = 0, lastEncoderDistance = 0;
 	private long lastUpdateTime;
 
@@ -41,13 +42,13 @@ public class FieldCentric implements SmartDashboardSource {
 					+ (System.currentTimeMillis() - lastUpdateTime) / 1000f + "s)");
 		}
 
-		double angle = getAngle(AngleUnit.RADIAN);
+		Angle angle = getAngle();
 
 		
 		double ave = Drive.getInstance().getEncoderAverageDistance();
 		double delta_x_r = ave - lastEncoderDistance;
-		double deltax = delta_x_r * Math.sin(angle);
-		double deltay = delta_x_r * Math.cos(angle);
+		double deltax = delta_x_r * angle.sin();
+		double deltay = delta_x_r * angle.cos();
 		x += deltax;
 		y += deltay;
 		dis += delta_x_r;
@@ -95,17 +96,11 @@ public class FieldCentric implements SmartDashboardSource {
 
 	/**
 	 * Gets the angle used for current coordinate calculations
-	 * @param unit the AngleUnit to return in
-	 * @return the angle in the given units
+	 * @return the angle
 	 */
-	public double getAngle(AngleUnit unit) {
+	public Angle getAngle() {
 		// Gyro is reversed (clockwise causes an increase in the angle)
-		double val = ((NavX.getInstance().getYaw(AngleUnit.RADIAN)) - initialGyro) * -1 + initialTheta;
-		if(unit == AngleUnit.RADIAN)
-			return val;
-		if(unit == AngleUnit.DEGREE)
-			return Math.toDegrees(val);
-		return 0;
+		return new Angle(Unit.RADIAN,(NavX.getInstance().getYaw().get(Unit.RADIAN) - initialGyro.get(Unit.RADIAN)) * -1 + initialTheta);
 	}
 
 	/**
@@ -116,11 +111,11 @@ public class FieldCentric implements SmartDashboardSource {
 		y = 0;
 		dis = 0;
 		lastEncoderDistance = Drive.getInstance().getEncoderAverageDistance();
-		initialGyro = NavX.getInstance().getYaw(AngleUnit.RADIAN);
+		initialGyro = NavX.getInstance().getYaw();
 	}
 
 	@Override
 	public void smartDashboardInfo() {
-		SmartDashboard.putNumber("NavX Yaw", (NavX.getInstance().getYaw(AngleUnit.DEGREE)));
+		SmartDashboard.putNumber("NavX Yaw", NavX.getInstance().getYaw().get(Unit.DEGREE));
 	}
 }

@@ -5,10 +5,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import edu.nr.lib.AngleGyroCorrectionSource;
-import edu.nr.lib.AngleUnit;
 import edu.nr.lib.NRCommand;
 import edu.nr.lib.NavX;
 import edu.nr.lib.network.AndroidServer;
+import edu.nr.lib.units.Angle;
+import edu.nr.lib.units.Angle.Unit;
 import edu.nr.robotics.RobotMap;
 import edu.nr.robotics.auton.AutonFollowInstructionsShootCommand.GetGyro;
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -22,7 +23,7 @@ public class DriveAnglePIDCommand extends NRCommand {
 
 	NRPID pid;
 	
-	double angle;
+	Angle angle;
 	AngleController controller;
 	AngleGyroCorrectionSource correction;
 	
@@ -44,22 +45,22 @@ public class DriveAnglePIDCommand extends NRCommand {
 	 * Create one for using the Android to communicate
 	 */
     public DriveAnglePIDCommand() {
-    	this(0, new AngleGyroCorrectionSource(AngleUnit.DEGREE), true);
+    	this(Angle.zero, new AngleGyroCorrectionSource(), true);
     	this.useAndroid = true;
     }
     
-    public DriveAnglePIDCommand(double angle, AngleUnit unit) {
-    	this(angle, new AngleGyroCorrectionSource(unit), true);    	
+    public DriveAnglePIDCommand(Angle angle) {
+    	this(angle, new AngleGyroCorrectionSource(), true);    	
     	this.useAndroid = false;
     }
     
-    public DriveAnglePIDCommand(double angle, GetGyro getGyro) {
+    public DriveAnglePIDCommand(Angle angle, GetGyro getGyro) {
     	this(angle, null, false);  
     	this.getGyro = getGyro;
     	this.useAndroid = false;
     }
 
-    private DriveAnglePIDCommand(double angle, AngleGyroCorrectionSource correction, boolean resetCorrection) {
+    private DriveAnglePIDCommand(Angle angle, AngleGyroCorrectionSource correction, boolean resetCorrection) {
     	this.angle = angle;
     	this.correction = correction;
     	requires(Drive.getInstance());
@@ -76,7 +77,7 @@ public class DriveAnglePIDCommand extends NRCommand {
 	protected boolean isFinishedNR() {
     	if(!goodToGo)
     		return true;
-    	if(Math.abs(pid.getError()) < RobotMap.TURN_THRESHOLD) {
+    	if(Math.abs(pid.getError()) < RobotMap.TURN_THRESHOLD.get(Unit.DEGREE)) {
     		currentCount++;
     	} else {
     		currentCount = 0;
@@ -122,7 +123,7 @@ public class DriveAnglePIDCommand extends NRCommand {
 			
 			angle = AndroidServer.getInstance().getTurnAngle();
 
-			if(Math.abs(angle) < RobotMap.TURN_THRESHOLD) {
+			if(Math.abs(angle.get(Unit.DEGREE)) < RobotMap.TURN_THRESHOLD.get(Unit.DEGREE)) {
 				goodToGo = false;
 				return;
 			}
@@ -135,11 +136,11 @@ public class DriveAnglePIDCommand extends NRCommand {
 		}
 		
 		if(correction == null)
-			correction = new AngleGyroCorrectionSource(AngleUnit.DEGREE);
+			correction = new AngleGyroCorrectionSource();
 		
 		pid.setSource(correction);
 
-		pid.setSetpoint(angle);
+		pid.setSetpoint(angle.get(Unit.DEGREE));
 		
 		Drive.getInstance().setPIDEnabled(true);
 		controller = new AngleController();

@@ -3,7 +3,6 @@ package edu.nr.robotics.subsystems.drive;
 import edu.nr.lib.AngleGyroCorrection;
 import edu.nr.lib.NRCommand;
 import edu.nr.lib.NRMath;
-import edu.nr.lib.interfaces.GyroCorrection;
 import edu.nr.robotics.DrivingMode;
 import edu.nr.robotics.OI;
 
@@ -13,7 +12,7 @@ import edu.nr.robotics.OI;
 public class DriveJoystickCommand extends NRCommand {
 	private double oldTurn;
 	
-	GyroCorrection gyroCorrection;
+	AngleGyroCorrection gyroCorrection;
 
 	public DriveJoystickCommand() {
 		requires(Drive.getInstance());
