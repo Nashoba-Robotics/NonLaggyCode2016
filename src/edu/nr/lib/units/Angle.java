@@ -1,17 +1,27 @@
 package edu.nr.lib.units;
 
 public class Angle {
-	
-	public static final double DEGREES_PER_REV = 360;
-	public static final double RADIANS_PER_REV = 2.0*Math.PI;
-	
+		
 	public enum Unit {
 		RADIAN, DEGREE, REVOLUTION;
+		
+		double perMeter() {
+			switch(this) {
+			case REVOLUTION:
+				return 1;
+			case RADIAN:
+				return 2.0*Math.PI;
+			case DEGREE:
+				return 360;
+			default:
+				return 1;
+			}
+		}
+		
+		static Unit defaultType = Unit.REVOLUTION;
 	}
-
-	public static Unit defaultType = Unit.REVOLUTION;
 	
-	public static Angle zero = new Angle(defaultType,0);
+	public static Angle zero = new Angle(Unit.defaultType,0);
 	
 	public Unit type;
 
@@ -29,16 +39,11 @@ public class Angle {
 	public double get(Unit type) {
 		if(this.type == type) {
 			return this.value;
-		} else if(this.type == Unit.DEGREE && type == Unit.REVOLUTION) {
-			return value / DEGREES_PER_REV;
-		} else if(this.type == Unit.RADIAN && type == Unit.REVOLUTION) {
-			return value / RADIANS_PER_REV;
-		} else if(type == Unit.RADIAN) {
-			return get(Unit.REVOLUTION) * RADIANS_PER_REV;
-		} else if(type == Unit.DEGREE) {
-			return get(Unit.REVOLUTION) * DEGREES_PER_REV;
+		} else if(type == Unit.defaultType) {
+			return value / this.type.perMeter();
+		} else {
+			return get(Unit.defaultType) * type.perMeter();
 		}
-		return 0;
 	}
 	
 	public double sin() {

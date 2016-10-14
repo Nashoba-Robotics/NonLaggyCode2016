@@ -2,16 +2,26 @@ package edu.nr.lib.units;
 
 public class Distance {
 	
-	private static final double METERS_PER_FOOT = 0.3048;
-	private static final double INCHES_PER_FOOT = 12;
-	
 	public enum Unit {
 		METER, FOOT, INCH;
+		
+		double perMeter() {
+			switch(this) {
+			case METER:
+				return 1;
+			case FOOT:
+				return 3.281;
+			case INCH:
+				return Unit.FOOT.perMeter() * 12;
+			default:
+				return 1;
+			}
+		}
+		
+		static Unit defaultType = Unit.METER;
 	}
-
-	public static Unit defaultType = Unit.METER;
 	
-	public static Distance zero = new Distance(defaultType,0);
+	public static Distance zero = new Distance(Unit.defaultType,0);
 	
 	public Unit type;
 
@@ -29,15 +39,10 @@ public class Distance {
 	public double get(Unit type) {
 		if(this.type == type) {
 			return this.value;
-		} else if(this.type == Unit.FOOT && type == Unit.METER) {
-			return value * METERS_PER_FOOT;
-		} else if(this.type == Unit.INCH && type == Unit.METER) {
-			return value * METERS_PER_FOOT / INCHES_PER_FOOT;
-		} else if(type == Unit.FOOT) {
-			return get(Unit.METER) / METERS_PER_FOOT;
-		} else if(type == Unit.INCH) {
-			return get(Unit.METER) / (METERS_PER_FOOT / INCHES_PER_FOOT);
+		} else if(type == Unit.defaultType) {
+			return value / this.type.perMeter();
+		} else {
+			return get(Unit.defaultType) * type.perMeter();
 		}
-		return 0;
 	}
 }
