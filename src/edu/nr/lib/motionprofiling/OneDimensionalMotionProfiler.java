@@ -42,7 +42,7 @@ public class OneDimensionalMotionProfiler extends TimerTask implements MotionPro
 		this.ka = ka;
 		this.kp = kp;
 		this.kd = kd;
-		this.kv = 1/trajectory.getMaxUsedVelocity() * kvMult;
+		this.kv = 1/trajectory.getMaxPossibleVelocity() * kvMult;
 	}
 	
 	public OneDimensionalMotionProfiler(PIDOutput out, PIDSource source, Trajectory trajectory, double ka, double kp, double kd, double kvMult) {
@@ -54,31 +54,28 @@ public class OneDimensionalMotionProfiler extends TimerTask implements MotionPro
 	
 	@Override
 	public void run() {
-		if(startTime == 0) {
-			startTime = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
-		}
 		if(enabled) {
 			double dt = edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - prevTime;
-
-			double output = 0;
 						
-			output += trajectory.getGoalVelocity(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime) * kv;
+			double velocityGoal = trajectory.getGoalVelocity(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime);
 			
-			output += trajectory.getGoalAccel(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime) / trajectory.getMaxUsedAccel() * ka;
+			double accelGoal = trajectory.getGoalAccel(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime);
 			
 			double error = trajectory.getGoalPosition(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime) - source.pidGet();
+						
+			double errorDeriv = (error - errorLast) / dt;
 			
-			output += error * kp;
+			double output = velocityGoal * kv + accelGoal * ka + error * kp + errorDeriv * kd;
 			
-			output += (error - errorLast) / dt * kd;
+			out.pidWrite(output);
+
 			errorLast = error;
-			
-			out.pidWrite(output * trajectory.getMaxUsedVelocity() / trajectory.getMaxPossibleVelocity());
-			
+
 			source.setPIDSourceType(PIDSourceType.kRate);
-			SmartDashboard.putString("Motion Profiler V", source.pidGet() + ":" + output * trajectory.getMaxUsedVelocity());
+			SmartDashboard.putString("Motion Profiler V", source.pidGet() + ":" + output * trajectory.getMaxPossibleVelocity());
 			source.setPIDSourceType(PIDSourceType.kDisplacement);
-			SmartDashboard.putString("Motion Profiler X", source.pidGet() + ":" + (trajectory.getGoalPosition(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime) + initialPosition));
+			SmartDashboard.putString("Motion Profiler X", source.pidGet() + ":" 
+					+ (trajectory.getGoalPosition(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime) + initialPosition));
 		}
 		
 		if(source.pidGet() != prevV) {

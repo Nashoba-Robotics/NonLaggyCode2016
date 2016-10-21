@@ -4,7 +4,7 @@ public class SimpleOneDimensionalTrajectory implements Trajectory {
 	
 	double maxPossibleVelocity;
 	double maxUsedVelocity;
-	double maxAccel;
+	double maxUsedAccel;
 	
 	double totalTime;
 	double timeAccelPlus;
@@ -13,12 +13,12 @@ public class SimpleOneDimensionalTrajectory implements Trajectory {
 	
 	double goalDistance;
 	
-	public SimpleOneDimensionalTrajectory(double goalDistance, double maxPossibleVelocity, double maxUsedVelocity, double maxAccel) {
+	public SimpleOneDimensionalTrajectory(double goalDistance, double maxPossibleVelocity, double maxUsedVelocity, double maxUsedAccel) {
 		this.goalDistance = goalDistance;
 		this.maxUsedVelocity = maxUsedVelocity;
 		this.maxPossibleVelocity = maxPossibleVelocity;
-		this.maxAccel = maxAccel;
-		timeAccelPlus = timeAccelMinus = maxUsedVelocity / maxAccel;
+		this.maxUsedAccel = maxUsedAccel;
+		timeAccelPlus = timeAccelMinus = maxUsedVelocity / maxUsedAccel;
 		double cruiseDistance = goalDistance - 0.5 * timeAccelPlus * maxUsedVelocity - 0.5 * timeAccelMinus * maxUsedVelocity;
 		timeAtCruise = cruiseDistance / maxUsedVelocity;
 		totalTime = timeAccelMinus + timeAtCruise + timeAccelMinus;
@@ -26,22 +26,20 @@ public class SimpleOneDimensionalTrajectory implements Trajectory {
 
 	public double getGoalVelocity(double time) {
 		if(time <= 0) return 0;
-		if(time <= timeAccelPlus) return time * maxAccel;
+		if(time <= timeAccelPlus) return time * maxUsedAccel;
 		if(time <= timeAccelPlus + timeAtCruise) return maxUsedVelocity;
 		double timeSlowingDownSoFar = time - (timeAccelPlus + timeAtCruise);
-		if(time <= totalTime) return maxUsedVelocity + timeSlowingDownSoFar * -maxAccel;
+		if(time <= totalTime) return maxUsedVelocity + timeSlowingDownSoFar * -maxUsedAccel;
 		return 0;
 	}
 	
-	public double getGoalPosition(double time) {
-		if(time < 0) return 0;
-		
+	public double getGoalPosition(double time) {		
 		if(time <= timeAccelPlus) {
 			//We're on the positive slope of the trapezoid
-			return 1/2 * time * time * maxAccel;
+			return 0.5 * time * time * maxUsedAccel;
 		}
 		
-		double speedUpDistance =  1/2 * timeAccelPlus * maxUsedVelocity;
+		double speedUpDistance =  0.5 * timeAccelPlus * maxUsedVelocity;
 		
 		if(time <= timeAccelPlus + timeAtCruise) {
 			//We're on the top part of the trapezoid
@@ -56,7 +54,7 @@ public class SimpleOneDimensionalTrajectory implements Trajectory {
 			double timeSlowingDownSoFar = time - (timeAccelPlus + timeAtCruise);
 			return speedUpDistance + fullSpeedDistance 
 					+ maxUsedVelocity * timeSlowingDownSoFar 
-					- 0.5 * maxAccel * timeSlowingDownSoFar * timeSlowingDownSoFar;
+					- 0.5 * maxUsedAccel * timeSlowingDownSoFar * timeSlowingDownSoFar;
 		}
 				
 		return goalDistance;
@@ -64,9 +62,9 @@ public class SimpleOneDimensionalTrajectory implements Trajectory {
 
 	public double getGoalAccel(double time) {
 		if(time < 0) return 0;
-		if(time < timeAccelPlus) return maxAccel;
+		if(time < timeAccelPlus) return maxUsedAccel;
 		if(time < timeAccelPlus + timeAtCruise) return 0;
-		if(time < totalTime) return -maxAccel;
+		if(time < totalTime) return -maxUsedAccel;
 		return 0;
 	}
 	
@@ -75,7 +73,7 @@ public class SimpleOneDimensionalTrajectory implements Trajectory {
 	}
 
 	public double getMaxAccel() {
-		return maxAccel;
+		return maxUsedAccel;
 	}
 
 	@Override
@@ -85,7 +83,7 @@ public class SimpleOneDimensionalTrajectory implements Trajectory {
 
 	@Override
 	public double getMaxUsedAccel() {
-		return maxAccel;
+		return maxUsedAccel;
 	}
 
 	
