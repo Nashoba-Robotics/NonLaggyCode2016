@@ -10,7 +10,7 @@ public class HoodNeutralCommand extends NRCommand {
 	
 	@Override
 	protected void onStart() {
-		Hood.getInstance().disablePID();
+		Hood.getInstance().disableProfiler();
 		Hood.getInstance().setMotor(0);
 	}
 	

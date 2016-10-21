@@ -13,11 +13,6 @@ public class HoodBottomCommand extends CommandGroup {
         addSequential(new HoodPositionCommand(RobotMap.HOOD_BOTTOM_POSITION));
         requires(Hood.getInstance());
     }
-
-	public HoodBottomCommand(double speed) {
-        addSequential(new HoodPositionCommand(RobotMap.HOOD_BOTTOM_POSITION, speed));
-        requires(Hood.getInstance());
-	}
 	
 	@Override
 	public boolean isFinished() {

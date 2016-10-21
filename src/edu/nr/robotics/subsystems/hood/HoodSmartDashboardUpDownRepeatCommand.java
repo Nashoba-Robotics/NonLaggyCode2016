@@ -16,8 +16,8 @@ public class HoodSmartDashboardUpDownRepeatCommand extends NRCommand {
     
     @Override
     protected void onStart() {
-    	if(Hood.getInstance().isPIDEnabled())
-    		Hood.getInstance().disablePID();
+    	if(Hood.getInstance().isProfilerEnabled())
+    		Hood.getInstance().disableProfiler();
     }
     
     boolean goingUp = true;
@@ -43,10 +43,5 @@ public class HoodSmartDashboardUpDownRepeatCommand extends NRCommand {
     @Override
 	protected boolean isFinishedNR() {
         return false;
-    }
-    
-    @Override
-	protected void onEnd(boolean interrupted) {
-    	Hood.getInstance().enablePID();
     }
 }

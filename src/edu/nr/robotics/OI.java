@@ -31,7 +31,6 @@ import edu.nr.robotics.subsystems.hood.Hood;
 import edu.nr.robotics.subsystems.hood.HoodIncreaseDegreeCommand;
 import edu.nr.robotics.subsystems.hood.HoodJetsonPositionCommand;
 import edu.nr.robotics.subsystems.hood.HoodPositionCommand;
-import edu.nr.robotics.subsystems.hood.HoodProfilerEnableCommand;
 import edu.nr.robotics.subsystems.hood.HoodResetEncoderCommand;
 import edu.nr.robotics.subsystems.intakearm.IntakeArm;
 import edu.nr.robotics.subsystems.intakearm.IntakeArmBottomHeightCommandGroup;

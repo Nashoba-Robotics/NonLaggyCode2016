@@ -40,4 +40,8 @@ public interface MotionProfiler {
 	 * @param trajectory
 	 */
 	public void setTrajectory(Trajectory trajectory);
+
+	public boolean isEnabled();
+
+	public Trajectory getTrajectory();
 }

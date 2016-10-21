@@ -1,9 +1,12 @@
 package edu.nr.robotics.subsystems.hood;
 
-import edu.nr.lib.PID;
 import edu.nr.lib.TalonEncoder;
 import edu.nr.lib.interfaces.Periodic;
 import edu.nr.lib.interfaces.SmartDashboardSource;
+import edu.nr.lib.motionprofiling.MotionProfiler;
+import edu.nr.lib.motionprofiling.OneDimensionalMotionProfiler;
+import edu.nr.lib.motionprofiling.SimpleOneDimensionalTrajectory;
+import edu.nr.lib.motionprofiling.Trajectory;
 import edu.nr.robotics.EnabledSubsystems;
 import edu.nr.robotics.LiveWindowClasses;
 import edu.nr.robotics.RobotMap;
@@ -27,10 +30,10 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	
 	public static final double MAX_RPM = 83.325;
 	
+	public MotionProfiler profiler;
 	
 	CANTalon talon;	
 	TalonEncoder enc;
-	PID pid;
 	
 	//Max acceleration for motion profiling is 100 degrees per second per second
 	//Max velocity for motion profiling is 30 degrees per second
@@ -80,7 +83,9 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 			enc = new TalonEncoder(talon,true);
 			enc.setPIDSourceType(PIDSourceType.kDisplacement);
 			enc.setDistancePerRev(RobotMap.HOOD_TICK_TO_ANGLE_MULTIPLIER);
-			//pid = new PID(0.25, 0.00, 0.001, enc, talon);
+			
+			profiler = new OneDimensionalMotionProfiler(this, this, 1/MAX_VEL, 0.00125,0.1,/*0.000001*/0);
+			//profiler = new OneDimensionalMotionProfiler(this, this, 1/MAX_VEL,0,0,0);
 			
 			LiveWindow.addSensor("Hood", "Bottom Switch", LiveWindowClasses.hoodBottomSwitch);
 			LiveWindow.addSensor("Hood", "Top Switch", LiveWindowClasses.hoodTopSwitch);
@@ -115,72 +120,21 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	 * @param speed the speed to set the motor to, from -1 to 1
 	 */
 	public void setMotor(double speed) {
-		disablePID();
 		if(talon != null)
 			talon.setSetpoint(speed * MAX_RPM);
 	}
 
 	public void setMotorInRPM(double rpm) {
-		disablePID();
 		if(talon != null)
 			talon.setSetpoint(rpm);
 	}
 	
 	public void setMotorInDPS(double degpersec) {
-		disablePID();
 		if(talon != null)
 			talon.setSetpoint(degpersec 
 				* 11.11 /*gear ratio*/ 
 				/ 360 /*degrees per rotation*/ 
 				* 60 /*seconds per minute*/ );
-	}
-	
-	/**
-	 * Set the PID setpoint
-	 * @param value the value to set the setpoint to
-	 */
-	public void setSetpoint(double value) {
-		if(pid != null) {
-			if(!pid.isEnable())
-				pid.enable();
-			pid.setSetpoint(value);	
-		}
-	}
-	
-	/**
-	 * Get the PID setpoint
-	 * @return the PID setpoint
-	 */
-	public double getSetpoint() {
-		if(pid != null)
-			return pid.getSetpoint();
-		return 0;
-	}
-	
-	/**
-	 * Enable the PID
-	 */
-	public void enablePID() {
-		if(pid != null)
-			pid.enable();
-	}
-	
-	/**
-	 * Disable the PID
-	 */
-	public void disablePID() {
-		if(pid != null && pid.isEnable())
-			pid.disable();
-	}
-	
-	/**
-	 * Gets whether the PID is enabled or not
-	 * @return whether the PID is enabled
-	 */
-	public boolean isPIDEnabled() {
-		if(pid != null)
-			return pid.isEnable();
-		return false;
 	}
 	
 	/**
@@ -204,12 +158,6 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 		//0.05 is a number I just made up
 	}
 	
-	public void setMaxSpeedPID(double speed) {
-		maxSpeed = speed;
-		if(pid != null)
-			pid.setOutputRange(0,speed);
-	}
-	
 	@Override
 	public void smartDashboardInfo() {
 		SmartDashboard.putNumber("Hood Angle", getDisplacement());
@@ -227,11 +175,8 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 				+ ":" + talon.getSetpoint()/*rpm at the encoder shaft*/ 
 				/ 11.11 /*gear ratio*/ 
 				* 360 /*degrees per rotation*/ 
-				/ 60 /*seconds per minute*/ );
-		
-		
-		SmartDashboard.putString("Hood Displacement PID", getDisplacement() + ":" + getSetpoint() + ":" + (getSetpoint()-RobotMap.HOOD_THRESHOLD) + ":" + (getSetpoint()+RobotMap.HOOD_THRESHOLD));
-		
+				/ 60 /*seconds per minute*/ );	
+		SmartDashboard.putData(this);
 	}
 
 	@Override
@@ -293,6 +238,35 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 			return getDisplacement();
 		else
 			return enc.getRateWithoutScaling();
+	}
+
+	public void disableProfiler() {
+		if(profiler != null)
+			profiler.disable();
+	}
+	
+	public void enableProfiler(Trajectory traj) {
+		if(profiler != null) {
+			profiler.setTrajectory(traj);
+			profiler.enable();
+		}
+	}
+	
+	public void enableProfilerFromDisplacement(double delta) {
+		enableProfiler(delta + getDisplacement());
+	}
+	
+	public void enableProfiler(double position, double speed) {
+		enableProfiler(new SimpleOneDimensionalTrajectory(position, getDisplacement(), Hood.MAX_VEL, speed, Hood.MAX_ACC));
+	}
+
+
+	public void enableProfiler(double position) {
+		enableProfiler(position, Hood.MAX_VEL);
+	}
+	
+	public boolean isProfilerEnabled() {
+		return profiler.isEnabled();
 	}
 
 	

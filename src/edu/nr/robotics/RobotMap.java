@@ -58,7 +58,6 @@ public class RobotMap {
 	public static final double INTAKE_INTAKE_POS = 0.522 + INTAKE_OFFSET;
 	public static final double INTAKE_HOME_POS = 0.522 + INTAKE_OFFSET; //home == intake
 	public static final double INTAKE_BOTTOM_POS = 0.494 + INTAKE_OFFSET;
-	public static final double INTAKE_ARM_TICK_TO_ANGLE_MULTIPLIER = -0.00222;
 	public static final double TURN_THRESHOLD = 0.4;
 	public static final double SHOOTER_THRESHOLD = 0.05;
 	

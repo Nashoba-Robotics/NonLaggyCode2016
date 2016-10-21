@@ -15,7 +15,7 @@ public class HoodMoveDownUntilLimitSwitchCommand extends NRCommand {
     
     @Override
 	protected void onStart() {
-    	Hood.getInstance().disablePID();
+    	Hood.getInstance().disableProfiler();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -28,12 +28,5 @@ public class HoodMoveDownUntilLimitSwitchCommand extends NRCommand {
     @Override
 	protected boolean isFinishedNR() {
         return Hood.getInstance().isBotLimitSwitchClosed();
-    }
-
-    // Called once after isFinished returns true
-    @Override
-    protected void onEnd(boolean interrupted) {
-    	Hood.getInstance().setSetpoint(0);
-    	Hood.getInstance().enablePID();
     }
 }

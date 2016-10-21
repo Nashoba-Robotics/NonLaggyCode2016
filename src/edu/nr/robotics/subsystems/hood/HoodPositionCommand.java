@@ -4,42 +4,22 @@ import edu.nr.lib.NRCommand;
 
 public class HoodPositionCommand extends NRCommand {
 
-	double val;
-	double speed;
+	double position;
 	
-	double prevSpeed;
-	
-	public HoodPositionCommand(double val) {
-		this(val, 1);
-	}
-	
-	public HoodPositionCommand(double val, double d) {
-		this.val = val;
-		this.speed = d;
+	public HoodPositionCommand(double position) {
+		this.position = position;
 		requires(Hood.getInstance());
-
 	}
 
 	@Override
 	protected void onStart() {
-		Hood.getInstance().enablePID();
-		prevSpeed = Hood.getInstance().getMaxSpeed();
-		Hood.getInstance().setMaxSpeedPID(speed);
+		Hood.getInstance().disableProfiler();
+		Hood.getInstance().enableProfiler(position);
 	}
-
-	@Override
-	protected void onExecute() {
-		Hood.getInstance().setSetpoint(val);
-	}
-
-	@Override
-	protected void onEnd(boolean interrupted) {
-		Hood.getInstance().setMaxSpeedPID(prevSpeed);
-	}
-
+	
 	@Override
 	protected boolean isFinishedNR() {
-		return Math.abs(Hood.getInstance().getDisplacement() - val) < 0.005;
+		return false;
 	}
 
 }

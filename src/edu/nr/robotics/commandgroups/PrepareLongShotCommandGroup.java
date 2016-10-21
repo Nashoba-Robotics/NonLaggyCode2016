@@ -12,7 +12,6 @@ public class PrepareLongShotCommandGroup extends CommandGroup {
     
     public  PrepareLongShotCommandGroup() {
         addParallel(new HoodPositionCommand(RobotMap.LONG_SHOT_POSITION));
-        //addParallel(new HoodJetsonPositionCommand());
         addParallel(new IntakeArmHomeHeightCommandGroup());
     }
 }

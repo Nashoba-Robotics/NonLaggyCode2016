@@ -22,8 +22,7 @@ public class HoodJetsonPositionCommand extends NRCommand {
     		return;
     	}
 		val = Hood.distanceToAngle(AndroidServer.getInstance().getDistance());
-		Hood.getInstance().enablePID();
-		Hood.getInstance().setSetpoint(val);
+		Hood.getInstance().enableProfiler(val);
 	}
 
 	@Override
@@ -40,11 +39,11 @@ public class HoodJetsonPositionCommand extends NRCommand {
 
 	public void setAngleAgain() {
 		val = Hood.distanceToAngle(AndroidServer.getInstance().getDistance());
-		Hood.getInstance().setSetpoint(val);		
+		Hood.getInstance().enableProfiler(val);		
 	}
 
 	public double getSetpoint() {
-		return Hood.getInstance().getSetpoint();
+		return Hood.getInstance().profiler.getTrajectory().getGoalPosition();
 	}
 
 }

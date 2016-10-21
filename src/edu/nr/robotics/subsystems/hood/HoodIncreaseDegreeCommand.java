@@ -15,21 +15,20 @@ public class HoodIncreaseDegreeCommand extends NRCommand {
 	@Override
 	protected void onStart() {
 		prevVal = Hood.getInstance().getDisplacement();
-		Hood.getInstance().enablePID();
+		Hood.getInstance().disableProfiler();
+		Hood.getInstance().enableProfilerFromDisplacement(val);
 	}
-
-	@Override
-	protected void onExecute() {
-		Hood.getInstance().setSetpoint(val + prevVal);
-	}
-
-	@Override
-	protected void onEnd(boolean interrupted) {
-	}
-
+	
 	@Override
 	protected boolean isFinishedNR() {
-		return Math.abs(Hood.getInstance().getDisplacement() - (val + prevVal)) < 0.3 || ((val > 0) ? Hood.getInstance().isTopLimitSwitchClosed() : Hood.getInstance().isBotLimitSwitchClosed());
+		return false;
 	}
+	
+	@Override
+	protected void onEnd() {
+		Hood.getInstance().disableProfiler();
+	}
+	
+	
 
 }

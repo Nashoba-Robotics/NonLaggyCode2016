@@ -41,7 +41,6 @@ import edu.nr.robotics.subsystems.drive.DriveTurnSmartDashboardCommand;
 import edu.nr.robotics.subsystems.drive.FieldCentric;
 import edu.nr.robotics.subsystems.hood.Hood;
 import edu.nr.robotics.subsystems.hood.HoodJetsonPositionCommand;
-import edu.nr.robotics.subsystems.hood.HoodProfilerEnableCommand;
 import edu.nr.robotics.subsystems.hood.HoodSmartDashboardVelocityCommand;
 import edu.nr.robotics.subsystems.intakearm.IntakeArm;
 import edu.nr.robotics.subsystems.intakearm.IntakeArmMoveUpUntilPositionCommand;
@@ -74,7 +73,6 @@ public class Robot extends IterativeRobot {
 
 	RobotDiagram robotDiagram;
 	
-	public MotionProfiler profiler;
 
 	public Command driveWall;
 
@@ -155,9 +153,6 @@ public class Robot extends IterativeRobot {
 		initSmartDashboard();
 		robotDiagram = new RobotDiagram();
 		
-		Trajectory traj = new SimpleOneDimensionalTrajectory(60, Hood.MAX_VEL, Hood.MAX_VEL, Hood.MAX_ACC);
-		profiler = new OneDimensionalMotionProfiler(Hood.getInstance(), Hood.getInstance(), traj,0.00125,0.1,/*0.000001*/0,1.0);
-
 	}
 
 	private void initSmartDashboard() {
@@ -201,8 +196,6 @@ public class Robot extends IterativeRobot {
 
 		SmartDashboard.putData("Hood Jetson angle command", new HoodJetsonPositionCommand());
 		
-		SmartDashboard.putData("Hood enable motion profiler", new HoodProfilerEnableCommand());
-
 		SmartDashboard.putNumber("Hood velocity for setting (deg per s)", 0);
 		
 		SmartDashboard.putData("Hood go at SmartDashboard speed", new HoodSmartDashboardVelocityCommand());
@@ -372,7 +365,7 @@ public class Robot extends IterativeRobot {
 		// Fix intake arm cancelling
 		IntakeRoller.getInstance().setRollerSpeed(0);
 		LoaderRoller.getInstance().setLoaderSpeed(0);
-		Hood.getInstance().disablePID();
+		Hood.getInstance().disableProfiler();
 		Elevator.getInstance().setMotorValue(0);
 	}
 
