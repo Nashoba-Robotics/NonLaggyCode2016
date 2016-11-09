@@ -35,6 +35,7 @@ import edu.nr.robotics.subsystems.drive.DriveAnglePIDCommand;
 import edu.nr.robotics.subsystems.drive.DriveConstantCommand;
 import edu.nr.robotics.subsystems.drive.DriveConstantSmartDashboardCommand;
 import edu.nr.robotics.subsystems.drive.DriveGyroAngleSmartDashboardCommand;
+import edu.nr.robotics.subsystems.drive.DriveMotionProfileDistanceCommand;
 import edu.nr.robotics.subsystems.drive.DriveSetPIDSmartDashboardCommand;
 import edu.nr.robotics.subsystems.drive.DriveSetTurnPIDSmartDashboardCommand;
 import edu.nr.robotics.subsystems.drive.DriveTurnSmartDashboardCommand;
@@ -240,7 +241,9 @@ public class Robot extends IterativeRobot {
 		
 		SmartDashboard.putData("Go intake arm up",new IntakeArmMoveUpUntilPositionCommand(RobotMap.INTAKE_INTAKE_POS));
 
-
+		SmartDashboard.putData("Drive Forward 20 Feet with Motion Profiler", new DriveMotionProfileDistanceCommand(20));
+		
+		
 		SmartDashboard.putNumber("Android Adjust Factor", RobotMap.ANDROID_ADJUST_FACTOR);
 		
 		

@@ -252,17 +252,8 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 		}
 	}
 	
-	public void enableProfilerFromDisplacement(double delta) {
-		enableProfiler(delta + getDisplacement());
-	}
-	
-	public void enableProfiler(double position, double speed) {
-		enableProfiler(new SimpleOneDimensionalTrajectory(position, getDisplacement(), Hood.MAX_VEL, speed, Hood.MAX_ACC));
-	}
-
-
-	public void enableProfiler(double position) {
-		enableProfiler(position, Hood.MAX_VEL);
+	public void enableProfiler(double delta) {
+		enableProfiler(new SimpleOneDimensionalTrajectory(delta, Hood.MAX_VEL, Hood.MAX_VEL, Hood.MAX_ACC));	
 	}
 	
 	public boolean isProfilerEnabled() {

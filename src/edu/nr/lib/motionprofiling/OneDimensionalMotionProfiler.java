@@ -27,14 +27,14 @@ public class OneDimensionalMotionProfiler extends TimerTask implements MotionPro
 	private double errorLast;
 	
 	private double initialPosition;
-		
+			
 	private Trajectory trajectory;
 		
 	public OneDimensionalMotionProfiler(PIDOutput out, PIDSource source, double kv, double ka, double kp, double kd, long period) {
 		this.out = out;
 		this.source = source;
 		this.period = period;
-		this.trajectory = new SimpleOneDimensionalTrajectory(0,0,1,1,1);
+		this.trajectory = new SimpleOneDimensionalTrajectory(0,1,1,1);
 		timer = new Timer();
 		timer.schedule(this, 0, this.period);
 		reset();
@@ -43,6 +43,7 @@ public class OneDimensionalMotionProfiler extends TimerTask implements MotionPro
 		this.kp = kp;
 		this.kd = kd;
 		this.kv = kv;
+		this.initialPosition = source.pidGet();
 	}
 	
 	public OneDimensionalMotionProfiler(PIDOutput out, PIDSource source, double kv, double ka, double kp, double kd) {
@@ -61,7 +62,7 @@ public class OneDimensionalMotionProfiler extends TimerTask implements MotionPro
 			
 			double accelGoal = trajectory.getGoalAccel(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime);
 			
-			double error = trajectory.getGoalPosition(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime) - source.pidGet();
+			double error = trajectory.getGoalPosition(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime) - source.pidGet() + initialPosition;
 						
 			double errorDeriv = (error - errorLast) / dt;
 			
@@ -75,7 +76,7 @@ public class OneDimensionalMotionProfiler extends TimerTask implements MotionPro
 			SmartDashboard.putString("Motion Profiler V", source.pidGet() + ":" + output * trajectory.getMaxPossibleVelocity() * Math.signum(trajectory.getMaxPossibleVelocity()));
 			source.setPIDSourceType(PIDSourceType.kDisplacement);
 			SmartDashboard.putString("Motion Profiler X", source.pidGet() + ":" 
-					+ (trajectory.getGoalPosition(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime)));
+					+ (initialPosition + (trajectory.getGoalPosition(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime))));
 		}
 		
 		prevTime = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
@@ -108,22 +109,6 @@ public class OneDimensionalMotionProfiler extends TimerTask implements MotionPro
 		source.setPIDSourceType(PIDSourceType.kDisplacement);
 		initialPosition = source.pidGet();
 		source.setPIDSourceType(type);
-	}
-
-	/**
-	 * Sets the PIDOutput for the profiler
-	 * @param out
-	 */
-	public void setOut(PIDOutput out) {
-		this.out = out;
-	}
-
-	/**
-	 * Sets the PIDSource for the profiler
-	 * @param source
-	 */
-	public void setSource(PIDSource source) {
-		this.source = source;
 	}
 	
 	/**

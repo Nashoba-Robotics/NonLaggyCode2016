@@ -1,24 +1,28 @@
 package edu.nr.robotics.subsystems.drive;
 
 import edu.nr.lib.NRMath;
+import edu.nr.lib.interfaces.DoublePIDOutput;
+import edu.nr.lib.interfaces.DoublePIDSource;
 import edu.nr.lib.interfaces.Periodic;
 import edu.nr.lib.interfaces.SmartDashboardSource;
+import edu.nr.lib.motionprofiling.SimpleOneDimensionalTrajectory;
+import edu.nr.lib.motionprofiling.Trajectory;
+import edu.nr.lib.motionprofiling.TwoMotorOneDimensionalMotionProfiler;
 import edu.nr.robotics.EnabledSubsystems;
-import edu.nr.robotics.LiveWindowClasses;
 import edu.nr.robotics.OI;
 import edu.nr.robotics.RobotMap;
+import edu.nr.robotics.subsystems.hood.Hood;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
  */
-public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
+public class Drive extends Subsystem implements SmartDashboardSource, Periodic, DoublePIDSource, DoublePIDOutput{
 	
 	/**
 	 *  This is a constant that is used for driving with PID control
@@ -28,12 +32,15 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	private static Drive singleton;
 	CANTalon leftTalon, rightTalon, tempLeftTalon, tempRightTalon;
 	
+	TwoMotorOneDimensionalMotionProfiler profiler;
 	
 	private final static double ticksPerRev = 256 * 60 / 24 * 48;
 	private final static double wheelDiameter = 0.6375; //Feet
 	private final static double distancePerRev = Math.PI * wheelDiameter;
-	private final static double maxRPS = RobotMap.MAX_SPEED / distancePerRev;
-	private final static double maxRPM = maxRPS * 60;
+	private final static double MAX_RPS = RobotMap.MAX_SPEED / distancePerRev;
+	private final static double MAX_RPM = MAX_RPS * 60;
+	
+	private final static double MAX_ACC = 12; //Feet per second per second. Total guess
 
 	private Drive() {
 		if(EnabledSubsystems.driveEnabled) {
@@ -89,6 +96,8 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 			tempRightTalon.changeControlMode(TalonControlMode.Follower);
 			tempRightTalon.set(rightTalon.getDeviceID());
 			tempRightTalon.enableBrakeMode(true);
+			
+			profiler = new TwoMotorOneDimensionalMotionProfiler(this, this, 1.0/RobotMap.MAX_SPEED, 0, 0, 0);
 		}
 	}
 	
@@ -236,9 +245,9 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 			setPIDEnabled(true);
 		}
 		if(leftTalon != null)
-			leftTalon.setSetpoint(-left*maxRPM);
+			leftTalon.setSetpoint(-left*MAX_RPM);
 		if(rightTalon != null)
-			rightTalon.setSetpoint(right*maxRPM);
+			rightTalon.setSetpoint(right*MAX_RPM);
 	}
 
 	/**
@@ -338,7 +347,7 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	 */
 	public double getEncoderLeftSpeed() {
 		if(leftTalon != null)
-			return leftTalon.getSpeed() * distancePerRev * 10;
+			return leftTalon.getSpeed() * distancePerRev / 60;
 		return 0;
 	}
 
@@ -350,7 +359,7 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	 */
 	public double getEncoderRightSpeed() {
 		if(rightTalon != null)
-			return -rightTalon.getSpeed() * distancePerRev * 10;
+			return -rightTalon.getSpeed() * distancePerRev / 60;
 		return 0;
 	}
 
@@ -413,5 +422,70 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 			leftTalon.setPID(p, i, d, f, 0, 0, 0);
 		if(rightTalon != null)
 			rightTalon.setPID(p, i, d, f, 0, 0, 0);
+	}
+
+	@Override
+	public void pidWrite(double outputLeft, double outputRight) {
+		setPIDSetpoint(-outputLeft, -outputRight, true);		
+	}
+
+	PIDSourceType PIDType = PIDSourceType.kDisplacement;
+	
+	@Override
+	public void setPIDSourceType(PIDSourceType pidSource) {
+		PIDType = pidSource;
+	}
+
+	@Override
+	public PIDSourceType getPIDSourceType() {
+		return PIDType;
+	}
+
+	/**
+	 * In feet per second or feet
+	 */
+	@Override
+	public double pidGetLeft() {
+		if(PIDType == PIDSourceType.kDisplacement) {
+			return getEncoderLeftDistance();
+		} else {
+			return getEncoderLeftSpeed();
+		}
+	}
+
+	/**
+	 * In feet per second or feet
+	 */
+	@Override
+	public double pidGetRight() {
+		if(PIDType == PIDSourceType.kDisplacement) {
+			return getEncoderRightDistance();
+		} else {
+			return getEncoderRightSpeed();
+		}
+	}
+
+	public void disableProfiler() {
+		if(profiler != null)
+			profiler.disable();
+	}
+	
+	public void enableProfiler(Trajectory traj) {
+		if(profiler != null) {
+			profiler.setTrajectory(traj);
+			profiler.enable();
+		}
+	}
+		
+	public void enableProfiler(double delta, double speed) {
+		enableProfiler(new SimpleOneDimensionalTrajectory(delta, RobotMap.MAX_SPEED, speed, MAX_ACC));
+	}
+
+	public void enableProfiler(double position) {
+		enableProfiler(position, RobotMap.MAX_SPEED);
+	}
+	
+	public boolean isProfilerEnabled() {
+		return profiler.isEnabled();
 	}
 }

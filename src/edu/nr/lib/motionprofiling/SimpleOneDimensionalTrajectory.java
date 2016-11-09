@@ -16,10 +16,9 @@ public class SimpleOneDimensionalTrajectory implements Trajectory {
 	
 	boolean triangleShaped;
 		
-	public SimpleOneDimensionalTrajectory(double endPosition, double currentPosition, double maxPossibleVelocity, double maxUsedVelocity, double maxUsedAccel) {
-		double goalPositionDelta = endPosition - currentPosition;
-		startPosition = currentPosition;
-		this.endPosition = endPosition;
+	public SimpleOneDimensionalTrajectory(double goalPositionDelta, double maxPossibleVelocity, double maxUsedVelocity, double maxUsedAccel) {
+		this.endPosition = goalPositionDelta;
+		this.startPosition = 0;
 		if(goalPositionDelta < 0) {
 			maxUsedVelocity *= -1;
 			maxPossibleVelocity *= -1;

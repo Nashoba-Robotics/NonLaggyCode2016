@@ -28,7 +28,6 @@ import edu.nr.robotics.subsystems.drive.DriveConstantCommand;
 import edu.nr.robotics.subsystems.drive.DriveGyroAngleSmartDashboardCommand;
 import edu.nr.robotics.subsystems.drive.DriveResetEncodersCommand;
 import edu.nr.robotics.subsystems.hood.Hood;
-import edu.nr.robotics.subsystems.hood.HoodIncreaseDegreeCommand;
 import edu.nr.robotics.subsystems.hood.HoodJetsonPositionCommand;
 import edu.nr.robotics.subsystems.hood.HoodPositionCommand;
 import edu.nr.robotics.subsystems.hood.HoodResetEncoderCommand;
@@ -110,9 +109,6 @@ public class OI implements SmartDashboardSource, Periodic {
 		//->  2: Reverse drive direction
 		//->  3: Reset elevator encoder
 		new JoystickButton(driveLeft, 3).whenPressed(new ElevatorResetEncoderCommand());
-		
-		new JoystickButton(driveLeft, 9).whenPressed(new HoodIncreaseDegreeCommand(1));
-		new JoystickButton(driveLeft, 8).whenPressed(new HoodIncreaseDegreeCommand(-1));
 	}
 	
 	public void initDriveRight() {

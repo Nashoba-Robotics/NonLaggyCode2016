@@ -22,18 +22,6 @@ public interface MotionProfiler {
 	 * Doesn't disable the controller
 	 */
 	public void reset();
-
-	/**
-	 * Sets the PIDOutput for the profiler
-	 * @param out
-	 */
-	public void setOut(PIDOutput out);
-
-	/**
-	 * Sets the PIDSource for the profiler
-	 * @param source
-	 */
-	public void setSource(PIDSource source);
 	
 	/**
 	 * Sets the trajectory for the profiler
