@@ -35,7 +35,7 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic, 
 	TwoMotorOneDimensionalMotionProfiler profiler;
 	
 	private final static double ticksPerRev = 256 * 60 / 24 * 48;
-	private final static double wheelDiameter = 0.6375; //Feet
+	private final static double wheelDiameter = 0.6375 / 1.025577; //Feet // 1.025577 is an adjustment factor based on actual distance traveled versus encoder distance traveled
 	private final static double distancePerRev = Math.PI * wheelDiameter;
 	private final static double MAX_RPS = RobotMap.MAX_SPEED / distancePerRev;
 	private final static double MAX_RPM = MAX_RPS * 60;
@@ -97,7 +97,7 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic, 
 			tempRightTalon.set(rightTalon.getDeviceID());
 			tempRightTalon.enableBrakeMode(true);
 			
-			profiler = new TwoMotorOneDimensionalMotionProfiler(this, this, 1.0/RobotMap.MAX_SPEED, 0, 0, 0);
+			profiler = new TwoMotorOneDimensionalMotionProfiler(this, this, 1.10/RobotMap.MAX_SPEED, 0.02, 0.8, 0, 0.07);
 		}
 	}
 	
@@ -482,7 +482,7 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic, 
 	}
 
 	public void enableProfiler(double position) {
-		enableProfiler(position, RobotMap.MAX_SPEED);
+		enableProfiler(position, 7.5); //7.5 ft/s is the maximum speed for a maximum acc of 12 ft/s/s
 	}
 	
 	public boolean isProfilerEnabled() {

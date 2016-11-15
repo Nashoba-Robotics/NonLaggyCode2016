@@ -79,7 +79,7 @@ public class RobotMap {
 	public static final double DRIVE_P = 0.01;
 	public static final double DRIVE_I = 0;
 	public static final double DRIVE_D = 0;
-	public static final double DRIVE_F = 0.02;
+	public static final double DRIVE_F = 0.0155;
 	public static final double AUTON_ONE_ALIGN_ANGLE = 40;
 	public static final double AUTON_TWO_ALIGN_ANGLE = 25;
 	public static final double AUTON_THREE_ALIGN_ANGLE = 10;

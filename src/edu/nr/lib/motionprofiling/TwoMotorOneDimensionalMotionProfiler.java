@@ -3,8 +3,10 @@ package edu.nr.lib.motionprofiling;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edu.nr.lib.AngleGyroCorrection;
 import edu.nr.lib.interfaces.DoublePIDOutput;
 import edu.nr.lib.interfaces.DoublePIDSource;
+import edu.nr.lib.interfaces.GyroCorrection;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -23,7 +25,7 @@ public class TwoMotorOneDimensionalMotionProfiler extends TimerTask implements M
 	private DoublePIDOutput out;
 	private DoublePIDSource source;
 	
-	private double ka, kp, kd, kv;
+	private double ka, kp, kd, kv, kp_theta;
 	private double errorLastLeft;
 	private double errorLastRight;
 	
@@ -31,26 +33,31 @@ public class TwoMotorOneDimensionalMotionProfiler extends TimerTask implements M
 	private double initialPositionRight;
 			
 	private Trajectory trajectory;
+	
+	GyroCorrection gyroCorrection;
+
 		
-	public TwoMotorOneDimensionalMotionProfiler(DoublePIDOutput out, DoublePIDSource source, double kv, double ka, double kp, double kd, long period) {
+	public TwoMotorOneDimensionalMotionProfiler(DoublePIDOutput out, DoublePIDSource source, double kv, double ka, double kp, double kd, double kp_theta, long period) {
 		this.out = out;
 		this.source = source;
 		this.period = period;
 		this.trajectory = new SimpleOneDimensionalTrajectory(0,1,1,1);
 		timer = new Timer();
 		timer.schedule(this, 0, this.period);
-		reset();
 		this.source.setPIDSourceType(PIDSourceType.kDisplacement);
 		this.ka = ka;
 		this.kp = kp;
 		this.kd = kd;
 		this.kv = kv;
+		this.kp_theta = kp_theta;
 		this.initialPositionLeft = source.pidGetLeft();
 		this.initialPositionRight = source.pidGetRight();
+		this.gyroCorrection = new AngleGyroCorrection();
+		reset();
 	}
 	
-	public TwoMotorOneDimensionalMotionProfiler(DoublePIDOutput out, DoublePIDSource source, double kv, double ka, double kp, double kd) {
-		this(out, source, kv, ka, kp, kd, defaultPeriod);
+	public TwoMotorOneDimensionalMotionProfiler(DoublePIDOutput out, DoublePIDSource source, double kv, double ka, double kp, double kd, double kp_theta) {
+		this(out, source, kv, ka, kp, kd, kp_theta, defaultPeriod);
 	}
 	
 	double timeOfVChange = 0;
@@ -67,15 +74,49 @@ public class TwoMotorOneDimensionalMotionProfiler extends TimerTask implements M
 			double positionGoal = trajectory.getGoalPosition(currentTimeSinceStart);
 			double accelGoal = trajectory.getGoalAccel(currentTimeSinceStart);
 			
+			double headingAdjustment = gyroCorrection.getTurnValue(kp_theta);
+			
 			double errorLeft = positionGoal - source.pidGetLeft() + initialPositionLeft;			
 			double errorDerivLeft = (errorLeft - errorLastLeft) / dt;
-			double outputLeft = velocityGoal * kv + accelGoal * ka + errorLeft * kp + errorDerivLeft * kd;
+			double prelimOutputLeft = velocityGoal * kv + accelGoal * ka + errorLeft * kp + errorDerivLeft * kd;
 			errorLastLeft = errorLeft;
+			
+			double outputLeft = 0;
+
+			if (prelimOutputLeft > 0.0) {
+				if (headingAdjustment > 0.0) {
+					outputLeft = prelimOutputLeft - headingAdjustment;
+				} else {
+					outputLeft = Math.max(prelimOutputLeft, -headingAdjustment);
+				}
+			} else {
+				if (headingAdjustment > 0.0) {
+					outputLeft = -Math.max(-prelimOutputLeft, headingAdjustment);
+				} else {
+					outputLeft = prelimOutputLeft - headingAdjustment;
+				}
+			}
 			
 			double errorRight = positionGoal - source.pidGetRight() + initialPositionRight;			
 			double errorDerivRight = (errorRight - errorLastRight) / dt;
-			double outputRight = velocityGoal * kv + accelGoal * ka + errorRight * kp + errorDerivRight * kd;
+			double prelimOutputRight = velocityGoal * kv + accelGoal * ka + errorRight * kp + errorDerivRight * kd;
 			errorLastRight = errorRight;
+			
+			double outputRight = 0;
+			
+			if (prelimOutputRight > 0.0) {
+				if (headingAdjustment > 0.0) {
+					outputRight = Math.max(prelimOutputRight, headingAdjustment);
+				} else {
+					outputRight = prelimOutputRight + headingAdjustment;
+				}
+			} else {
+				if (headingAdjustment > 0.0) {
+					outputRight = prelimOutputRight + headingAdjustment;
+				} else {
+					outputRight = -Math.max(-prelimOutputRight, -headingAdjustment);
+				}
+			}
 			
 			out.pidWrite(outputLeft, outputRight);
 			
@@ -119,6 +160,7 @@ public class TwoMotorOneDimensionalMotionProfiler extends TimerTask implements M
 		initialPositionLeft = source.pidGetLeft();
 		initialPositionRight = source.pidGetRight();
 		source.setPIDSourceType(type);
+		gyroCorrection.clearInitialValue();
 	}
 	
 	/**

@@ -242,6 +242,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Go intake arm up",new IntakeArmMoveUpUntilPositionCommand(RobotMap.INTAKE_INTAKE_POS));
 
 		SmartDashboard.putData("Drive Forward 20 Feet with Motion Profiler", new DriveMotionProfileDistanceCommand(20));
+		SmartDashboard.putData("Drive Forward 30 Feet with Motion Profiler", new DriveMotionProfileDistanceCommand(30));
 		
 		
 		SmartDashboard.putNumber("Android Adjust Factor", RobotMap.ANDROID_ADJUST_FACTOR);
