@@ -2,10 +2,10 @@ package edu.nr.robotics.subsystems.intakearm;
 
 import edu.nr.lib.interfaces.Periodic;
 import edu.nr.lib.interfaces.SmartDashboardSource;
-import edu.nr.lib.motionprofiling.MotionProfiler;
 import edu.nr.lib.motionprofiling.OneDimensionalMotionProfiler;
-import edu.nr.lib.motionprofiling.SimpleOneDimensionalTrajectory;
-import edu.nr.lib.motionprofiling.Trajectory;
+import edu.nr.lib.motionprofiling.OneDimensionalMotionProfilerBasic;
+import edu.nr.lib.motionprofiling.OneDimensionalTrajectorySimple;
+import edu.nr.lib.motionprofiling.OneDimensionalTrajectory;
 import edu.nr.robotics.EnabledSubsystems;
 import edu.nr.robotics.LiveWindowClasses;
 import edu.nr.robotics.RobotMap;
@@ -26,7 +26,7 @@ public class IntakeArm extends Subsystem implements SmartDashboardSource, Period
     
 	private static IntakeArm singleton;
 	
-	public MotionProfiler profiler;
+	public OneDimensionalMotionProfiler profiler;
 	
 	int counter = 0;
 
@@ -47,7 +47,7 @@ public class IntakeArm extends Subsystem implements SmartDashboardSource, Period
 						
 			talon.configPotentiometerTurns(3);
 			
-			profiler = new OneDimensionalMotionProfiler(this, this, 1/MAX_VEL, 0,0,0);
+			profiler = new OneDimensionalMotionProfilerBasic(this, this, 1/MAX_VEL, 0,0,0);
 			
 			//talon.setF(32.7); //works well for down, poorly for up
 			talon.setF(1000);
@@ -168,7 +168,7 @@ public class IntakeArm extends Subsystem implements SmartDashboardSource, Period
 			profiler.disable();
 	}
 	
-	public void enableProfiler(Trajectory traj) {
+	public void enableProfiler(OneDimensionalTrajectory traj) {
 		if(profiler != null) {
 			profiler.setTrajectory(traj);
 			profiler.enable();
@@ -176,7 +176,7 @@ public class IntakeArm extends Subsystem implements SmartDashboardSource, Period
 	}
 	
 	public void enableProfiler(double position) {
-		enableProfiler(new SimpleOneDimensionalTrajectory(position - IntakeArm.getInstance().getPosition(), MAX_VEL, MAX_VEL, MAX_ACC));	
+		enableProfiler(new OneDimensionalTrajectorySimple(position - IntakeArm.getInstance().getPosition(), MAX_VEL, MAX_VEL, MAX_ACC));	
 	}
 	
 	public boolean isProfilerEnabled() {

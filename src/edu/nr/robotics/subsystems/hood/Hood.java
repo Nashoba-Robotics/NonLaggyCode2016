@@ -3,10 +3,10 @@ package edu.nr.robotics.subsystems.hood;
 import edu.nr.lib.TalonEncoder;
 import edu.nr.lib.interfaces.Periodic;
 import edu.nr.lib.interfaces.SmartDashboardSource;
-import edu.nr.lib.motionprofiling.MotionProfiler;
 import edu.nr.lib.motionprofiling.OneDimensionalMotionProfiler;
-import edu.nr.lib.motionprofiling.SimpleOneDimensionalTrajectory;
-import edu.nr.lib.motionprofiling.Trajectory;
+import edu.nr.lib.motionprofiling.OneDimensionalMotionProfilerBasic;
+import edu.nr.lib.motionprofiling.OneDimensionalTrajectorySimple;
+import edu.nr.lib.motionprofiling.OneDimensionalTrajectory;
 import edu.nr.robotics.EnabledSubsystems;
 import edu.nr.robotics.LiveWindowClasses;
 import edu.nr.robotics.RobotMap;
@@ -30,7 +30,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	
 	public static final double MAX_RPM = 83.325;
 	
-	public MotionProfiler profiler;
+	public OneDimensionalMotionProfiler profiler;
 	
 	CANTalon talon;	
 	TalonEncoder enc;
@@ -84,7 +84,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 			enc.setPIDSourceType(PIDSourceType.kDisplacement);
 			enc.setDistancePerRev(RobotMap.HOOD_TICK_TO_ANGLE_MULTIPLIER);
 			
-			profiler = new OneDimensionalMotionProfiler(this, this, 1/MAX_VEL, 0.00125,0.1,/*0.000001*/0);
+			profiler = new OneDimensionalMotionProfilerBasic(this, this, 1/MAX_VEL, 0.00125,0.1,/*0.000001*/0);
 			//profiler = new OneDimensionalMotionProfiler(this, this, 1/MAX_VEL,0,0,0);
 			
 			LiveWindow.addSensor("Hood", "Bottom Switch", LiveWindowClasses.hoodBottomSwitch);
@@ -255,7 +255,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 		setMotor(0);
 	}
 	
-	public void enableProfiler(Trajectory traj) {
+	public void enableProfiler(OneDimensionalTrajectory traj) {
 		if(profiler != null) {
 			profiler.setTrajectory(traj);
 			profiler.enable();
@@ -263,7 +263,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	}
 	
 	public void enableProfiler(double delta) {
-		enableProfiler(new SimpleOneDimensionalTrajectory(delta, Hood.MAX_VEL, Hood.MAX_VEL, Hood.MAX_ACC));	
+		enableProfiler(new OneDimensionalTrajectorySimple(delta, Hood.MAX_VEL, Hood.MAX_VEL, Hood.MAX_ACC));	
 	}
 	
 	public boolean isProfilerEnabled() {

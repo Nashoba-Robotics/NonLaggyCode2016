@@ -5,9 +5,9 @@ import edu.nr.lib.interfaces.DoublePIDOutput;
 import edu.nr.lib.interfaces.DoublePIDSource;
 import edu.nr.lib.interfaces.Periodic;
 import edu.nr.lib.interfaces.SmartDashboardSource;
-import edu.nr.lib.motionprofiling.SimpleOneDimensionalTrajectory;
-import edu.nr.lib.motionprofiling.Trajectory;
-import edu.nr.lib.motionprofiling.TwoMotorOneDimensionalMotionProfiler;
+import edu.nr.lib.motionprofiling.OneDimensionalTrajectorySimple;
+import edu.nr.lib.motionprofiling.OneDimensionalTrajectory;
+import edu.nr.lib.motionprofiling.OneDimensionalMotionProfilerTwoMotor;
 import edu.nr.robotics.EnabledSubsystems;
 import edu.nr.robotics.OI;
 import edu.nr.robotics.RobotMap;
@@ -32,7 +32,7 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic, 
 	private static Drive singleton;
 	CANTalon leftTalon, rightTalon, tempLeftTalon, tempRightTalon;
 	
-	TwoMotorOneDimensionalMotionProfiler profiler;
+	OneDimensionalMotionProfilerTwoMotor profiler;
 	
 	private final static double ticksPerRev = 256 * 60 / 24 * 48;
 	private final static double wheelDiameter = 0.6375 / 1.025577; //Feet // 1.025577 is an adjustment factor based on actual distance traveled versus encoder distance traveled
@@ -97,7 +97,7 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic, 
 			tempRightTalon.set(rightTalon.getDeviceID());
 			tempRightTalon.enableBrakeMode(true);
 			
-			profiler = new TwoMotorOneDimensionalMotionProfiler(this, this, 1.10/RobotMap.MAX_SPEED, 0.02, 0.8, 0, 0.07);
+			profiler = new OneDimensionalMotionProfilerTwoMotor(this, this, 1.10/RobotMap.MAX_SPEED, 0.02, 0.8, 0, 0.07);
 		}
 	}
 	
@@ -470,7 +470,7 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic, 
 			profiler.disable();
 	}
 	
-	public void enableProfiler(Trajectory traj) {
+	public void enableProfiler(OneDimensionalTrajectory traj) {
 		if(profiler != null) {
 			profiler.setTrajectory(traj);
 			profiler.enable();
@@ -478,7 +478,7 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic, 
 	}
 		
 	public void enableProfiler(double delta, double speed) {
-		enableProfiler(new SimpleOneDimensionalTrajectory(delta, RobotMap.MAX_SPEED, speed, MAX_ACC));
+		enableProfiler(new OneDimensionalTrajectorySimple(delta, RobotMap.MAX_SPEED, speed, MAX_ACC));
 	}
 
 	public void enableProfiler(double position) {
