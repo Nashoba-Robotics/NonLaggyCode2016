@@ -2,18 +2,28 @@ package edu.nr.lib.motionprofiling;
 
 import java.util.ArrayList;
 
-public class PremadeOneDimensionalTrajectory implements Trajectory {
+public class OneDimensionalTrajectoryPremade implements OneDimensionalTrajectory {
 
 	//The values in the position, velocity, and acceleration lists
 	//are offset by the period.
 	// That is, the first value in the list is at time 0,
 	// the second value in the list is at time $period,
 	// the third value in the list is at time 2*$period,
-	// and so on.
-	private double period;
-	private ArrayList<Double> positionList;
-	private ArrayList<Double> velocityList;
-	private ArrayList<Double> accelerationList;
+	// and so on.	
+	private final double period;
+	private final ArrayList<Double> positionList;
+	private final ArrayList<Double> velocityList;
+	private final ArrayList<Double> accelerationList;
+	
+	private final double maxPossibleVelocity;
+	
+	public OneDimensionalTrajectoryPremade(double maxPossibleVelocity, ArrayList<Double> positionList, ArrayList<Double> velocityList, ArrayList<Double> accelerationList, double period) {
+		this.maxPossibleVelocity = maxPossibleVelocity;
+		this.positionList = positionList;
+		this.velocityList = velocityList;
+		this.accelerationList = accelerationList;
+		this.period = period;
+	}
 	
 	@Override
 	public double getGoalVelocity(double time) {
@@ -41,8 +51,7 @@ public class PremadeOneDimensionalTrajectory implements Trajectory {
 
 	@Override
 	public double getMaxPossibleVelocity() {
-		// TODO Auto-generated method stub
-		return 0;
+		return maxPossibleVelocity;
 	}
 
 	@Override
@@ -82,6 +91,11 @@ public class PremadeOneDimensionalTrajectory implements Trajectory {
 	@Override
 	public double getEndPosition() {
 		return positionList.get(positionList.size() - 1);
+	}
+
+	@Override
+	public double getGoalHeading(double time) {
+		return 0;
 	}
 
 }

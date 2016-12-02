@@ -1,6 +1,6 @@
 package edu.nr.lib.motionprofiling;
 
-public class SimpleOneDimensionalTrajectory implements Trajectory {
+public class OneDimensionalTrajectorySimple implements OneDimensionalTrajectory {
 	
 	double maxPossibleVelocity;
 	double maxUsedVelocity;
@@ -16,7 +16,7 @@ public class SimpleOneDimensionalTrajectory implements Trajectory {
 	
 	boolean triangleShaped;
 		
-	public SimpleOneDimensionalTrajectory(double goalPositionDelta, double maxPossibleVelocity, double maxUsedVelocity, double maxUsedAccel) {
+	public OneDimensionalTrajectorySimple(double goalPositionDelta, double maxPossibleVelocity, double maxUsedVelocity, double maxUsedAccel) {
 		this.endPosition = goalPositionDelta;
 		this.startPosition = 0;
 		if(goalPositionDelta < 0) {
@@ -138,6 +138,11 @@ public class SimpleOneDimensionalTrajectory implements Trajectory {
 	@Override
 	public double getEndPosition() {
 		return endPosition;
+	}
+
+	@Override
+	public double getGoalHeading(double time) {
+		return 0;
 	}
 
 	

@@ -3,7 +3,7 @@ package edu.nr.lib.motionprofiling;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 
-public interface MotionProfiler {
+public interface TwoDimensionalMotionProfiler {
 
 	public void run();
 	
@@ -27,9 +27,9 @@ public interface MotionProfiler {
 	 * Sets the trajectory for the profiler
 	 * @param trajectory
 	 */
-	public void setTrajectory(Trajectory trajectory);
+	public void setTrajectory(TwoDimensionalTrajectory trajectory);
 
 	public boolean isEnabled();
 
-	public Trajectory getTrajectory();
+	public TwoDimensionalTrajectory getTrajectory();
 }

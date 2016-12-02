@@ -10,7 +10,7 @@ import edu.nr.lib.interfaces.GyroCorrection;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class TwoMotorOneDimensionalMotionProfiler extends TimerTask implements MotionProfiler  {
+public class OneDimensionalMotionProfilerTwoMotor extends TimerTask implements OneDimensionalMotionProfiler  {
 
 	private final Timer timer;
 	
@@ -32,16 +32,16 @@ public class TwoMotorOneDimensionalMotionProfiler extends TimerTask implements M
 	private double initialPositionLeft;
 	private double initialPositionRight;
 			
-	private Trajectory trajectory;
+	private OneDimensionalTrajectory trajectory;
 	
 	GyroCorrection gyroCorrection;
 
 		
-	public TwoMotorOneDimensionalMotionProfiler(DoublePIDOutput out, DoublePIDSource source, double kv, double ka, double kp, double kd, double kp_theta, long period) {
+	public OneDimensionalMotionProfilerTwoMotor(DoublePIDOutput out, DoublePIDSource source, double kv, double ka, double kp, double kd, double kp_theta, long period) {
 		this.out = out;
 		this.source = source;
 		this.period = period;
-		this.trajectory = new SimpleOneDimensionalTrajectory(0,1,1,1);
+		this.trajectory = new OneDimensionalTrajectorySimple(0,1,1,1);
 		timer = new Timer();
 		timer.schedule(this, 0, this.period);
 		this.source.setPIDSourceType(PIDSourceType.kDisplacement);
@@ -56,7 +56,7 @@ public class TwoMotorOneDimensionalMotionProfiler extends TimerTask implements M
 		reset();
 	}
 	
-	public TwoMotorOneDimensionalMotionProfiler(DoublePIDOutput out, DoublePIDSource source, double kv, double ka, double kp, double kd, double kp_theta) {
+	public OneDimensionalMotionProfilerTwoMotor(DoublePIDOutput out, DoublePIDSource source, double kv, double ka, double kp, double kd, double kp_theta) {
 		this(out, source, kv, ka, kp, kd, kp_theta, defaultPeriod);
 	}
 	
@@ -167,7 +167,7 @@ public class TwoMotorOneDimensionalMotionProfiler extends TimerTask implements M
 	 * Sets the trajectory for the profiler
 	 * @param trajectory
 	 */
-	public void setTrajectory(Trajectory trajectory) {
+	public void setTrajectory(OneDimensionalTrajectory trajectory) {
 		this.trajectory = trajectory;
 	}
 
@@ -177,7 +177,7 @@ public class TwoMotorOneDimensionalMotionProfiler extends TimerTask implements M
 	}
 
 	@Override
-	public Trajectory getTrajectory() {
+	public OneDimensionalTrajectory getTrajectory() {
 		return trajectory;
 	}
 	
