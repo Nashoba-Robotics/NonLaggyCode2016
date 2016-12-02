@@ -242,7 +242,7 @@ public class OI implements SmartDashboardSource, Periodic {
 	// Overrides intake arm position (overrides pot, not limit switches)
 	// snapCoffinJoysticks(operatorRight.getAxis(AxisType.kY))
 	public double getIntakeArmMoveValue() {
-		return snapCoffinJoysticks(-operatorRight.getAxis(AxisType.kY));
+		return snapCoffinJoysticks(operatorRight.getAxis(AxisType.kY));
 	}
 	
 	// -> Joy2: Loader Roller Joystick

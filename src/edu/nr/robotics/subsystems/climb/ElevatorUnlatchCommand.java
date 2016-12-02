@@ -13,32 +13,4 @@ public class ElevatorUnlatchCommand extends CommandGroup {
 		addSequential(new ElevatorWaitUntilChangedByCommand(RobotMap.ELEVATOR_UNLATCH_DISTANCE));
         addParallel(new ElevatorOffCommand());
 	}
-	
-	private class IntakeArmMoveIfTooHighCommand extends NRCommand {
-		
-		private IntakeArmMoveIfTooHighCommand() {
-			requires(IntakeArm.getInstance());
-		}
-		
-		@Override
-		protected void onStart() {
-			if(IntakeArm.getInstance().get() < RobotMap.INTAKE_TOP_POS - RobotMap.INTAKE_ARM_THRESHOLD) {
-				IntakeArm.getInstance().enable();
-				IntakeArm.getInstance().setSetpoint(RobotMap.INTAKE_TOP_POS);
-			}
-		}
-		
-		@Override
-		protected boolean isFinishedNR() {
-			if(IntakeArm.getInstance().get() < RobotMap.INTAKE_TOP_POS - RobotMap.INTAKE_ARM_THRESHOLD) {
-				return false;
-			} 
-			return true;
-		}
-		
-		@Override
-		protected void onEnd() {
-			IntakeArm.getInstance().disable();
-		}
-	}
 }

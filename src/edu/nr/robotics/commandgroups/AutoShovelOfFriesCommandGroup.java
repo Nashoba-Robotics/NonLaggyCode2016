@@ -7,7 +7,6 @@ import edu.nr.robotics.subsystems.intakearm.IntakeArmBottomHeightCommandGroup;
 import edu.nr.robotics.subsystems.intakearm.IntakeArmMoveDownUntilLimitSwitchCommand;
 import edu.nr.robotics.subsystems.intakearm.IntakeArmMoveDownUntilPositionCommand;
 import edu.nr.robotics.subsystems.intakearm.IntakeArmMoveUpUntilPositionCommand;
-import edu.nr.robotics.subsystems.intakearm.IntakeArmOffCommand;
 import edu.nr.robotics.subsystems.intakearm.IntakeArmPositionCommand;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;

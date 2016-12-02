@@ -4,35 +4,31 @@ import edu.nr.lib.NRCommand;
 
 public class IntakeArmPositionCommand extends NRCommand {
 
-	double val;
-	double threshold;
+	double position;
 	
-	public IntakeArmPositionCommand(double val) {
-		this(val, 0);
+	public IntakeArmPositionCommand(double position) {
+		this(position, 1);
 	}
 	
-	public IntakeArmPositionCommand(double val, double threshold) {
-		this.val = val;
-		this.threshold = threshold;
-		requires(IntakeArm.getInstance());	
+	public IntakeArmPositionCommand(double position, double speed) {
+		this.position = position;
+		requires(IntakeArm.getInstance());
 	}
 
 	@Override
 	protected void onStart() {
-		IntakeArm.getInstance().enable();
-	}
-
-	@Override
-	protected void onExecute() {
-		IntakeArm.getInstance().setSetpoint(val);
+		IntakeArm.getInstance().disableProfiler();
+		IntakeArm.getInstance().enableProfiler(position);
 	}
 	
 	@Override
 	protected boolean isFinishedNR() {
-		System.err.println("val " + ((IntakeArm.getInstance().get() - val) < threshold));
-		if(threshold != 0)
-			return Math.abs(IntakeArm.getInstance().getError()) < threshold;
-		return !IntakeArm.getInstance().isEnable();
-
+		return false;
 	}
+	
+	@Override
+	protected void onEnd() {
+		IntakeArm.getInstance().disableProfiler();
+	}
+
 }

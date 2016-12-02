@@ -116,7 +116,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	}
 	
 	/**
-	 * Disable the PID and set the motor to the given speed
+	 * Set the motor to the given speed
 	 * @param speed the speed to set the motor to, from -1 to 1
 	 */
 	public void setMotor(double speed) {
@@ -166,16 +166,18 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 			SmartDashboard.putNumber("Hood Velocity", enc.getRateWithoutScaling());
 			SmartDashboard.putNumber("Hood Acceleration", enc.getAccelWithoutScaling());
 		}
-		SmartDashboard.putString("Hood Velocity PID", 
-				talon.getSpeed() /*rpm at the encoder shaft*/ 
-				/ 11.11 /*gear ratio*/ 
-				* 360 /*degrees per rotation*/ 
-				/ 60 /*seconds per minute*/ 
-				
-				+ ":" + talon.getSetpoint()/*rpm at the encoder shaft*/ 
-				/ 11.11 /*gear ratio*/ 
-				* 360 /*degrees per rotation*/ 
-				/ 60 /*seconds per minute*/ );	
+		if(talon != null) {
+			SmartDashboard.putString("Hood Velocity PID", 
+					talon.getSpeed() /*rpm at the encoder shaft*/ 
+					/ 11.11 /*gear ratio*/ 
+					* 360 /*degrees per rotation*/ 
+					/ 60 /*seconds per minute*/ 
+					
+					+ ":" + talon.getSetpoint()/*rpm at the encoder shaft*/ 
+					/ 11.11 /*gear ratio*/ 
+					* 360 /*degrees per rotation*/ 
+					/ 60 /*seconds per minute*/ );	
+		}
 		SmartDashboard.putData(this);
 	}
 
@@ -234,15 +236,23 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 
 	@Override
 	public double pidGet() {
-		if(pidSource == PIDSourceType.kDisplacement)
+		if(pidSource == PIDSourceType.kDisplacement) {
 			return getDisplacement();
-		else
-			return enc.getRateWithoutScaling();
+		} else if(enc != null) {
+				return enc.getRateWithoutScaling();
+		} else {
+			return  0;
+		}
 	}
 
 	public void disableProfiler() {
 		if(profiler != null)
 			profiler.disable();
+	}
+	
+	public void disable() {
+		disableProfiler();
+		setMotor(0);
 	}
 	
 	public void enableProfiler(Trajectory traj) {
@@ -257,7 +267,11 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	}
 	
 	public boolean isProfilerEnabled() {
-		return profiler.isEnabled();
+		if(profiler != null) {
+			return profiler.isEnabled();
+		} else {
+			return false;
+		}
 	}
 
 	
