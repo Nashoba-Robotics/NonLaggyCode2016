@@ -14,5 +14,5 @@ public interface Trajectory {
 
 	public double getMaxUsedAccel();
 
-	public double getGoalPosition();
+	public double getEndPosition();
 }

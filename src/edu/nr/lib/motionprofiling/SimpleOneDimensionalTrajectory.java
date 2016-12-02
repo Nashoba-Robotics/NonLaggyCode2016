@@ -136,7 +136,7 @@ public class SimpleOneDimensionalTrajectory implements Trajectory {
 	}
 
 	@Override
-	public double getGoalPosition() {
+	public double getEndPosition() {
 		return endPosition;
 	}
 

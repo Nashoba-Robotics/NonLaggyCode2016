@@ -43,7 +43,7 @@ public class HoodJetsonPositionCommand extends NRCommand {
 	}
 
 	public double getSetpoint() {
-		return Hood.getInstance().profiler.getTrajectory().getGoalPosition();
+		return Hood.getInstance().profiler.getTrajectory().getEndPosition();
 	}
 
 }
