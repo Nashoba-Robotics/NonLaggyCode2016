@@ -47,11 +47,10 @@ public class IntakeArm extends Subsystem implements SmartDashboardSource, Period
 						
 			talon.configPotentiometerTurns(3);
 			
-			profiler = new OneDimensionalMotionProfilerBasic(this, this, 1/MAX_VEL, 0,0,0);
+			profiler = new OneDimensionalMotionProfilerBasic(this, this, 1/MAX_VEL, 0.1,0.1,0);
 			
-			//talon.setF(32.7); //works well for down, poorly for up
-			talon.setF(1000);
-			talon.setP(20);			
+			talon.setF(60);
+			talon.setP(80);			
 			
 			LiveWindow.addSensor("Intake Arm", "Bottom Switch", LiveWindowClasses.intakeArmBottomSwitch);
 			LiveWindow.addSensor("Intake Arm", "Top Switch", LiveWindowClasses.intakeArmTopSwitch);
