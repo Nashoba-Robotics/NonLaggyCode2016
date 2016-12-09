@@ -64,6 +64,9 @@ public class OneDimensionalTrajectorySimple implements OneDimensionalTrajectory 
 	}
 	
 	public double getGoalPosition(double time) {	
+		if(time > totalTime) {
+			return endPosition;
+		}
 		if(triangleShaped) {
 			if(time <= timeAccelPlus) {
 				//We're on the positive slope of the trapezoid

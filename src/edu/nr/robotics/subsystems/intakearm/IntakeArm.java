@@ -34,8 +34,8 @@ public class IntakeArm extends Subsystem implements SmartDashboardSource, Period
 	
 	boolean pidDisabled = false;
 	
-	static final double MAX_ACC = .1;
-	static final double MAX_VEL = 1;
+	static final double MAX_ACC = 100 / 60.0;
+	static final double MAX_VEL = 30 / 60.0;
 		
 	private IntakeArm() {		
 		if(EnabledSubsystems.intakeEnabled)
@@ -102,7 +102,7 @@ public class IntakeArm extends Subsystem implements SmartDashboardSource, Period
 	 */
 	public double getVelocity() {
 		if(talon != null)
-			return talon.getSpeed();
+			return -talon.getSpeed()/60.0;
 		return 0;
 	}
 

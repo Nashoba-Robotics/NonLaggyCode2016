@@ -71,9 +71,18 @@ public class OneDimensionalMotionProfilerBasic extends TimerTask implements OneD
 			out.pidWrite(output);
 
 			errorLast = error;
+			
+			double timeSinceStart = edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime;
+			
+			if((initialPosition + (trajectory.getGoalPosition(timeSinceStart))) < 0) {
+				double goalPosition = trajectory.getGoalPosition(timeSinceStart);
+				double currentTime = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
+				
+				isEnabled();
+			}
 
 			source.setPIDSourceType(PIDSourceType.kRate);
-			SmartDashboard.putString("Motion Profiler V", source.pidGet() + ":" + (output * trajectory.getMaxPossibleVelocity() * Math.signum(trajectory.getMaxPossibleVelocity()) + Math.sin(edu.wpi.first.wpilibj.Timer.getFPGATimestamp())/100000.0));
+			SmartDashboard.putString("Motion Profiler V", source.pidGet() + ":" + (output * trajectory.getMaxPossibleVelocity() * Math.signum(trajectory.getMaxPossibleVelocity())));
 			source.setPIDSourceType(PIDSourceType.kDisplacement);
 			SmartDashboard.putString("Motion Profiler X", source.pidGet() + ":" 
 					+ (initialPosition + (trajectory.getGoalPosition(edu.wpi.first.wpilibj.Timer.getFPGATimestamp() - startTime))));
