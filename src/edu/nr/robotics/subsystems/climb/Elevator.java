@@ -4,7 +4,6 @@ import edu.nr.lib.NRMath;
 import edu.nr.lib.TalonEncoder;
 import edu.nr.lib.interfaces.SmartDashboardSource;
 import edu.nr.robotics.EnabledSubsystems;
-import edu.nr.robotics.LiveWindowClasses;
 import edu.nr.robotics.RobotMap;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -26,7 +25,6 @@ public class Elevator extends Subsystem implements SmartDashboardSource {
 			talon = new CANTalon(RobotMap.ELEVATOR_TALON);
 			talon.enableBrakeMode(true);
 			enc = new TalonEncoder(talon, false);
-			LiveWindow.addSensor("Elevator", "Speed", LiveWindowClasses.elevatorSpeed);
 		}
 		
 		
@@ -81,9 +79,7 @@ public class Elevator extends Subsystem implements SmartDashboardSource {
 		if(EnabledSubsystems.climbEnabled) {
 			if(enc != null){
 				SmartDashboard.putNumber("Elevator speed", enc.getRate());
-				SmartDashboard.putNumber("Elevator position", enc.get());
-				LiveWindowClasses.elevatorSpeed.set(enc.getRate());
-	
+				SmartDashboard.putNumber("Elevator position", enc.get());	
 			}
 			
 			if(talon != null)

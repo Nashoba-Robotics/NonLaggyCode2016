@@ -8,7 +8,6 @@ import edu.nr.lib.motionprofiling.OneDimensionalMotionProfilerBasic;
 import edu.nr.lib.motionprofiling.OneDimensionalTrajectorySimple;
 import edu.nr.lib.motionprofiling.OneDimensionalTrajectory;
 import edu.nr.robotics.EnabledSubsystems;
-import edu.nr.robotics.LiveWindowClasses;
 import edu.nr.robotics.RobotMap;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -17,7 +16,6 @@ import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -86,9 +84,6 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 			
 			profiler = new OneDimensionalMotionProfilerBasic(this, this, 1/MAX_VEL, 0.00125,0.1,/*0.000001*/0);
 			//profiler = new OneDimensionalMotionProfiler(this, this, 1/MAX_VEL,0,0,0);
-			
-			LiveWindow.addSensor("Hood", "Bottom Switch", LiveWindowClasses.hoodBottomSwitch);
-			LiveWindow.addSensor("Hood", "Top Switch", LiveWindowClasses.hoodTopSwitch);
 			
 			//LiveWindow.addSensor("Hood", "PID", pid);
 		}

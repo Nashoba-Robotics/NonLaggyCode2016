@@ -202,8 +202,6 @@ public class Robot extends IterativeRobot {
 		
 		SmartDashboard.putData("Turn 3 degree command", new DriveAnglePIDCommand(-15, AngleUnit.DEGREE));
 
-		LiveWindow.addSensor("Jetson", "Ready to shoot", LiveWindowClasses.readyToShoot);
-
 		SmartDashboard.putNumber("Hood Multiplier Percent", 100);
 
 		SmartDashboard.putNumber("Hood location for setting", 48);

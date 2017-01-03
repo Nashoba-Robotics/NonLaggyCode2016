@@ -2,7 +2,6 @@ package edu.nr.robotics.subsystems.intakeroller;
 
 import edu.nr.lib.interfaces.SmartDashboardSource;
 import edu.nr.robotics.EnabledSubsystems;
-import edu.nr.robotics.LiveWindowClasses;
 import edu.nr.robotics.RobotMap;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -24,8 +23,6 @@ public class IntakeRoller extends Subsystem implements SmartDashboardSource {
 		if(EnabledSubsystems.intakeRollersEnabled) {
 			gate = new DigitalInput(RobotMap.INTAKE_PHOTO_GATE);
 			talon = new CANTalon(RobotMap.INTAKE_ROLLER_TALON);
-			
-			LiveWindow.addSensor("Intake Roller", "Speed", LiveWindowClasses.intakeRollerSpeed);
 		}
 	}
 	
@@ -57,7 +54,6 @@ public class IntakeRoller extends Subsystem implements SmartDashboardSource {
 	@Override
 	public void smartDashboardInfo() {
 		if(EnabledSubsystems.intakeRollersEnabled) {
-			LiveWindowClasses.intakeRollerSpeed.set(talon.get());
 			SmartDashboard.putBoolean("Intake Roller Forward", isForward());
 			SmartDashboard.putBoolean("Intake Roller Reverse", isReverse());
 		}

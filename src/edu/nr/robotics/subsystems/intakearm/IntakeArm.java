@@ -7,7 +7,6 @@ import edu.nr.lib.motionprofiling.OneDimensionalMotionProfilerBasic;
 import edu.nr.lib.motionprofiling.OneDimensionalTrajectorySimple;
 import edu.nr.lib.motionprofiling.OneDimensionalTrajectory;
 import edu.nr.robotics.EnabledSubsystems;
-import edu.nr.robotics.LiveWindowClasses;
 import edu.nr.robotics.RobotMap;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -51,9 +50,6 @@ public class IntakeArm extends Subsystem implements SmartDashboardSource, Period
 			
 			talon.setF(60);
 			talon.setP(80);			
-			
-			LiveWindow.addSensor("Intake Arm", "Bottom Switch", LiveWindowClasses.intakeArmBottomSwitch);
-			LiveWindow.addSensor("Intake Arm", "Top Switch", LiveWindowClasses.intakeArmTopSwitch);
 		}
 
 	}
@@ -108,9 +104,6 @@ public class IntakeArm extends Subsystem implements SmartDashboardSource, Period
 	@Override
 	public void smartDashboardInfo() {
 			SmartDashboard.putNumber("Intake Arm Potentiometer", getPosition());
-			
-			LiveWindowClasses.intakeArmBottomSwitch.set(isBotLimitSwitchClosed());
-			LiveWindowClasses.intakeArmTopSwitch.set(isTopLimitSwitchClosed());
 		if(talon != null) {
 			SmartDashboard.putString("Intake Velocity PID", 
 					talon.getSpeed() + ":" + talon.getSetpoint() + ":" + talon.getOutputVoltage());	

@@ -3,7 +3,6 @@ package edu.nr.robotics.subsystems.shooter;
 import edu.nr.lib.CounterPIDSource;
 import edu.nr.lib.interfaces.SmartDashboardSource;
 import edu.nr.robotics.EnabledSubsystems;
-import edu.nr.robotics.LiveWindowClasses;
 import edu.nr.robotics.RobotMap;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -46,9 +45,6 @@ public class Shooter extends Subsystem implements SmartDashboardSource{
 			shooterRate.setPIDSourceType(PIDSourceType.kRate);
 			shooterRate.setSamplesToAverage(24);
 			shooterRate.scale(3 * RobotMap.SHOOTER_MAX_SPEED);
-							
-			LiveWindow.addSensor("Shooter", "PID Output", LiveWindowClasses.shooterOutput);
-			LiveWindow.addSensor("Shooter", "Current", LiveWindowClasses.shooterCurrent);
 		}
 	}
 	
@@ -115,7 +111,6 @@ public class Shooter extends Subsystem implements SmartDashboardSource{
 			SmartDashboard.putNumber("Shooter Speed", getSpeed());
 			SmartDashboard.putNumber("Shooter Speed Percent", getScaledSpeed());
 			SmartDashboard.putData(this);
-			LiveWindowClasses.shooterCurrent.set(talonOutput.getOutputCurrent());
 		}
 	}
 
