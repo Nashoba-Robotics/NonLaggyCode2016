@@ -6,11 +6,11 @@ import java.util.TimerTask;
 
 import edu.nr.lib.AngleGyroCorrectionSource;
 import edu.nr.lib.AngleUnit;
+import edu.nr.lib.GetGyroCommand;
 import edu.nr.lib.NRCommand;
 import edu.nr.lib.NavX;
 import edu.nr.lib.network.AndroidServer;
 import edu.nr.robotics.RobotMap;
-import edu.nr.robotics.auton.AutonFollowInstructionsShootCommand.GetGyro;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,7 +36,7 @@ public class DriveAnglePIDCommand extends NRCommand {
 	
 	boolean goodToGo = true;
 	
-	GetGyro getGyro;
+	GetGyroCommand getGyro;
 	
 	boolean resetCorrection;
 
@@ -53,7 +53,7 @@ public class DriveAnglePIDCommand extends NRCommand {
     	this.useAndroid = false;
     }
     
-    public DriveAnglePIDCommand(double angle, GetGyro getGyro) {
+    public DriveAnglePIDCommand(double angle, GetGyroCommand getGyro) {
     	this(angle, null, false);  
     	this.getGyro = getGyro;
     	this.useAndroid = false;

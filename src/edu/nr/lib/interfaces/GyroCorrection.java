@@ -2,10 +2,10 @@ package edu.nr.lib.interfaces;
 
 public abstract class GyroCorrection
 {
-	private static final double ANGLE_CORRECTION_INTENSITY = 0.05, MAX_ANGLE_CORRECTION_SPEED = 0.2;
+	private static final double DEFAULT_KP_THETA = 0.05, MAX_ANGLE_CORRECTION_SPEED = 0.2;
 	private boolean initialized = false;
 	
-	public double getTurnValue(double correctionIntensity)
+	public double getTurnValue(double kP_theta)
 	{
 		if(initialized == false)
 		{
@@ -13,7 +13,7 @@ public abstract class GyroCorrection
 			initialized = true;
 		}
 		
-		double turn = getAngleErrorDegrees() * correctionIntensity;
+		double turn = getAngleErrorDegrees() * kP_theta;
     	if(turn<0)
     		turn = Math.max(-MAX_ANGLE_CORRECTION_SPEED, turn);
     	else
@@ -24,7 +24,7 @@ public abstract class GyroCorrection
 	
 	public double getTurnValue()
 	{
-		return this.getTurnValue(ANGLE_CORRECTION_INTENSITY);
+		return this.getTurnValue(DEFAULT_KP_THETA);
 	}
 	
 	protected abstract double getAngleErrorDegrees();

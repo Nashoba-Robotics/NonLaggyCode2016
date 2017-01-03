@@ -1,24 +1,28 @@
 package edu.nr.robotics.subsystems.drive;
 
 import edu.nr.lib.NRMath;
+import edu.nr.lib.interfaces.DoublePIDOutput;
+import edu.nr.lib.interfaces.DoublePIDSource;
 import edu.nr.lib.interfaces.Periodic;
 import edu.nr.lib.interfaces.SmartDashboardSource;
+import edu.nr.lib.motionprofiling.OneDimensionalTrajectorySimple;
+import edu.nr.lib.motionprofiling.OneDimensionalTrajectory;
+import edu.nr.lib.motionprofiling.OneDimensionalMotionProfilerTwoMotor;
 import edu.nr.robotics.EnabledSubsystems;
-import edu.nr.robotics.LiveWindowClasses;
 import edu.nr.robotics.OI;
 import edu.nr.robotics.RobotMap;
+import edu.nr.robotics.subsystems.hood.Hood;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
  */
-public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
+public class Drive extends Subsystem implements SmartDashboardSource, Periodic, DoublePIDSource, DoublePIDOutput{
 	
 	/**
 	 *  This is a constant that is used for driving with PID control
@@ -28,40 +32,51 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	private static Drive singleton;
 	CANTalon leftTalon, rightTalon, tempLeftTalon, tempRightTalon;
 	
+	OneDimensionalMotionProfilerTwoMotor profiler;
 	
 	private final static double ticksPerRev = 256 * 60 / 24 * 48;
-	private final static double wheelDiameter = 0.6375; //Feet
+	private final static double wheelDiameter = 0.6375 / 1.025577; //Feet // 1.025577 is an adjustment factor based on actual distance traveled versus encoder distance traveled
 	private final static double distancePerRev = Math.PI * wheelDiameter;
-	private final static double maxRPS = RobotMap.MAX_SPEED / distancePerRev;
-	private final static double maxRPM = maxRPS * 60;
+	private final static double MAX_RPS = RobotMap.MAX_SPEED / distancePerRev;
+	private final static double MAX_RPM = MAX_RPS * 60;
+	
+	private final static double MAX_ACC = 12; //Feet per second per second. Total guess
 
 	private Drive() {
 		if(EnabledSubsystems.driveEnabled) {
+			//Set the left talon variable to be for the talon connected to RobotMap.TALON_LEFT_B (set to 3)
 			leftTalon = new CANTalon(RobotMap.TALON_LEFT_B);
 			
+			//Go to speed mode instead of voltage mode (the default), or some other mode, like motion profiling
 			leftTalon.changeControlMode(TalonControlMode.Speed);
 			
+			//Enable brake mode
 			leftTalon.enableBrakeMode(true);
+			
+			//Tell the talon that it uses a quad encoder that has moved 0 ticks so far
 			leftTalon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 			leftTalon.setEncPosition(0);
 			
+			//Reverses the sensor on the left talon. The right talon is not reversed. This is because they are on opposite sides of the robot.
 			leftTalon.reverseSensor(true);
 			
-			
+			//Tell the left talon that it has ticksPerRev (set to 30,720, this is from Greg) ticks per revolution.
 			leftTalon.configEncoderCodesPerRev((int)ticksPerRev);
 
+			//Set the FPID values. The I and D values are current set to 0, the F is set to 0.02, the P is set to 0.01.
+			//These values were found through subjective testing
 			leftTalon.setF(RobotMap.DRIVE_F); 
 			leftTalon.setP(RobotMap.DRIVE_P); 
 			leftTalon.setI(RobotMap.DRIVE_I); 
 			leftTalon.setD(RobotMap.DRIVE_D); 
 			
-	
+			//This is setting the secondary talon on the left side (in port RobotMap.TALON_LEFT_A) to follow the primary talon on the left side.
 			tempLeftTalon = new CANTalon(RobotMap.TALON_LEFT_A);
 			tempLeftTalon.changeControlMode(TalonControlMode.Follower);
 			tempLeftTalon.set(leftTalon.getDeviceID());
 			tempLeftTalon.enableBrakeMode(true);
 			
-			
+			//The same thing as above happens for the right talon
 			rightTalon = new CANTalon(RobotMap.TALON_RIGHT_A);
 			rightTalon.enableBrakeMode(true);
 
@@ -81,9 +96,11 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 			tempRightTalon.changeControlMode(TalonControlMode.Follower);
 			tempRightTalon.set(rightTalon.getDeviceID());
 			tempRightTalon.enableBrakeMode(true);
+			
+			profiler = new OneDimensionalMotionProfilerTwoMotor(this, this, 1.10/RobotMap.MAX_SPEED, 0.02, 0.8, 0, 0.07);
 		}
 	}
-
+	
 	public static Drive getInstance() {
 		init();
 		return singleton;
@@ -228,9 +245,9 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 			setPIDEnabled(true);
 		}
 		if(leftTalon != null)
-			leftTalon.setSetpoint(-left*maxRPM);
+			leftTalon.setSetpoint(-left*MAX_RPM);
 		if(rightTalon != null)
-			rightTalon.setSetpoint(right*maxRPM);
+			rightTalon.setSetpoint(right*MAX_RPM);
 	}
 
 	/**
@@ -330,7 +347,7 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	 */
 	public double getEncoderLeftSpeed() {
 		if(leftTalon != null)
-			return leftTalon.getSpeed() * distancePerRev * 10;
+			return leftTalon.getSpeed() * distancePerRev / 60;
 		return 0;
 	}
 
@@ -342,7 +359,7 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 	 */
 	public double getEncoderRightSpeed() {
 		if(rightTalon != null)
-			return -rightTalon.getSpeed() * distancePerRev * 10;
+			return -rightTalon.getSpeed() * distancePerRev / 60;
 		return 0;
 	}
 
@@ -405,5 +422,70 @@ public class Drive extends Subsystem implements SmartDashboardSource, Periodic{
 			leftTalon.setPID(p, i, d, f, 0, 0, 0);
 		if(rightTalon != null)
 			rightTalon.setPID(p, i, d, f, 0, 0, 0);
+	}
+
+	@Override
+	public void pidWrite(double outputLeft, double outputRight) {
+		setPIDSetpoint(-outputLeft, -outputRight, true);		
+	}
+
+	PIDSourceType PIDType = PIDSourceType.kDisplacement;
+	
+	@Override
+	public void setPIDSourceType(PIDSourceType pidSource) {
+		PIDType = pidSource;
+	}
+
+	@Override
+	public PIDSourceType getPIDSourceType() {
+		return PIDType;
+	}
+
+	/**
+	 * In feet per second or feet
+	 */
+	@Override
+	public double pidGetLeft() {
+		if(PIDType == PIDSourceType.kDisplacement) {
+			return getEncoderLeftDistance();
+		} else {
+			return getEncoderLeftSpeed();
+		}
+	}
+
+	/**
+	 * In feet per second or feet
+	 */
+	@Override
+	public double pidGetRight() {
+		if(PIDType == PIDSourceType.kDisplacement) {
+			return getEncoderRightDistance();
+		} else {
+			return getEncoderRightSpeed();
+		}
+	}
+
+	public void disableProfiler() {
+		if(profiler != null)
+			profiler.disable();
+	}
+	
+	public void enableProfiler(OneDimensionalTrajectory traj) {
+		if(profiler != null) {
+			profiler.setTrajectory(traj);
+			profiler.enable();
+		}
+	}
+		
+	public void enableProfiler(double delta, double speed) {
+		enableProfiler(new OneDimensionalTrajectorySimple(delta, RobotMap.MAX_SPEED, speed, MAX_ACC));
+	}
+
+	public void enableProfiler(double position) {
+		enableProfiler(position, 7.5); //7.5 ft/s is the maximum speed for a maximum acc of 12 ft/s/s
+	}
+	
+	public boolean isProfilerEnabled() {
+		return profiler.isEnabled();
 	}
 }

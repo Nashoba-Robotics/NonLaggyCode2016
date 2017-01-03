@@ -6,9 +6,11 @@ import edu.nr.robotics.OI;
 /**
  *
  */
-public class HoodJoystickCommand extends NRCommand {
+public class HoodSmartDashboardUpDownRepeatCommand extends NRCommand {
 
-    public HoodJoystickCommand() {
+	double moveValue = 0;
+	
+    public HoodSmartDashboardUpDownRepeatCommand(double moveValue) {
         requires(Hood.getInstance());
     }
     
@@ -17,11 +19,24 @@ public class HoodJoystickCommand extends NRCommand {
     	if(Hood.getInstance().isProfilerEnabled())
     		Hood.getInstance().disableProfiler();
     }
-
+    
+    boolean goingUp = true;
+    
     // Called repeatedly when this Command is scheduled to run
     @Override
 	protected void onExecute() {
-    	Hood.getInstance().setMotor(OI.getInstance().getHoodMoveValue());
+    	if(goingUp) {
+    		Hood.getInstance().setMotor(moveValue);
+    	} else {
+    		Hood.getInstance().setMotor(-moveValue);
+    	}
+    	if(Hood.getInstance().isTopLimitSwitchClosed()) {
+			goingUp = false;
+		}
+
+    	if(Hood.getInstance().isBotLimitSwitchClosed()) {
+			goingUp = true;
+		}
     }
 
     // Make this return true when this Command no longer needs to run execute()

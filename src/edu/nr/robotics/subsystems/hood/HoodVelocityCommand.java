@@ -6,9 +6,11 @@ import edu.nr.robotics.OI;
 /**
  *
  */
-public class HoodJoystickCommand extends NRCommand {
+public class HoodVelocityCommand extends NRCommand {
 
-    public HoodJoystickCommand() {
+	double moveValue = 0;
+	
+    public HoodVelocityCommand(double moveValue) {
         requires(Hood.getInstance());
     }
     
@@ -21,12 +23,16 @@ public class HoodJoystickCommand extends NRCommand {
     // Called repeatedly when this Command is scheduled to run
     @Override
 	protected void onExecute() {
-    	Hood.getInstance().setMotor(OI.getInstance().getHoodMoveValue());
+    	Hood.getInstance().setMotor(moveValue);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
 	protected boolean isFinishedNR() {
         return false;
+    }
+    
+    @Override
+	protected void onEnd(boolean interrupted) {
     }
 }

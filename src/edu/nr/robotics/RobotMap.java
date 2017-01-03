@@ -32,7 +32,7 @@ public class RobotMap {
 	public static final int LIGHTS_SPIKE = 0;
 	
 	public static final int INTAKE_ARM_TALON = 11;
-	public static final int INTAKE_ARM_POT = 0;
+	//public static final int INTAKE_ARM_POT = 0;
 	public static final int HOOD_TALON = 6;
 	public static final int ELEVATOR_TALON = 2;
 	
@@ -52,13 +52,11 @@ public class RobotMap {
 	public static final double HOOD_TOP_POSITION = 75.46;
 	public static final double HOOD_TICK_TO_ANGLE_MULTIPLIER = 0.031934;
 	public static final double HOOD_THRESHOLD = 0.2;
-	public static final double INTAKE_ARM_THRESHOLD = 0.003;
-	public static final double INTAKE_OFFSET = 0.004;
-	public static final double INTAKE_TOP_POS = 0.655 + INTAKE_OFFSET;
-	public static final double INTAKE_INTAKE_POS = 0.522 + INTAKE_OFFSET;
-	public static final double INTAKE_HOME_POS = 0.522 + INTAKE_OFFSET; //home == intake
-	public static final double INTAKE_BOTTOM_POS = 0.494 + INTAKE_OFFSET;
-	public static final double INTAKE_ARM_TICK_TO_ANGLE_MULTIPLIER = -0.00222;
+	public static final double INTAKE_ARM_THRESHOLD = 0.03;
+	public static final double INTAKE_TOP_POS = 1.83;
+	public static final double INTAKE_INTAKE_POS = 1.16;
+	public static final double INTAKE_HOME_POS = INTAKE_INTAKE_POS; //home == intake
+	public static final double INTAKE_BOTTOM_POS = 0.94;
 	public static final double TURN_THRESHOLD = 0.4;
 	public static final double SHOOTER_THRESHOLD = 0.05;
 	
@@ -80,16 +78,13 @@ public class RobotMap {
 	public static final double DRIVE_P = 0.01;
 	public static final double DRIVE_I = 0;
 	public static final double DRIVE_D = 0;
-	public static final double DRIVE_F = 0.02;
+	public static final double DRIVE_F = 0.0155;
 	public static final double AUTON_ONE_ALIGN_ANGLE = 40;
 	public static final double AUTON_TWO_ALIGN_ANGLE = 25;
 	public static final double AUTON_THREE_ALIGN_ANGLE = 10;
 	public static final double AUTON_FOUR_ALIGN_ANGLE = -10;
 	public static final double AUTON_FIVE_ALIGN_ANGLE = -15;
 	
-	public static final double INTAKE_ARM_P = 60;
-	public static final double INTAKE_ARM_I = 0;
-	public static final double INTAKE_ARM_D = 0;
 	public static final int DRIVE_VOLT_RAMP_RATE = 240;
 	public static final double ANDROID_ADJUST_FACTOR = 0.95;
 }

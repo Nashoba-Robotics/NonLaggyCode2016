@@ -1,6 +1,6 @@
 package edu.nr.lib.motionprofiling;
 
-public interface OneDimensionalMotionProfiler {
+public interface TwoDimensionalMotionProfiler {
 
 	public void run();
 	
@@ -24,9 +24,9 @@ public interface OneDimensionalMotionProfiler {
 	 * Sets the trajectory for the profiler
 	 * @param trajectory
 	 */
-	public void setTrajectory(OneDimensionalTrajectory trajectory);
+	public void setTrajectory(TwoDimensionalTrajectory trajectory);
 
 	public boolean isEnabled();
 
-	public OneDimensionalTrajectory getTrajectory();
+	public TwoDimensionalTrajectory getTrajectory();
 }

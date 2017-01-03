@@ -21,7 +21,7 @@ public class LaserCannonTriggerCommand extends CommandGroup {
 				+ " Photo 2: " + LoaderRoller.getInstance().hasBall() 
 				+ " Photo 3: " + IntakeRoller.getInstance().hasBall()
 				+ " Shooter Speed: " + Shooter.getInstance().getScaledSpeed() 
-				+ " Hood angle: " + Hood.getInstance().get());
+				+ " Hood angle: " + Hood.getInstance().getDisplacement());
 	}
 
 }

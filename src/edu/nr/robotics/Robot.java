@@ -10,10 +10,10 @@ import edu.nr.lib.AngleUnit;
 import edu.nr.lib.WaitUntilGyroCommand;
 import edu.nr.lib.interfaces.Periodic;
 import edu.nr.lib.interfaces.SmartDashboardSource;
-import edu.nr.lib.motionprofiling.MotionProfiler;
 import edu.nr.lib.motionprofiling.OneDimensionalMotionProfiler;
-import edu.nr.lib.motionprofiling.SimpleOneDimensionalTrajectory;
-import edu.nr.lib.motionprofiling.Trajectory;
+import edu.nr.lib.motionprofiling.OneDimensionalMotionProfilerBasic;
+import edu.nr.lib.motionprofiling.OneDimensionalTrajectorySimple;
+import edu.nr.lib.motionprofiling.OneDimensionalTrajectory;
 import edu.nr.lib.NavX;
 import edu.nr.lib.network.AndroidServer;
 import edu.nr.robotics.Robot.defense;
@@ -35,15 +35,16 @@ import edu.nr.robotics.subsystems.drive.DriveAnglePIDCommand;
 import edu.nr.robotics.subsystems.drive.DriveConstantCommand;
 import edu.nr.robotics.subsystems.drive.DriveConstantSmartDashboardCommand;
 import edu.nr.robotics.subsystems.drive.DriveGyroAngleSmartDashboardCommand;
+import edu.nr.robotics.subsystems.drive.DriveMotionProfileDistanceCommand;
 import edu.nr.robotics.subsystems.drive.DriveSetPIDSmartDashboardCommand;
 import edu.nr.robotics.subsystems.drive.DriveSetTurnPIDSmartDashboardCommand;
 import edu.nr.robotics.subsystems.drive.DriveTurnSmartDashboardCommand;
 import edu.nr.robotics.subsystems.drive.FieldCentric;
 import edu.nr.robotics.subsystems.hood.Hood;
 import edu.nr.robotics.subsystems.hood.HoodJetsonPositionCommand;
+import edu.nr.robotics.subsystems.hood.HoodSmartDashboardVelocityCommand;
 import edu.nr.robotics.subsystems.intakearm.IntakeArm;
 import edu.nr.robotics.subsystems.intakearm.IntakeArmMoveUpUntilPositionCommand;
-import edu.nr.robotics.subsystems.intakearm.IntakeArmSetPIDSmartDashboardCommand;
 import edu.nr.robotics.subsystems.intakeroller.IntakeRoller;
 import edu.nr.robotics.subsystems.loaderroller.LaserCannonTriggerCommand;
 import edu.nr.robotics.subsystems.loaderroller.LoaderRoller;
@@ -72,7 +73,6 @@ public class Robot extends IterativeRobot {
 
 	RobotDiagram robotDiagram;
 	
-	public MotionProfiler profiler;
 
 	public Command driveWall;
 
@@ -153,9 +153,6 @@ public class Robot extends IterativeRobot {
 		initSmartDashboard();
 		robotDiagram = new RobotDiagram();
 		
-		Trajectory traj = new SimpleOneDimensionalTrajectory(40, Hood.MAX_VEL, Hood.MAX_ACC);
-		profiler = new OneDimensionalMotionProfiler(Hood.getInstance(), Hood.getInstance(), traj,0,0,0);
-
 	}
 
 	private void initSmartDashboard() {
@@ -198,7 +195,11 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Gyro angle command", new WaitUntilGyroCommand(20));
 
 		SmartDashboard.putData("Hood Jetson angle command", new HoodJetsonPositionCommand());
-
+		
+		SmartDashboard.putNumber("Hood velocity for setting (deg per s)", 0);
+		
+		SmartDashboard.putData("Hood go at SmartDashboard speed", new HoodSmartDashboardVelocityCommand());
+		
 		SmartDashboard.putData("Turn 3 degree command", new DriveAnglePIDCommand(-15, AngleUnit.DEGREE));
 
 		LiveWindow.addSensor("Jetson", "Ready to shoot", LiveWindowClasses.readyToShoot);
@@ -210,10 +211,6 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Turn P", RobotMap.TURN_P);
 		SmartDashboard.putNumber("Turn I", RobotMap.TURN_I);
 		SmartDashboard.putNumber("Turn D", RobotMap.TURN_D);
-
-		SmartDashboard.putNumber("Intake Arm P", RobotMap.INTAKE_ARM_P);
-		SmartDashboard.putNumber("Intake Arm I", RobotMap.INTAKE_ARM_I);
-		SmartDashboard.putNumber("Intake Arm D", RobotMap.INTAKE_ARM_D);
 
 		SmartDashboard.putNumber("Drive P", RobotMap.DRIVE_TURN_P);
 		SmartDashboard.putNumber("Drive I", RobotMap.DRIVE_TURN_I);
@@ -229,17 +226,16 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Gyro Set Numbers Smart Dashboard", new DriveSetTurnPIDSmartDashboardCommand());
 		SmartDashboard.putData("Drive Constant command", new DriveConstantSmartDashboardCommand(true,true,true));
 		SmartDashboard.putNumber("Drive Constant Value", 0.5);
-
-		SmartDashboard.putNumber("Intake Offset", RobotMap.INTAKE_OFFSET);
 		
 		SmartDashboard.putString("GyroPID", "0:0");
 		SmartDashboard.putNumber("GyroPIDAngle", 0);
-		
-		SmartDashboard.putData("Set Intake Arm PID", new IntakeArmSetPIDSmartDashboardCommand());
-		
+				
 		SmartDashboard.putData("Go intake arm up",new IntakeArmMoveUpUntilPositionCommand(RobotMap.INTAKE_INTAKE_POS));
 
-
+		SmartDashboard.putData("Drive Forward 20 Feet with Motion Profiler", new DriveMotionProfileDistanceCommand(20));
+		SmartDashboard.putData("Drive Forward 30 Feet with Motion Profiler", new DriveMotionProfileDistanceCommand(30));
+		
+		
 		SmartDashboard.putNumber("Android Adjust Factor", RobotMap.ANDROID_ADJUST_FACTOR);
 		
 		

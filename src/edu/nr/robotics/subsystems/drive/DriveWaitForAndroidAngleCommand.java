@@ -33,7 +33,7 @@ public class DriveWaitForAndroidAngleCommand extends NRCommand implements Androi
 		System.out.println("Checking drive angle: current count: " + currentCount + " drive angle error: " + command.getError());
 		
 		if(auton)
-			return currentCount >= 8 && (Math.abs(Hood.getInstance().get() - hoodcommand.getSetpoint()) < 0.25);
+			return currentCount >= 8 && (Math.abs(Hood.getInstance().getDisplacement() - hoodcommand.getSetpoint()) < 0.25);
 		return false;
 	}
 	

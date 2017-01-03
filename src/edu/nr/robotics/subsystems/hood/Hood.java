@@ -1,9 +1,12 @@
 package edu.nr.robotics.subsystems.hood;
 
-import edu.nr.lib.PID;
 import edu.nr.lib.TalonEncoder;
 import edu.nr.lib.interfaces.Periodic;
 import edu.nr.lib.interfaces.SmartDashboardSource;
+import edu.nr.lib.motionprofiling.OneDimensionalMotionProfiler;
+import edu.nr.lib.motionprofiling.OneDimensionalMotionProfilerBasic;
+import edu.nr.lib.motionprofiling.OneDimensionalTrajectorySimple;
+import edu.nr.lib.motionprofiling.OneDimensionalTrajectory;
 import edu.nr.robotics.EnabledSubsystems;
 import edu.nr.robotics.LiveWindowClasses;
 import edu.nr.robotics.RobotMap;
@@ -11,6 +14,8 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
+import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
+import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,12 +26,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Hood extends Subsystem implements SmartDashboardSource, Periodic, PIDOutput, PIDSource {
     
 	public static final double MAX_ACC = 100;
-	public static final double MAX_VEL = 30;
+	public static final double MAX_VEL = 45; //TODO: find more accurately
 	
+	public static final double MAX_RPM = 83.325;
+	
+	public OneDimensionalMotionProfiler profiler;
 	
 	CANTalon talon;	
 	TalonEncoder enc;
-	PID pid;
 	
 	//Max acceleration for motion profiling is 100 degrees per second per second
 	//Max velocity for motion profiling is 30 degrees per second
@@ -42,21 +49,48 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 		Position(double position) {
 			this.pos = position;
 		}
+		
+		private static boolean isAtPosition(Position pos, double angle) {
+			return pos.pos < angle + RobotMap.HOOD_THRESHOLD && pos.pos > angle - RobotMap.HOOD_THRESHOLD;
+		}
+		
+		private static boolean isAtPosition(Position pos) {
+			return isAtPosition(pos,Hood.getInstance().enc.get());
+		}
+		
+		public boolean isAtPosition() {
+			return isAtPosition(this);
+		}
+		
 	}
 	
 	private Hood() {
 		if(EnabledSubsystems.hoodEnabled) {
 			talon = new CANTalon(RobotMap.HOOD_TALON);
 			talon.enableBrakeMode(true);
-			enc = new TalonEncoder(talon);
+			
+			talon.changeControlMode(TalonControlMode.Speed);
+			
+			talon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+			
+			talon.setEncPosition(0);
+			
+			talon.configEncoderCodesPerRev(256);
+			
+			talon.setF(7.3);
+			talon.setP(2);
+			
+			enc = new TalonEncoder(talon,true);
 			enc.setPIDSourceType(PIDSourceType.kDisplacement);
 			enc.setDistancePerRev(RobotMap.HOOD_TICK_TO_ANGLE_MULTIPLIER);
-			pid = new PID(0.25, 0.00, 0.001, enc, talon);
+			
+			profiler = new OneDimensionalMotionProfilerBasic(this, this, 1/MAX_VEL, 0.00125,0.1,/*0.000001*/0);
+			//profiler = new OneDimensionalMotionProfiler(this, this, 1/MAX_VEL,0,0,0);
 			
 			LiveWindow.addSensor("Hood", "Bottom Switch", LiveWindowClasses.hoodBottomSwitch);
 			LiveWindow.addSensor("Hood", "Top Switch", LiveWindowClasses.hoodTopSwitch);
 			
-			LiveWindow.addSensor("Hood", "PID", pid);
+			//LiveWindow.addSensor("Hood", "PID", pid);
 		}
 	}
 
@@ -82,69 +116,32 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	}
 	
 	/**
-	 * Disable the PID and set the motor to the given speed
+	 * Set the motor to the given speed
 	 * @param speed the speed to set the motor to, from -1 to 1
 	 */
 	public void setMotor(double speed) {
-		if(pid != null)
-			pid.disable();
 		if(talon != null)
-			talon.set(speed);
+			talon.setSetpoint(speed * MAX_RPM);
+	}
+
+	public void setMotorInRPM(double rpm) {
+		if(talon != null)
+			talon.setSetpoint(rpm);
 	}
 	
-	/**
-	 * Set the PID setpoint
-	 * @param value the value to set the setpoint to
-	 */
-	public void setSetpoint(double value) {
-		if(pid != null) {
-			if(!pid.isEnable())
-				pid.enable();
-			pid.setSetpoint(value);	
-		}
-	}
-	
-	/**
-	 * Get the PID setpoint
-	 * @return the PID setpoint
-	 */
-	public double getSetpoint() {
-		if(pid != null)
-			return pid.getSetpoint();
-		return 0;
-	}
-	
-	/**
-	 * Enable the PID
-	 */
-	public void enable() {
-		if(pid != null)
-			pid.enable();
-	}
-	
-	/**
-	 * Disable the PID
-	 */
-	public void disable() {
-		if(pid != null)
-			pid.disable();
-	}
-	
-	/**
-	 * Gets whether the PID is enabled or not
-	 * @return whether the PID is enabled
-	 */
-	public boolean isEnable() {
-		if(pid != null)
-			return pid.isEnable();
-		return false;
+	public void setMotorInDPS(double degpersec) {
+		if(talon != null)
+			talon.setSetpoint(degpersec 
+				* 11.11 /*gear ratio*/ 
+				/ 360 /*degrees per rotation*/ 
+				* 60 /*seconds per minute*/ );
 	}
 	
 	/**
 	 * Gets the value of the encoder
 	 * @return the value of the encoder
 	 */
-	public double get() {
+	public double getDisplacement() {
 		if(enc != null)
 			return enc.get() ;
 		return 0;
@@ -154,39 +151,34 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	 * Gets whether the motor is still moving
 	 * @return whether the motor is still moving
 	 */
-	public boolean getMoving() {
-		if(pid != null)
-			return Math.abs(pid.getError()) > 0.05;
+	public boolean isMoving() {
+		if(enc != null)
+			return Math.abs(enc.getRateWithoutScaling()) > 0.05;
 		return false;
 		//0.05 is a number I just made up
 	}
 	
-	public void setMaxSpeedPID(double speed) {
-		maxSpeed = speed;
-		if(pid != null)
-			pid.setOutputRange(0,speed);
-	}
-	
 	@Override
 	public void smartDashboardInfo() {
-		SmartDashboard.putNumber("Hood Angle", get());
-		SmartDashboard.putNumber("Hood Distance", angleToDistance(get()));
-		SmartDashboard.putNumber("Hood Velocity", enc.getRateWithoutScaling());
-		SmartDashboard.putString("Hood PID", get() + ":" + getSetpoint() + ":" + (getSetpoint()-RobotMap.HOOD_THRESHOLD) + ":" + (getSetpoint()+RobotMap.HOOD_THRESHOLD));
-	}
-
-	public boolean isAtPosition(Position pos) {
-		if(enc != null)
-			return enc.get() + RobotMap.HOOD_THRESHOLD > pos.pos &&  enc.get() - RobotMap.HOOD_THRESHOLD < pos.pos;
-		return false;
-	}
-
-	public boolean isAtBottom() {
-		return isAtPosition(Position.BOTTOM);
-	}
-
-	public boolean isAtTop() {
-		return isAtPosition(Position.TOP);
+		SmartDashboard.putNumber("Hood Angle", getDisplacement());
+		SmartDashboard.putNumber("Hood Distance", angleToDistance(getDisplacement()));
+		if(enc != null) {
+			SmartDashboard.putNumber("Hood Velocity", enc.getRateWithoutScaling());
+			SmartDashboard.putNumber("Hood Acceleration", enc.getAccelWithoutScaling());
+		}
+		if(talon != null) {
+			SmartDashboard.putString("Hood Velocity PID", 
+					talon.getSpeed() /*rpm at the encoder shaft*/ 
+					/ 11.11 /*gear ratio*/ 
+					* 360 /*degrees per rotation*/ 
+					/ 60 /*seconds per minute*/ 
+					
+					+ ":" + talon.getSetpoint()/*rpm at the encoder shaft*/ 
+					/ 11.11 /*gear ratio*/ 
+					* 360 /*degrees per rotation*/ 
+					/ 60 /*seconds per minute*/ );	
+		}
+		SmartDashboard.putData(this);
 	}
 
 	@Override
@@ -244,10 +236,42 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 
 	@Override
 	public double pidGet() {
-		if(pidSource == PIDSourceType.kDisplacement)
-			return get();
-		else
-			return enc.getRateWithoutScaling();
+		if(pidSource == PIDSourceType.kDisplacement) {
+			return getDisplacement();
+		} else if(enc != null) {
+				return enc.getRateWithoutScaling();
+		} else {
+			return  0;
+		}
+	}
+
+	public void disableProfiler() {
+		if(profiler != null)
+			profiler.disable();
+	}
+	
+	public void disable() {
+		disableProfiler();
+		setMotor(0);
+	}
+	
+	public void enableProfiler(OneDimensionalTrajectory traj) {
+		if(profiler != null) {
+			profiler.setTrajectory(traj);
+			profiler.enable();
+		}
+	}
+	
+	public void enableProfiler(double delta) {
+		enableProfiler(new OneDimensionalTrajectorySimple(delta, Hood.MAX_VEL, Hood.MAX_VEL, Hood.MAX_ACC));	
+	}
+	
+	public boolean isProfilerEnabled() {
+		if(profiler != null) {
+			return profiler.isEnabled();
+		} else {
+			return false;
+		}
 	}
 
 	

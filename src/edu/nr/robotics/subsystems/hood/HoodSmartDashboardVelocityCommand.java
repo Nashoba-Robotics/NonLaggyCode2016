@@ -1,14 +1,11 @@
 package edu.nr.robotics.subsystems.hood;
 
 import edu.nr.lib.NRCommand;
-import edu.nr.robotics.OI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/**
- *
- */
-public class HoodJoystickCommand extends NRCommand {
-
-    public HoodJoystickCommand() {
+public class HoodSmartDashboardVelocityCommand extends NRCommand {
+	
+    public HoodSmartDashboardVelocityCommand() {
         requires(Hood.getInstance());
     }
     
@@ -21,7 +18,7 @@ public class HoodJoystickCommand extends NRCommand {
     // Called repeatedly when this Command is scheduled to run
     @Override
 	protected void onExecute() {
-    	Hood.getInstance().setMotor(OI.getInstance().getHoodMoveValue());
+    	Hood.getInstance().setMotorInDPS(SmartDashboard.getNumber("Hood velocity for setting (deg per s)"));
     }
 
     // Make this return true when this Command no longer needs to run execute()
