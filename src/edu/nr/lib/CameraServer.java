@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package edu.nr.lib.camera;
+package edu.nr.lib;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

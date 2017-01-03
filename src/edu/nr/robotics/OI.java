@@ -96,8 +96,8 @@ public class OI implements SmartDashboardSource, Periodic {
 		initOperatorLeft();
 		initOperatorRight();
 		
-		new DoubleJoystickButton(new JoystickButton(driveLeft, 6), new JoystickButton(driveRight, 6)).whenPressed(new ElevatorResetCommand());
-		new DoubleJoystickButton(new JoystickButton(driveLeft, 6), new JoystickButton(driveRight, 7)).whenPressed(new ElevatorResetPart2Command());
+		new DoubleJoystickButton(new JoystickButton(driveLeft, 6), new JoystickButton(driveRight, 6), DoubleJoystickButton.Type.And).whenPressed(new ElevatorResetCommand());
+		new DoubleJoystickButton(new JoystickButton(driveLeft, 6), new JoystickButton(driveRight, 7), DoubleJoystickButton.Type.And).whenPressed(new ElevatorResetPart2Command());
 	}
 	
 	public void initDriveLeft() {
@@ -141,7 +141,7 @@ public class OI implements SmartDashboardSource, Periodic {
 
 		// -> 2 + 3: Align
 		// Auto align the robot to target, ends when drive joysticks are touched
-		alignButton = new DoubleJoystickButton(new JoystickButton(operatorLeft, 2), new JoystickButton(operatorLeft, 3));
+		alignButton = new DoubleJoystickButton(new JoystickButton(operatorLeft, 2), new JoystickButton(operatorLeft, 3), DoubleJoystickButton.Type.And);
 		
 		alignCommand = new AlignCommandGroup();
 		alignButton.whenPressed(alignCommand);
