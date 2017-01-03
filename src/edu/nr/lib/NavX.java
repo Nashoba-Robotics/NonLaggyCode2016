@@ -2,10 +2,6 @@ package edu.nr.lib;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.nr.robotics.Robot;
-import edu.wpi.first.wpilibj.DriverStation;
 
 public class NavX {
 	

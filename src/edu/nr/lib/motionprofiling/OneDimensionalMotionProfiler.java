@@ -1,8 +1,5 @@
 package edu.nr.lib.motionprofiling;
 
-import edu.wpi.first.wpilibj.PIDOutput;
-import edu.wpi.first.wpilibj.PIDSource;
-
 public interface OneDimensionalMotionProfiler {
 
 	public void run();

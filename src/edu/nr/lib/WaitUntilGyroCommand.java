@@ -1,7 +1,5 @@
 package edu.nr.lib;
 
-import edu.nr.robotics.auton.AutonFollowInstructionsShootCommand.GetGyro;
-
 /**
  *
  */
@@ -9,13 +7,13 @@ public class WaitUntilGyroCommand extends NRCommand {
 
 	AngleGyroCorrection gyroCorrection;
 	double angle;
-	GetGyro gyro;
+	GetGyroCommand gyro;
 
 	public WaitUntilGyroCommand(double angle) {
 		this.angle = angle;
 	}
 
-	public WaitUntilGyroCommand(double angle, GetGyro gyro) {
+	public WaitUntilGyroCommand(double angle, GetGyroCommand gyro) {
 		this.angle = angle;
 		this.gyro = gyro;
 	}
@@ -37,4 +35,5 @@ public class WaitUntilGyroCommand extends NRCommand {
         else
             gyroCorrection = new AngleGyroCorrection();
 	}
+	
 }

@@ -1,7 +1,7 @@
 package edu.nr.robotics.auton;
 
 import edu.nr.robotics.RobotMap;
-import edu.nr.robotics.auton.AutonFollowInstructionsShootCommand.GetGyro;
+import edu.nr.lib.GetGyroCommand;
 import edu.nr.lib.WaitUntilGyroCommand;
 import edu.nr.robotics.Robot.position;
 import edu.nr.robotics.subsystems.drive.DriveAnglePIDCommand;
@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class AutonTurnPositionCommand extends CommandGroup {
 
-	public AutonTurnPositionCommand(position selected, GetGyro gyro) {
+	public AutonTurnPositionCommand(position selected, GetGyroCommand gyro) {
 		switch(selected) {
 		case Five:
 			addSequential(new DriveSimpleDistanceWithGyroCommand(1,0.4));
