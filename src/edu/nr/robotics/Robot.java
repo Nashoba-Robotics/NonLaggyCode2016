@@ -52,6 +52,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -84,10 +85,10 @@ public class Robot extends IterativeRobot {
 	}
 
 	Command autonomousCommand;
-	SendableChooser autoCommandChooser;
+	SendableChooser<CommandGroup> autoCommandChooser;
 
-	public SendableChooser defensePicker;
-	public SendableChooser positionPicker;
+	public SendableChooser<defense> defensePicker;
+	public SendableChooser<position> positionPicker;
 
 	public enum defense {
 		RoughTerrain, Guillotine, LowBar, Other, Cheval
@@ -151,7 +152,7 @@ public class Robot extends IterativeRobot {
 
 	private void initSmartDashboard() {
 		System.out.println("About to init SmartDashboard");
-		defensePicker = new SendableChooser();
+		defensePicker = new SendableChooser<defense>();
 		defensePicker.addDefault("Other", defense.Other);
 		defensePicker.addObject("Rough Terrain", defense.RoughTerrain);
 		defensePicker.addObject("Shovel of Fries", defense.Cheval);
@@ -159,7 +160,7 @@ public class Robot extends IterativeRobot {
 		defensePicker.addObject("Low Bar", defense.LowBar);
 		SmartDashboard.putData("Defense Picker", defensePicker);
 
-		positionPicker = new SendableChooser();
+		positionPicker = new SendableChooser<position>();
 		positionPicker.addObject("One", position.One);
 		positionPicker.addDefault("Two", position.Two);
 		positionPicker.addObject("Three", position.Three);
@@ -167,7 +168,7 @@ public class Robot extends IterativeRobot {
 		positionPicker.addObject("Five", position.Five);
 		SmartDashboard.putData("Position Picker", positionPicker);
 
-		autoCommandChooser = new SendableChooser();
+		autoCommandChooser = new SendableChooser<CommandGroup>();
 		autoCommandChooser.addDefault("Do Nothing", new AutonDoNothingCommand());
 		// autoCommandChooser.addObject("Follow instructions", new
 		// AutonFollowInstructionsCommand());
@@ -181,7 +182,7 @@ public class Robot extends IterativeRobot {
 		// autoCommandChooser.addObject(String name, Command command);
 		SmartDashboard.putData("Autonomous Chooser", autoCommandChooser);
 
-		OI.getInstance().drivingModeChooser = new SendableChooser();
+		OI.getInstance().drivingModeChooser = new SendableChooser<DrivingMode>();
 		OI.getInstance().drivingModeChooser.addDefault("arcade", DrivingMode.ARCADE);
 		OI.getInstance().drivingModeChooser.addObject("tank", DrivingMode.TANK);
 		SmartDashboard.putData("Driving Mode Chooser", OI.getInstance().drivingModeChooser);
@@ -274,31 +275,10 @@ public class Robot extends IterativeRobot {
 	}
 
 	/**
-	 * Periodic code for disabled mode
-	 */
-	public void disabledPeriodic() {
-		periodic();
-	}
-
-	/**
-	 * Periodic code for autonomous mode
-	 */
-	public void autonomousPeriodic() {
-		periodic();
-	}
-
-	/**
-	 * Periodic code for teleop mode
-	 */
-	public void teleopPeriodic() {
-		periodic();
-	}
-
-	/**
 	 * Periodic code for test mode
 	 */
+	@Override
 	public void testPeriodic() {
-		periodic();
 		LiveWindow.run();
 	}
 
@@ -306,7 +286,8 @@ public class Robot extends IterativeRobot {
 	 * A generic periodic function that is called by the periodic functions for
 	 * the specific modes
 	 */
-	private void periodic() {
+	@Override
+	public void robotPeriodic() {
 
 		updateLoopTime();
 
@@ -326,8 +307,6 @@ public class Robot extends IterativeRobot {
 		smartDashboardSources.forEach(SmartDashboardSource::smartDashboardInfo);
 
 		SmartDashboard.putData(robotDiagram);
-		
-		long currentTime = System.currentTimeMillis();
 	}
 
 	/**
@@ -346,7 +325,7 @@ public class Robot extends IterativeRobot {
 	 * Initialization code for autonomous mode
 	 */
 	public void autonomousInit() {
-		autonomousCommand = (Command) autoCommandChooser.getSelected();
+		autonomousCommand = autoCommandChooser.getSelected();
 		if(autonomousCommand instanceof AutonFollowInstructionsShootCommand)
 			autonomousCommand = new AutonFollowInstructionsShootCommand();
 		else if(autonomousCommand instanceof AutonFollowInstructionsForwardCommand)
@@ -362,12 +341,6 @@ public class Robot extends IterativeRobot {
 			doneFirstTime = true;
 			Elevator.getInstance().resetEncoder();
 		}
-	}
-
-	/**
-	 * Initialization code for test mode.
-	 */
-	public void testInit() {
 	}
 	
 	

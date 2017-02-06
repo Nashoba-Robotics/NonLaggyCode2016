@@ -58,7 +58,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class OI implements SmartDashboardSource, Periodic {
 	
-	public SendableChooser drivingModeChooser;
+	public SendableChooser<DrivingMode> drivingModeChooser;
 
 	public double speedMultiplier = 1;
 
