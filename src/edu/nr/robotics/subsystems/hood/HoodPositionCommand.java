@@ -13,8 +13,7 @@ public class HoodPositionCommand extends NRCommand {
 
 	@Override
 	protected void onStart() {
-		Hood.getInstance().disableProfiler();
-		Hood.getInstance().enableProfiler(position - Hood.getInstance().getDisplacement());
+		Hood.getInstance().enableProfiler(position);
 	}
 	
 	@Override

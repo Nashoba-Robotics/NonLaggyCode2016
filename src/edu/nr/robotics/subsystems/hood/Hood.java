@@ -9,12 +9,11 @@ import edu.nr.lib.motionprofiling.OneDimensionalTrajectorySimple;
 import edu.nr.lib.motionprofiling.OneDimensionalTrajectory;
 import edu.nr.robotics.EnabledSubsystems;
 import edu.nr.robotics.RobotMap;
-import edu.wpi.first.wpilibj.CANTalon;
+import com.ctre.CANTalon;
+import com.ctre.CANTalon.*;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
-import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
-import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -27,9 +26,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	public static final double MAX_VEL = 45; //TODO: find more accurately
 	
 	public static final double MAX_RPM = 83.325;
-	
-	public OneDimensionalMotionProfiler profiler;
-	
+		
 	CANTalon talon;	
 	TalonEncoder enc;
 	
@@ -37,6 +34,10 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	//Max velocity for motion profiling is 30 degrees per second
 	
 	double maxSpeed = 1.0;
+	
+	public static final double JOYSTICK_P = 2.0;
+	public static final double MOTION_PROFILE_P = 125;
+	public static final double MOTION_PROFILE_D = 1000;
 	
 	private static Hood singleton;
 	
@@ -76,16 +77,16 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 			talon.configEncoderCodesPerRev(256);
 			
 			talon.setF(7.3);
-			talon.setP(2);
 			
 			enc = new TalonEncoder(talon,true);
 			enc.setPIDSourceType(PIDSourceType.kDisplacement);
 			enc.setDistancePerRev(RobotMap.HOOD_TICK_TO_ANGLE_MULTIPLIER);
 			
-			profiler = new OneDimensionalMotionProfilerBasic(this, this, 1/MAX_VEL, 0.00125,0.1,/*0.000001*/0);
-			//profiler = new OneDimensionalMotionProfiler(this, this, 1/MAX_VEL,0,0,0);
+			talon.setMotionMagicCruiseVelocity(MAX_VEL);
+			talon.setMotionMagicAcceleration(MAX_ACC);
 			
-			//LiveWindow.addSensor("Hood", "PID", pid);
+			
+			//profiler = new OneDimensionalMotionProfilerBasic(this, this, 1/MAX_VEL, 0.00125,0.1,/*0.000001*/0);
 		}
 	}
 
@@ -115,6 +116,7 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	 * @param speed the speed to set the motor to, from -1 to 1
 	 */
 	public void setMotor(double speed) {
+		
 		if(talon != null)
 			talon.setSetpoint(speed * MAX_RPM);
 	}
@@ -173,6 +175,8 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 					* 360 /*degrees per rotation*/ 
 					/ 60 /*seconds per minute*/ );	
 		}
+		SmartDashboard.putString("Hood Motion Profiling", talon.getSetpoint()/RobotMap.HOOD_TICK_TO_ANGLE_MULTIPLIER+":"+talon.getPosition()/RobotMap.HOOD_TICK_TO_ANGLE_MULTIPLIER);
+		
 		SmartDashboard.putData(this);
 	}
 
@@ -241,8 +245,10 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 	}
 
 	public void disableProfiler() {
-		if(profiler != null)
-			profiler.disable();
+		if(talon != null) {
+			talon.changeControlMode(TalonControlMode.Speed);
+			talon.setPID(JOYSTICK_P,0,0);
+		}
 	}
 	
 	public void disable() {
@@ -250,22 +256,27 @@ public class Hood extends Subsystem implements SmartDashboardSource, Periodic, P
 		setMotor(0);
 	}
 	
-	public void enableProfiler(OneDimensionalTrajectory traj) {
-		if(profiler != null) {
-			profiler.setTrajectory(traj);
-			profiler.enable();
+	public void enableProfiler(double position) {
+		if(talon != null) {
+			talon.changeControlMode(TalonControlMode.MotionMagic);
+			talon.setPID(MOTION_PROFILE_P, 0, MOTION_PROFILE_D);
+			talon.set(position * RobotMap.HOOD_TICK_TO_ANGLE_MULTIPLIER);
 		}
 	}
 	
-	public void enableProfiler(double delta) {
-		enableProfiler(new OneDimensionalTrajectorySimple(delta, Hood.MAX_VEL, Hood.MAX_VEL, Hood.MAX_ACC));	
-	}
-	
 	public boolean isProfilerEnabled() {
-		if(profiler != null) {
-			return profiler.isEnabled();
+		if(talon != null) {
+			return talon.getControlMode().equals(TalonControlMode.MotionMagic);
 		} else {
 			return false;
+		}
+	}
+
+	public double getEndProfilerPosition() {
+		if(isProfilerEnabled()) {
+			return talon.getSetpoint();
+		} else {
+			return 0;
 		}
 	}
 

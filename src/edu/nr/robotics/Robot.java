@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
 
-import com.ni.vision.VisionException;
-
 import edu.nr.lib.AngleUnit;
-import edu.nr.lib.CameraServer;
 import edu.nr.lib.WaitUntilGyroCommand;
 import edu.nr.lib.interfaces.Periodic;
 import edu.nr.lib.interfaces.SmartDashboardSource;
@@ -50,16 +47,13 @@ import edu.nr.robotics.subsystems.intakeroller.IntakeRoller;
 import edu.nr.robotics.subsystems.loaderroller.LaserCannonTriggerCommand;
 import edu.nr.robotics.subsystems.loaderroller.LoaderRoller;
 import edu.nr.robotics.subsystems.shooter.Shooter;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary;
-import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tInstances;
-import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
-import edu.wpi.first.wpilibj.communication.UsageReporting;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -148,7 +142,7 @@ public class Robot extends IterativeRobot {
 			}
 		}).start();
 
-		initCamera();
+		//CameraServer.getInstance().startAutomaticCapture();
 		initSubsystems();
 		initSmartDashboard();
 		robotDiagram = new RobotDiagram();
@@ -237,20 +231,6 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Android Adjust Factor", RobotMap.ANDROID_ADJUST_FACTOR);
 		
 		
-	}
-
-	private void initCamera() {
-		System.out.flush();
-		// the camera name (ex "cam0") can be found through the roborio web
-		// interface
-		try {
-			CameraServer server = CameraServer.getInstance();
-			server.setQuality(50);
-			server.startAutomaticCapture("cam0");
-		} catch (VisionException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	private void initSubsystems() {
